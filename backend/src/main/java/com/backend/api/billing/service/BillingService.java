@@ -68,7 +68,7 @@ public class BillingService {
         Subscription subscription = subscriptionService.getSubscriptionByCustomerKey(request.customerKey());
         autoPayment(subscription);
 
-        return new BillingResponse(billingKey, updated.customerKey());
+        return new BillingResponse(billingKey, updated.customerKey);
     }
 
     //자동 결제. 한달 주기로 결제 진행
