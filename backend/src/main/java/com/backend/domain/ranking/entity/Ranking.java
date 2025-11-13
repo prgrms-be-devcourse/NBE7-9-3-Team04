@@ -17,7 +17,7 @@ public class Ranking extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Tier tier;
+    public Tier tier;
 
     @Column(nullable = false)
     private Integer rankValue;
