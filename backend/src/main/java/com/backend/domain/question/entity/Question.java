@@ -34,7 +34,6 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User author;
 
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = true)
     private QuestionCategoryType categoryType;
@@ -67,6 +66,38 @@ public class Question extends BaseEntity {
 
     public void changeCategory(QuestionCategoryType categoryType) {
         this.categoryType = categoryType;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public Boolean getIsApproved() {
+        return isApproved;
+    }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public QuestionCategoryType getCategoryType() {
+        return categoryType;
+    }
+
+    public List<Answer> getAnswers() {
+        return answers;
+    }
+
+    public UUID getGroupId() {
+        return groupId;
     }
 
 }
