@@ -41,10 +41,10 @@ class AnswerService(
 
     @Transactional
     fun writeAnswer(currentUser: User, questionId: Long, reqBody: AnswerCreateRequest): Answer {
-        val content: String = reqBody.content
+        val content = reqBody.content!!
 
         val question = questionService.findByIdOrThrow(questionId)
-        val isPublic = reqBody.isPublic
+        val isPublic = reqBody.isPublic!!
 
         val answer = Answer(
             content,
