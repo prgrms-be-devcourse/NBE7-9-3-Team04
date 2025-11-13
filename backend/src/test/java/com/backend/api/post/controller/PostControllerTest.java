@@ -4,18 +4,21 @@ import com.backend.api.post.dto.request.PostAddRequest;
 import com.backend.api.post.dto.request.PostUpdateRequest;
 import com.backend.domain.answer.repository.AnswerRepository;
 import com.backend.domain.post.entity.PinStatus;
-import com.backend.domain.qna.repository.QnaRepository;
 import com.backend.domain.post.entity.Post;
 import com.backend.domain.post.entity.PostCategoryType;
 import com.backend.domain.post.entity.PostStatus;
 import com.backend.domain.post.repository.PostRepository;
+import com.backend.domain.qna.repository.QnaRepository;
 import com.backend.domain.question.entity.Question;
 import com.backend.domain.question.repository.QuestionRepository;
+import com.backend.domain.ranking.repository.RankingRepository;
+import com.backend.domain.resume.repository.ResumeRepository;
 import com.backend.domain.user.entity.Role;
-import com.backend.global.exception.ErrorCode;
 import com.backend.domain.user.entity.User;
 import com.backend.domain.user.repository.UserRepository;
+import com.backend.domain.userQuestion.repository.UserQuestionRepository;
 import com.backend.global.Rq.Rq;
+import com.backend.global.exception.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.transaction.Transactional;
@@ -24,7 +27,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -35,8 +37,8 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDateTime;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -71,6 +73,16 @@ class PostControllerTest {
     @Autowired
     private QnaRepository qnaRepository;
 
+    @Autowired
+    private RankingRepository rankingRepository;
+
+
+    @Autowired
+    private UserQuestionRepository userQuestionRepository;
+
+    @Autowired
+    private ResumeRepository resumeRepository;
+
     private User testUser;
     private User otherUser;
     private Post savedPost;
@@ -81,12 +93,18 @@ class PostControllerTest {
     void setUp() {
         objectMapper.registerModule(new JavaTimeModule());
 
-        // 자식 테이블부터 순서대로 정리
+        userQuestionRepository.deleteAll();
+
+        rankingRepository.deleteAll();
+        resumeRepository.deleteAll();
         answerRepository.deleteAll();
         qnaRepository.deleteAll();
+
         postRepository.deleteAll();
         questionRepository.deleteAll();
+
         userRepository.deleteAll();
+
 
         testUser = User.builder()
                 .email("test1@test.com").password("pw").name("작성자1").nickname("user1").age(20).role(Role.USER)
@@ -114,7 +132,7 @@ class PostControllerTest {
         Question question = Question.builder()
                 .title("테스트 질문 제목")
                 .content("테스트 질문 내용입니다.")
-                .author(testUser)  // 여기 반드시 필요
+                .author(testUser)
                 .build();
         questionRepository.save(question);
     }
@@ -577,19 +595,16 @@ class PostControllerTest {
         @Test
         @DisplayName("게시글 다건 조회 성공")
         void success() throws Exception {
-            // given
-            // 테스트의 독립성을 위해 필요한 데이터를 이 테스트 내에서 직접 생성합니다.
+
             User postAuthor = User.builder()
                     .email("post_author@test.com").password("pw").name("게시글작성자").nickname("post_author").age(25).role(Role.USER)
                     .github("").build();
             userRepository.save(postAuthor);
 
-            // @BeforeEach에서 생성된 게시글 외에 새로운 게시글을 추가합니다.
             Post anotherPost = Post.builder()
                     .title("두 번째 게시글")
                     .introduction("두 번째 한줄 소개입니다. 10자 이상.")
                     .content("두 번째 내용입니다. 10자 이상.")
-                    // @BeforeEach의 otherUser 대신 이 테스트에서 생성한 postAuthor를 사용합니다.
                     .users(postAuthor)
                     .deadline(FIXED_DEADLINE)
                     .status(PostStatus.ING)
@@ -599,19 +614,19 @@ class PostControllerTest {
                     .build();
             postRepository.save(anotherPost);
 
-            // when
+
             ResultActions resultActions = mockMvc.perform(
                     get("/api/v1/posts")
+                            .queryParam("page", "1")
                             .accept(MediaType.APPLICATION_JSON)
             );
 
-            // then
             resultActions
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value("OK"))
-                    .andExpect(jsonPath("$.message").value("전체 게시글 조회 성공")) // 1. 응답 메시지 확인
-                    .andExpect(jsonPath("$.data.posts.length()").value(2)) // 2. 응답 데이터 구조 변경 확인 (posts 배열)
-                    .andExpect(jsonPath("$.data.posts[0].title").value("두 번째 게시글")) // 3. 최신순 정렬 확인
+                    .andExpect(jsonPath("$.message").value("전체 게시글 조회 성공"))
+                    .andExpect(jsonPath("$.data.posts.length()").value(2))
+                    .andExpect(jsonPath("$.data.posts[0].title").value("두 번째 게시글")) // 최신순 정렬 확인 (두 번째 게시글이 더 늦게 생성되었으므로)
                     .andExpect(jsonPath("$.data.posts[1].title").value("기존 제목"))
                     .andDo(print());
         }
@@ -653,14 +668,16 @@ class PostControllerTest {
                 // when
                 ResultActions resultActions = mockMvc.perform(
                         get("/api/v1/posts/category/{categoryType}", "PROJECT")
+                                .queryParam("page", "1") // Integer 변환 오류 해결
                                 .accept(MediaType.APPLICATION_JSON)
                 );
 
+                // then
                 resultActions
                         .andExpect(status().isOk())
                         .andExpect(jsonPath("$.status").value("OK"))
                         .andExpect(jsonPath("$.message").value("카테고리별 게시글 조회 성공"))
-                        .andExpect(jsonPath("$.data.posts.length()").value(3)) // 4. 생성된 데이터 개수 확인
+                        .andExpect(jsonPath("$.data.posts.length()").value(3)) // @BeforeEach에서 저장된 1개 + 여기서 저장된 2개
                         .andExpect(jsonPath("$.data.posts[0].categoryType").value("PROJECT"))
                         .andDo(print());
             }
@@ -682,15 +699,19 @@ class PostControllerTest {
                         .build();
                 postRepository.save(studyPost);
 
+                // when
                 ResultActions resultActions = mockMvc.perform(
                         get("/api/v1/posts/category/{categoryType}", "STUDY")
+                                .queryParam("page", "1") // Integer 변환 오류 해결
                                 .accept(MediaType.APPLICATION_JSON)
                 );
 
+                // then
                 resultActions
                         .andExpect(status().isOk())
                         .andExpect(jsonPath("$.status").value("OK"))
                         .andExpect(jsonPath("$.message").value("카테고리별 게시글 조회 성공"))
+                        .andExpect(jsonPath("$.data.posts.length()").value(1))
                         .andExpect(jsonPath("$.data.posts[0].categoryType").value("STUDY"))
                         .andExpect(jsonPath("$.data.posts[0].title").value("스터디 게시글 1"))
                         .andDo(print());
@@ -700,8 +721,10 @@ class PostControllerTest {
             @DisplayName("실패 - 해당 카테고리에 게시글이 없음")
             void fail_empty_category() throws Exception {
 
+                // when
                 ResultActions resultActions = mockMvc.perform(
                         get("/api/v1/posts/category/{categoryType}", "STUDY")
+                                .queryParam("page", "1")
                                 .accept(MediaType.APPLICATION_JSON)
                 );
 

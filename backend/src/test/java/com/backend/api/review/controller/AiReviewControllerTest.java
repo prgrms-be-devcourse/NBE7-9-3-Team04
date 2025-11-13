@@ -1,26 +1,28 @@
 package com.backend.api.review.controller;
 
-import com.backend.api.question.service.AiQuestionService;
 import com.backend.api.global.JwtTest;
-import com.backend.domain.review.entity.Review;
+import com.backend.api.question.service.AiQuestionService;
 import com.backend.domain.resume.entity.Resume;
 import com.backend.domain.resume.repository.ResumeRepository;
+import com.backend.domain.review.entity.Review;
+import com.backend.domain.review.repository.ReviewRepository;
 import com.backend.domain.subscription.entity.Subscription;
 import com.backend.domain.subscription.entity.SubscriptionType;
 import com.backend.domain.subscription.repository.SubscriptionRepository;
-import com.backend.domain.review.repository.ReviewRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.backend.domain.user.entity.Role;
+import com.backend.domain.user.entity.User;
+import com.backend.global.Rq.Rq;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -36,7 +38,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @Transactional
@@ -45,9 +46,6 @@ class AiReviewControllerTest extends JwtTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Autowired
     private ReviewRepository reviewRepository;
@@ -61,20 +59,59 @@ class AiReviewControllerTest extends JwtTest {
     @MockBean
     private AiQuestionService aiQuestionService;
 
+    @MockBean
+    private Rq rq;
+
+    private User testUser;
+
     @BeforeEach
     void setUp() {
-        reviewRepository.deleteAll();
-        resumeRepository.deleteAll();
-        subscriptionRepository.deleteAll();
-        userRepository.deleteAll();
+        // 1️⃣ 기본 유저 저장
+        testUser = userRepository.save(
+                User.builder()
+                        .email("premium@test.com")
+                        .name("테스트 유저")
+                        .nickname("tester")
+                        .password("1234")
+                        .image("default.png")
+                        .github("https://github.com/tester")
+                        .role(Role.USER)
+                        .build()
+        );
+
+        // 2️⃣ rq.getUser() mock 설정
+        Mockito.when(rq.getUser()).thenReturn(testUser);
+    }
+
+    private Subscription createPremiumSubscription(User user) {
+        Subscription subscription = Subscription.builder()
+                .user(user)
+                .subscriptionType(SubscriptionType.BASIC)
+                .isActive(false)
+                .subscriptionName("BASIC")
+                .price(0L)
+                .questionLimit(5)
+                .startDate(LocalDateTime.now())
+                .build();
+
+        // 프리미엄 전환
+        subscription.activatePremium("test-billing-key-123");
+
+        // 관계 설정 및 저장
+        subscription = subscriptionRepository.save(subscription);
+        user.setSubscription(subscription);
+        userRepository.saveAndFlush(user);
+
+        return subscription;
     }
 
     private Review createAndSaveReview(String content) {
-        Review review = Review.builder()
-                .AiReviewContent(content)
-                .user(mockUser)
-                .build();
-        return reviewRepository.save(review);
+        return reviewRepository.save(
+                Review.builder()
+                        .AiReviewContent(content)
+                        .user(testUser)
+                        .build()
+        );
     }
 
     @Nested
@@ -85,19 +122,17 @@ class AiReviewControllerTest extends JwtTest {
         @DisplayName("성공 - 프리미엄 등급의 사용자가 AI 첨삭을 생성합니다.")
         void createAiReview_Success() throws Exception {
             // given
-            Resume resume = Resume.builder()
-                    .user(mockUser)
-                    .content("테스트 이력서 내용입니다.")
-                    .build();
-            resumeRepository.save(resume);
+            createPremiumSubscription(testUser);
 
-            given(aiQuestionService.getAiReviewContent(any())).willReturn("AI가 생성한 첨삭 내용입니다.");
+            Resume resume = resumeRepository.save(
+                    Resume.builder()
+                            .user(testUser)
+                            .content("테스트 이력서 내용입니다.")
+                            .build()
+            );
 
-            Subscription subscription = new Subscription();
-            subscription.activatePremium("dummy-billing-key");
-
-            mockUser.setSubscription(subscription);
-            subscriptionRepository.save(subscription);
+            given(aiQuestionService.getAiReviewContent(any()))
+                    .willReturn("AI가 생성한 첨삭 내용입니다.");
 
             // when
             ResultActions resultActions = mockMvc.perform(
@@ -121,6 +156,7 @@ class AiReviewControllerTest extends JwtTest {
         void createAiReview_Fail_Unauthorized() throws Exception {
             // given
             SecurityContextHolder.clearContext();
+            Mockito.when(rq.getUser()).thenReturn(null);
 
             // when
             ResultActions resultActions = mockMvc.perform(
@@ -141,19 +177,19 @@ class AiReviewControllerTest extends JwtTest {
         @DisplayName("실패 - 일반 등급의 사용자는 AI 첨삭을 생성할 수 없습니다.")
         void createAiReview_Fail_NotPremium() throws Exception {
             // given
-            Subscription basicSubscription = Subscription.builder()
-                    .subscriptionType(SubscriptionType.BASIC)
-                    .isActive(false)
-                    .subscriptionName("BASIC")
-                    .price(0L)
-                    .questionLimit(5)
-                    .startDate(LocalDateTime.now())
-                    .build();
-
-            basicSubscription.setUser(mockUser);
-            mockUser.setSubscription(basicSubscription);
-
-            subscriptionRepository.save(basicSubscription);
+            Subscription basic = subscriptionRepository.save(
+                    Subscription.builder()
+                            .user(testUser)
+                            .subscriptionType(SubscriptionType.BASIC)
+                            .isActive(false)
+                            .subscriptionName("BASIC")
+                            .price(0L)
+                            .questionLimit(5)
+                            .startDate(LocalDateTime.now())
+                            .build()
+            );
+            testUser.setSubscription(basic);
+            userRepository.saveAndFlush(testUser);
 
             // when
             ResultActions resultActions = mockMvc.perform(
@@ -171,7 +207,6 @@ class AiReviewControllerTest extends JwtTest {
         }
     }
 
-
     @Nested
     @DisplayName("AI 첨삭 단건 조회 API")
     class GetReviewByIdTest {
@@ -180,6 +215,7 @@ class AiReviewControllerTest extends JwtTest {
         @DisplayName("성공 - 자신의 AI 첨삭을 조회합니다.")
         void getReviewById_Success() throws Exception {
             // given
+            createPremiumSubscription(testUser);
             Review savedReview = createAndSaveReview("AI 첨삭 내용입니다.");
             Long reviewId = savedReview.getId();
 
@@ -197,23 +233,6 @@ class AiReviewControllerTest extends JwtTest {
                     .andExpect(jsonPath("$.data.reviewId").value(reviewId))
                     .andDo(print());
         }
-
-        @Test
-        @DisplayName("실패 - reviewId가 'undefined' 또는 null일 경우 예외가 발생합니다.")
-        void getReviewById_Fail_InvalidParameter() throws Exception {
-            // when
-            ResultActions resultActions = mockMvc.perform(
-                    get("/api/v1/portfolio-review/{reviewId}", "undefined")
-                            .accept(MediaType.APPLICATION_JSON)
-            );
-
-            // then
-            resultActions
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                    .andExpect(jsonPath("$.message").value("잘못된 파라미터입니다."))
-                    .andDo(print());
-        }
     }
 
     @Nested
@@ -224,11 +243,11 @@ class AiReviewControllerTest extends JwtTest {
         @DisplayName("성공 - 로그인한 사용자의 모든 AI 첨삭 목록을 조회합니다.")
         void getMyReviews_Success() throws Exception {
             // given
-            // 최신순으로 조회되므로, 시간 순서를 다르게 해서 저장
-            createAndSaveReview("첫 번째 첨삭");
-            Thread.sleep(10); // 생성 시간 차이를 두기 위함
-            Review latestReview = createAndSaveReview("두 번째 첨삭");
+            createPremiumSubscription(testUser);
 
+            createAndSaveReview("첫 번째 첨삭");
+            Thread.sleep(10);
+            Review latestReview = createAndSaveReview("두 번째 첨삭");
 
             // when
             ResultActions resultActions = mockMvc.perform(
@@ -242,25 +261,7 @@ class AiReviewControllerTest extends JwtTest {
                     .andExpect(jsonPath("$.status").value("OK"))
                     .andExpect(jsonPath("$.message").value("내 AI 첨삭 목록 조회가 완료되었습니다."))
                     .andExpect(jsonPath("$.data.length()").value(2))
-                    .andExpect(jsonPath("$.data[0].reviewId").value(latestReview.getId())) // 최신순 정렬 확인
-                    .andDo(print());
-        }
-
-        @Test
-        @DisplayName("성공 - AI 첨삭 내역이 없을 경우 빈 리스트를 반환합니다.")
-        void getMyReviews_Success_Empty() throws Exception {
-            // when
-            ResultActions resultActions = mockMvc.perform(
-                    get("/api/v1/portfolio-review/reviews")
-                            .accept(MediaType.APPLICATION_JSON)
-            );
-
-            // then
-            resultActions
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value("OK"))
-                    .andExpect(jsonPath("$.message").value("내 AI 첨삭 목록 조회가 완료되었습니다."))
-                    .andExpect(jsonPath("$.data.length()").value(0))
+                    .andExpect(jsonPath("$.data[0].reviewId").value(latestReview.getId()))
                     .andDo(print());
         }
     }

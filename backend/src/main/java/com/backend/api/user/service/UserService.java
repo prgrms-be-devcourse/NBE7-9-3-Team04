@@ -15,6 +15,7 @@ import com.backend.domain.subscription.repository.SubscriptionRepository;
 import com.backend.domain.user.entity.AccountStatus;
 import com.backend.domain.user.entity.Role;
 import com.backend.domain.user.entity.User;
+import com.backend.domain.user.entity.VerificationCode;
 import com.backend.domain.user.entity.search.UserDocument;
 import com.backend.domain.user.repository.UserRepository;
 import com.backend.domain.user.repository.VerificationCodeRepository;
@@ -73,8 +74,10 @@ public class UserService {
                 .build();
 
 
-      verificationCodeRepository.findByEmail(request.email())
-        .ifPresent(verificationCodeRepository::delete);
+        VerificationCode vc = verificationCodeRepository.findByEmail(request.email());
+        if (vc != null) {
+            verificationCodeRepository.delete(vc);
+        }
       
         userRepository.save(user);
 

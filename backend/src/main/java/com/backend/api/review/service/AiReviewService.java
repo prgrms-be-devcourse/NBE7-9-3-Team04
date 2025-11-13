@@ -30,6 +30,10 @@ public class AiReviewService {
 
     @Transactional
     public AiReviewResponse createAiReview(User user) throws JsonProcessingException {
+        if (user == null) {
+            throw new ErrorException(ErrorCode.UNAUTHORIZED_USER);
+        }
+
         if (!user.isPremium()) {
             throw new ErrorException(ErrorCode.AI_FEEDBACK_FOR_PREMIUM_ONLY);
         }
