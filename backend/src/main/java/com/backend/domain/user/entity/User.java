@@ -154,15 +154,4 @@ public class User extends BaseEntity {
         this.password = encodedPassword;
     }
 
-    // 🔥🔥🔥 임시 Getter (Kotlin 접근 오류 해결용)
-    public String getEmail() { return email; }
-
-    public String getName() { return name; }
-
-    public AccountStatus getAccountStatus() { return accountStatus; }
-
-    public Role getRole() { return role; }
-
-    public Long getId() { return super.getId(); }
-
 }
