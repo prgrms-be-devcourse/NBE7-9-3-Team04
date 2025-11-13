@@ -60,6 +60,51 @@ public class User extends BaseEntity {
     }
 
 
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public String getGithub() {
+        return github;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public AccountStatus getAccountStatus() {
+        return accountStatus;
+    }
+
+    public int getAiQuestionUsedCount() {
+        return aiQuestionUsedCount;
+    }
+
+    public Subscription getSubscription() {
+        return subscription;
+    }
+
+
     public void updateUser(String email, String password, String name,
                            String nickname, int age, String github, String image) {
         this.email = email;
