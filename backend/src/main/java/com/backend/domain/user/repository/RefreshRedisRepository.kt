@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit
 
 
 @Repository
-@RequiredArgsConstructor
 class RefreshRedisRepository(
     private val redisTemplate: RedisTemplate<String, Any>
 ) {
