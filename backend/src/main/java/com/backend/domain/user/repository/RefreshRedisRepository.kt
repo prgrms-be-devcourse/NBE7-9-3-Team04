@@ -9,11 +9,16 @@ import java.util.concurrent.TimeUnit
 
 @Repository
 @RequiredArgsConstructor
-class RefreshRedisRepository {
-    private val redisTemplate: RedisTemplate<String?, Any?>? = null
+class RefreshRedisRepository(
+    private val redisTemplate: RedisTemplate<String, Any>
+) {
+
+    companion object {
+        private const val REFRESH_TOKEN_PREFIX = "refreshToken_"
+    }
 
     fun save(refreshToken: RefreshToken) {
-        redisTemplate!!.opsForValue().set(
+        redisTemplate.opsForValue().set(
             REFRESH_TOKEN_PREFIX + refreshToken.userId,
             refreshToken.refreshToken,
             refreshToken.expiration,
@@ -21,19 +26,15 @@ class RefreshRedisRepository {
         )
     }
 
-    fun findByUserId(userId: Long?): String? {
-        return redisTemplate!!.opsForValue().get(REFRESH_TOKEN_PREFIX + userId) as String?
-    }
+    fun findByUserId(userId: Long): String? =
+        redisTemplate.opsForValue().get(REFRESH_TOKEN_PREFIX + userId) as String?
 
-    fun deleteByUserId(userId: Long?) {
-        redisTemplate!!.delete(REFRESH_TOKEN_PREFIX + userId)
-    }
 
-    fun existsByUserId(userId: Long?): Boolean {
-        return redisTemplate!!.hasKey(REFRESH_TOKEN_PREFIX + userId)
-    }
+    fun deleteByUserId(userId: Long) =
+        redisTemplate.delete(REFRESH_TOKEN_PREFIX + userId)
 
-    companion object {
-        private const val REFRESH_TOKEN_PREFIX = "refreshToken_"
-    }
+
+    fun existsByUserId(userId: Long?): Boolean =
+        redisTemplate.hasKey(REFRESH_TOKEN_PREFIX + userId)
+
 }

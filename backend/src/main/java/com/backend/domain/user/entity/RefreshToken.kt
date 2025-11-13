@@ -2,25 +2,21 @@ package com.backend.domain.user.entity
 
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
-import lombok.AllArgsConstructor
 import lombok.Builder
-import lombok.Getter
-import lombok.NoArgsConstructor
 import org.springframework.data.redis.core.RedisHash
 import org.springframework.data.redis.core.TimeToLive
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Entity
 @Builder
+@Entity
 @RedisHash(value = "refreshToken")
-class RefreshToken {
-    @Id
-    private var userId: Long? = null
+class RefreshToken(
 
-    private var refreshToken: String? = null
+    @Id
+    val userId: Long,
+
+    var refreshToken: String,
 
     @TimeToLive
-    private var expiration: Long? = null
-}
+    var expiration: Long
+
+)
