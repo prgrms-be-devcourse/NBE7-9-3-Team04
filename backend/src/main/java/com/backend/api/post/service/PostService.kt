@@ -186,7 +186,7 @@ class PostService(
 
     fun getByStatusAndDeadlineLessThan(now: LocalDateTime): List<Post> {
         return postRepository.findByStatusAndDeadlineLessThan(PostStatus.ING, now)
-            .orElseThrow { ErrorException(ErrorCode.POST_NOT_FOUND) }
+            ?: throw ErrorException(ErrorCode.POST_NOT_FOUND)
     }
 
     private fun validateDeadline(deadline: LocalDateTime) {
