@@ -1,13 +1,11 @@
-package com.backend.global.exception;
+package com.backend.global.exception
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatus
 
-@Getter
-@AllArgsConstructor
-public enum ErrorCode {
-  
+enum class ErrorCode(
+    val httpStatus: HttpStatus,
+    val message: String
+) {
     //사용자 관련
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다."),
     NOT_FOUND_NICKNAME(HttpStatus.NOT_FOUND, "작성자를 찾을 수 없습니다."),
@@ -27,7 +25,7 @@ public enum ErrorCode {
     EMAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "이메일 전송에 실패했습니다."),
     EMAIL_NOT_VERIFIED(HttpStatus.BAD_REQUEST, "이메일 인증이 완료되지 않았습니다."),
     USER_QUESTION_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 존재하는 유저-문제 관계입니다."),
-    INVALID_SUSPEND_REASON(HttpStatus.BAD_REQUEST,  "정지 사유가 필요합니다."),
+    INVALID_SUSPEND_REASON(HttpStatus.BAD_REQUEST, "정지 사유가 필요합니다."),
     INVALID_SUSPEND_PERIOD(HttpStatus.BAD_REQUEST, "유효한 정지 종료일을 입력해주세요."),
     INVALID_BAN_PERIOD(HttpStatus.BAD_REQUEST, "영구 정지 상태에서는 종료일을 지정할 수 없습니다."),
     INVALID_STATUS(HttpStatus.BAD_REQUEST, "유효하지 않은 상태 값입니다."),
@@ -67,7 +65,7 @@ public enum ErrorCode {
     QUESTION_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "이미 삭제된 질문입니다."),
     ALREADY_APPROVED_QUESTION(HttpStatus.BAD_REQUEST, "이미 승인된 질문입니다."),
     QUESTION_NOT_APPROVED(HttpStatus.FORBIDDEN, "승인되지 않은 질문입니다."),
-    NOT_FOUND_CONTENT(HttpStatus.NOT_FOUND,"질문 내용을 찾을 수 없습니다."),
+    NOT_FOUND_CONTENT(HttpStatus.NOT_FOUND, "질문 내용을 찾을 수 없습니다."),
     AI_QUESTION_LIMIT_EXCEEDED(HttpStatus.FORBIDDEN, "정해진 AI 질문 횟수를 모두 사용했습니다."),
     QUESTION_INVALID_USER(HttpStatus.FORBIDDEN, "해당 질문에 대한 권한이 없는 사용자입니다."),
 
@@ -80,10 +78,10 @@ public enum ErrorCode {
     DUPLICATE_RESUME(HttpStatus.BAD_REQUEST, "이미 등록된 이력서가 있습니다."),
     NOT_FOUND_RESUME(HttpStatus.NOT_FOUND, "이력서를 찾을 수 없습니다."),
     INVALID_USER(HttpStatus.FORBIDDEN, "이력서 수정 권한이 없습니다."),
-    AI_FEEDBACK_FOR_PREMIUM_ONLY(HttpStatus.FORBIDDEN,"포트폴리오 첨삭은 PREMIUM 등급 사용자만 이용 가능합니다."),
+    AI_FEEDBACK_FOR_PREMIUM_ONLY(HttpStatus.FORBIDDEN, "포트폴리오 첨삭은 PREMIUM 등급 사용자만 이용 가능합니다."),
     NOT_FOUND_REVIEW(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다"),
-    ACCESS_DENIED_REVIEW(HttpStatus.FORBIDDEN,"해당 리뷰에 접근할 권한이 없습니다."),
-    INVALID_PARAMETER(HttpStatus.BAD_REQUEST,"잘못된 파라미터입니다."),
+    ACCESS_DENIED_REVIEW(HttpStatus.FORBIDDEN, "해당 리뷰에 접근할 권한이 없습니다."),
+    INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "잘못된 파라미터입니다."),
 
 
     //payment
@@ -103,8 +101,8 @@ public enum ErrorCode {
 
 
     // feedback
-    FEEDBACK_NOT_FOUND(HttpStatus.NOT_FOUND,"피드백을 찾을 수 없습니다."),
-    FETCH_FEEDBACK_FAILED(HttpStatus.BAD_REQUEST,"AI 피드백 조회에 실패했습니다."),
+    FEEDBACK_NOT_FOUND(HttpStatus.NOT_FOUND, "피드백을 찾을 수 없습니다."),
+    FETCH_FEEDBACK_FAILED(HttpStatus.BAD_REQUEST, "AI 피드백 조회에 실패했습니다."),
 
     //ranking
     RANKING_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 존재하는 랭킹입니다."),
@@ -113,8 +111,6 @@ public enum ErrorCode {
     RANKING_NOT_AVAILABLE(HttpStatus.NOT_FOUND, "랭킹 정보를 사용할 수 없습니다."),
 
     REDIS_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Redis 처리 중 오류가 발생했습니다."),
-
     ;
-    private final HttpStatus httpStatus;
-    private final String message;
+
 }
