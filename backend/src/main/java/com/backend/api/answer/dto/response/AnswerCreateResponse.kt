@@ -32,7 +32,7 @@ data class AnswerCreateResponse(
             content = answer.content,
             isPublic = answer.isPublic,
             authorId = answer.author.id!!,
-            authorNickName = answer.author.nickname!!,
+            authorNickName = answer.author.nickname,
             questionId = answer.question.id!!
         )
     }
