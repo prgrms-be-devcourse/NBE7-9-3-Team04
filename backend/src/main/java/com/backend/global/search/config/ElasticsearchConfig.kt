@@ -13,7 +13,7 @@ import org.springframework.data.elasticsearch.core.document.Document
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories
 
 @Configuration
-@Profile("prod")
+@Profile("!test")
 @EnableElasticsearchRepositories(basePackages = ["com.backend.domain.user.repository.search"])
 class ElasticsearchConfig(
 
