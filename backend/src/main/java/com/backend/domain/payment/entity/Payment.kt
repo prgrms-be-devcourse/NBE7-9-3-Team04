@@ -44,7 +44,7 @@ class Payment(
 
     @ManyToOne(fetch = FetchType.LAZY) //한 구독에 결제는 여러번
     @JoinColumn(name = "subscription_id", nullable = false)
-    var subscription: Subscription
+    var subscription: Subscription ?= null
 
 ) : BaseEntity() {
 

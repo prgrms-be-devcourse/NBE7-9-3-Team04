@@ -55,7 +55,7 @@ data class PaymentResponse(
                 payment.status,
                 payment.createDate,
                 payment.approvedAt,
-                payment.subscription.id,
+                payment.subscription?.id,
                 payment.user.email
             )
         }

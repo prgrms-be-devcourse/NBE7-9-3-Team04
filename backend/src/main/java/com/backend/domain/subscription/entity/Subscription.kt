@@ -47,7 +47,7 @@ class Subscription(
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
-    var user: User,
+    val user: User,
 
     ) : BaseEntity() {
 
