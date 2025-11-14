@@ -1,14 +1,14 @@
 package com.backend.domain.feedback.entity;
 
 import com.backend.domain.answer.entity.Answer;
-import com.backend.domain.question.entity.Question;
-import com.backend.domain.user.entity.User;
 import com.backend.global.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
@@ -28,5 +28,17 @@ public class Feedback extends BaseEntity {
         this.answer = answer;
         this.aiScore = score;
         this.content = content;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public Integer getAiScore() {
+        return aiScore;
+    }
+
+    public Answer getAnswer() {
+        return answer;
     }
 }
