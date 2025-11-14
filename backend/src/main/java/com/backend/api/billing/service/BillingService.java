@@ -25,6 +25,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.UUID;
 
+
 @Service
 @RequiredArgsConstructor
 public class BillingService {
@@ -37,19 +38,19 @@ public class BillingService {
     @Transactional
     public BillingResponse issueBillingKey(BillingRequest request) {
 
-        if(request.authKey == null){
+        if(request.authKey() == null){
             throw new ErrorException(ErrorCode.INVALID_AUTH_KEY);
         }
 
-        if(request.customerKey == null){
+        if(request.customerKey() == null){
             throw new ErrorException(ErrorCode.INVALID_CUSTOMER_KEY);
         }
 
         Map<String, Object> billingResponse = webClient.post()
                 .uri("v1/billing/authorizations/issue")
                 .bodyValue(Map.of(
-                        "authKey", request.authKey,
-                        "customerKey", request.customerKey
+                        "authKey", request.authKey(),
+                        "customerKey", request.customerKey()
                 ))
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
@@ -62,10 +63,10 @@ public class BillingService {
         }
 
         // 구독 PREMIUM 전환
-        SubscriptionResponse updated = subscriptionService.activatePremium(request.customerKey, billingKey);
+        SubscriptionResponse updated = subscriptionService.activatePremium(request.customerKey(), billingKey);
 
         //카드 등록 시 첫번째 결제 바로 실행
-        Subscription subscription = subscriptionService.getSubscriptionByCustomerKey(request.customerKey);
+        Subscription subscription = subscriptionService.getSubscriptionByCustomerKey(request.customerKey());
         autoPayment(subscription);
 
         return new BillingResponse(billingKey, updated.customerKey());
@@ -99,15 +100,15 @@ public class BillingService {
                 .bodyToMono(BillingPaymentResponse.class)
                 .block();
 
-        LocalDateTime approvedAt = LocalDateTime.parse(response.approvedAt, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        LocalDateTime approvedAt = LocalDateTime.parse(response.approvedAt(), DateTimeFormatter.ISO_OFFSET_DATE_TIME);
 
         Payment payment = Payment.builder()
-                .orderId(response.orderId)
-                .paymentKey(response.paymentKey)
-                .orderName(response.orderName)
+                .orderId(response.orderId())
+                .paymentKey(response.paymentKey())
+                .orderName(response.orderName())
                 .totalAmount(subscription.getPrice())
                 .method("CARD")
-                .status(PaymentStatus.valueOf(response.status))
+                .status(PaymentStatus.valueOf(response.status()))
                 .approvedAt(approvedAt)
                 .user(subscription.getUser())
                 .subscription(subscription)
