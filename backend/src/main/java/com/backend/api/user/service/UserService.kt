@@ -112,6 +112,7 @@ class UserService(
         user.assignSubscription(basicSubscription)
         rankingRepository.save(ranking)
 
+
         eventPublisher.publishEvent(UserSignupEvent(user))
         return UserSignupResponse.from(user, ranking)
     }

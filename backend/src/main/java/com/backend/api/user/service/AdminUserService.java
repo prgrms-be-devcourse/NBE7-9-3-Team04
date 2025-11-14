@@ -91,11 +91,11 @@ public class AdminUserService {
     public AdminUserResponse changeUserStatus(Long userId, AdminUserStatusUpdateRequest request, User admin) {
         validateAdminAuthority(admin);
         User user = findByIdOrThrow(userId);
-        validateNotDuplicateStatus(user, request.status());
+        validateNotDuplicateStatus(user, request.status);
 
         validateStatusChangeRequest(request); // 상태별 검증 메서드로 분리
 
-        user.changeStatus(request.status());
+        user.changeStatus(request.status);
         userRepository.saveAndFlush(user);
 
         UserPenalty penalty = handleUserPenalty(user, request); // 패널티 로직 분리
@@ -105,7 +105,7 @@ public class AdminUserService {
     }
 
     private void validateStatusChangeRequest(AdminUserStatusUpdateRequest request) {
-        switch (request.status()) {
+        switch (request.status) {
             case SUSPENDED -> validateSuspendRequest(request);
             case BANNED -> validateBanRequest(request);
             case ACTIVE -> request.clearReasonAndDate();
@@ -114,33 +114,33 @@ public class AdminUserService {
     }
 
     private void validateSuspendRequest(AdminUserStatusUpdateRequest request) {
-        if (isBlank(request.reason())) {
+        if (isBlank(request.reason)) {
             throw new ErrorException(ErrorCode.INVALID_SUSPEND_REASON);
         }
-        if (request.suspendEndDate() == null || request.suspendEndDate().isBefore(LocalDate.now())) {
+        if (request.suspendEndDate == null || request.suspendEndDate.isBefore(LocalDate.now())) {
             throw new ErrorException(ErrorCode.INVALID_SUSPEND_PERIOD);
         }
     }
 
     private void validateBanRequest(AdminUserStatusUpdateRequest request) {
-        if (isBlank(request.reason())) {
+        if (isBlank(request.reason)) {
             throw new ErrorException(ErrorCode.INVALID_SUSPEND_REASON);
         }
-        if (request.suspendEndDate() != null) {
+        if (request.suspendEndDate != null) {
             throw new ErrorException(ErrorCode.INVALID_BAN_PERIOD);
         }
     }
 
     // Penalty 기록 처리
     private UserPenalty handleUserPenalty(User user, AdminUserStatusUpdateRequest request) {
-        if (request.status() == AccountStatus.SUSPENDED || request.status() == AccountStatus.BANNED) {
+        if (request.status == AccountStatus.SUSPENDED || request.status == AccountStatus.BANNED) {
             UserPenalty penalty = UserPenalty.builder()
                     .user(user)
-                    .reason(request.reason())
+                    .reason(request.reason)
                     .startAt(LocalDateTime.now())
-                    .endAt(request.suspendEndDate() != null ? request.suspendEndDate().atStartOfDay() : null)
+                    .endAt(request.suspendEndDate != null ? request.suspendEndDate.atStartOfDay() : null)
                     .released(false)
-                    .appliedStatus(request.status())
+                    .appliedStatus(request.status)
                     .build();
             return userPenaltyRepository.saveAndFlush(penalty);
         }
