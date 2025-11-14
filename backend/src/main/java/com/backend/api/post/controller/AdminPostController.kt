@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/v1/admin/posts")
 @Tag(name = "Admin Post", description = "게시글 관리 API(관리자)")
-// 1. @RequiredArgsConstructor 제거 -> 주 생성자 주입
+
 class AdminPostController(
     private val adminPostService: AdminPostService,
     private val rq: Rq
