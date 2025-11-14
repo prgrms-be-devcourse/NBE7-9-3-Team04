@@ -20,7 +20,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 
-//2차 때 사용 x
+
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
@@ -49,11 +49,11 @@ public class PaymentService {
 
 
         Payment payment = Payment.builder()
-                .orderId(response.orderId())
-                .paymentKey(response.paymentKey())
-                .orderName(response.orderName())
-                .method(response.method())
-                .totalAmount(response.totalAmount())
+                .orderId(response.orderId)
+                .paymentKey(response.paymentKey)
+                .orderName(response.orderName)
+                .method(response.method)
+                .totalAmount(response.totalAmount)
                 .status(PaymentStatus.DONE)
                 .approvedAt(LocalDateTime.now())
                 .user(user)
