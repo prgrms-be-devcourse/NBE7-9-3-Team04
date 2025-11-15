@@ -100,15 +100,15 @@ public class BillingService {
                 .bodyToMono(BillingPaymentResponse.class)
                 .block();
 
-        LocalDateTime approvedAt = LocalDateTime.parse(response.approvedAt(), DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        LocalDateTime approvedAt = LocalDateTime.parse(response.approvedAt, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
 
         Payment payment = Payment.builder()
-                .orderId(response.orderId())
-                .paymentKey(response.paymentKey())
-                .orderName(response.orderName())
+                .orderId(response.orderId)
+                .paymentKey(response.paymentKey)
+                .orderName(response.orderName)
                 .totalAmount(subscription.getPrice())
                 .method("CARD")
-                .status(PaymentStatus.valueOf(response.status()))
+                .status(PaymentStatus.valueOf(response.status))
                 .approvedAt(approvedAt)
                 .user(subscription.getUser())
                 .subscription(subscription)
