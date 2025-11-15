@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor
 
 @AllArgsConstructor
 enum class Tier(
-    private val label: String,
-    private val minScore: Int
+    val label: String,
+    val minScore: Int
 ) {
     UNRATED("Unrated", 0),
     BRONZE("Bronze", 300),

@@ -8,14 +8,14 @@ import jakarta.persistence.*
 class Ranking(
 
     @Column(nullable = false)
-    private var totalScore: Int,
+    var totalScore: Int,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     var tier: Tier,
 
     @Column(nullable = false)
-    private var rankValue: Int,
+    var rankValue: Int,
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
