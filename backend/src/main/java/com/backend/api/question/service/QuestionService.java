@@ -51,7 +51,7 @@ public class QuestionService {
 
     //질문 작성자 본인 여부 검증
     private void validateQuestionAuthor(Question question, User user) {
-        if (!question.getAuthor().getId().equals(user.getId())) {
+        if (question.getAuthor().getId() != user.getId()) {
             throw new ErrorException(ErrorCode.FORBIDDEN);
         }
     }
@@ -152,7 +152,7 @@ public class QuestionService {
     public QuestionResponse getNotApprovedQuestionById(Long userId, Long questionId, User user) {
         validateUserAuthority(user);
 
-        if (!user.getId().equals(userId)) {
+        if (user.getId() != userId) {
             throw new ErrorException(ErrorCode.QUESTION_INVALID_USER);
         }
         Question question = findByIdOrThrow(questionId);
@@ -192,7 +192,7 @@ public class QuestionService {
         userService.getUser(userId);
         User currentUser = rq.getUser();
 
-        if (!currentUser.getId().equals(userId) && !currentUser.getRole().equals(Role.ADMIN)) {
+        if (currentUser.getId() != userId && !currentUser.getRole().equals(Role.ADMIN)) {
             throw new ErrorException(ErrorCode.QUESTION_INVALID_USER);
         }
 

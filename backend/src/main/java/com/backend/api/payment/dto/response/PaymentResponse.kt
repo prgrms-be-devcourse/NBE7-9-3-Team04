@@ -42,12 +42,11 @@ data class PaymentResponse(
     @field:Schema(description = "사용자 이메일", example = "test@naver.com")
     val userEmail: String?
 ) {
-    //TODO 더블뱅 제거 필요
     companion object {
         @JvmStatic
         fun from(payment: Payment): PaymentResponse {
             return PaymentResponse(
-                payment.id!!,
+                payment.id,
                 payment.orderId,
                 payment.paymentKey,
                 payment.orderName,

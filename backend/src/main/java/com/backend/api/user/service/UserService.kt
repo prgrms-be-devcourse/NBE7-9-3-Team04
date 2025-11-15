@@ -29,7 +29,6 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.util.*
 
-//TODO id 더블뱅 제거
 @Service
 class UserService(
     val userRepository: UserRepository,
@@ -136,11 +135,11 @@ class UserService(
             throw ErrorException(ErrorCode.WRONG_PASSWORD)
         }
 
-        val accessToken = jwtTokenProvider.generateAccessToken(user.id!!, user.email, user.role)
-        val refreshToken = jwtTokenProvider.generateRefreshToken(user.id!!, user.email, user.role)
+        val accessToken = jwtTokenProvider.generateAccessToken(user.id, user.email, user.role)
+        val refreshToken = jwtTokenProvider.generateRefreshToken(user.id, user.email, user.role)
 
         refreshRedisService.saveRefreshToken(
-            user.id!!,
+            user.id,
             refreshToken,
             jwtTokenProvider.getRefreshTokenExpireTime()
         )
@@ -185,11 +184,11 @@ class UserService(
 
 
         //새로운 토큰 발급
-        val newAccessToken = jwtTokenProvider.generateAccessToken(user.id!!, user.email, user.role)
-        val newRefreshToken = jwtTokenProvider.generateRefreshToken(user.id!!, user.email, user.role)
+        val newAccessToken = jwtTokenProvider.generateAccessToken(user.id, user.email, user.role)
+        val newRefreshToken = jwtTokenProvider.generateRefreshToken(user.id, user.email, user.role)
 
         refreshRedisService.saveRefreshToken(
-            user.id!!,
+            user.id,
             newRefreshToken,
             jwtTokenProvider.getRefreshTokenExpireTime()
         )

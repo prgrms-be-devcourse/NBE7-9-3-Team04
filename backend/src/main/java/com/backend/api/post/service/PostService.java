@@ -73,7 +73,7 @@ public class PostService {
     public PostResponse getPost(Long postId, User user) {
         Post post = findPostByIdOrThrow(postId);
 
-        boolean isMine = user != null && post.getUsers().getId().equals(user.getId());
+        boolean isMine = user != null && post.getUsers().getId() == user.getId();
 
         return PostResponse.from(post, isMine);
     }
@@ -146,7 +146,7 @@ public class PostService {
     }
 
     private void validatePostOwner(Post post, User user) { // 중복 로직 헬퍼 메서드2
-        if (!post.getUsers().getId().equals(user.getId())) {
+        if (post.getUsers().getId() != user.getId()) {
             throw new ErrorException(ErrorCode.FORBIDDEN);
         }
     }

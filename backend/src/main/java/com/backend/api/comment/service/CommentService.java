@@ -62,7 +62,7 @@ public class CommentService {
     public CommentResponse updateComment(User currentUser, Long commentId, String newContent) {
         Comment comment = this.findByIdOrThrow(commentId);
 
-        if (!comment.getAuthor().getId().equals(currentUser.getId())) {
+        if (comment.getAuthor().getId() != currentUser.getId()) {
             throw new ErrorException(ErrorCode.COMMENT_INVALID_USER);
         }
 
@@ -75,7 +75,7 @@ public class CommentService {
     public void deleteComment(User currentUser, Long commentId) {
         Comment comment = this.findByIdOrThrow(commentId);
 
-        if (!comment.getAuthor().getId().equals(currentUser.getId())) {
+        if (comment.getAuthor().getId() != currentUser.getId()) {
             throw new ErrorException(ErrorCode.COMMENT_INVALID_USER);
         }
 
@@ -95,7 +95,7 @@ public class CommentService {
         List<CommentResponse> comments = commentsPage.getContent()
                 .stream()
                 .map(comment -> {
-                    boolean isMine = comment.getAuthor().getId().equals(currentUserId);
+                    boolean isMine = currentUserId != null && comment.getAuthor().getId() == currentUserId;
                     return new CommentResponse(comment, isMine);
                 })
                 .toList();
@@ -106,7 +106,7 @@ public class CommentService {
     public CommentPageResponse<CommentMypageResponse> getCommentsByUserId(int page, Long userId) {
         userService.getUser(userId);
         User currentUser = rq.getUser();
-        if(!currentUser.getId().equals(userId) && !currentUser.getRole().equals(Role.ADMIN)) {
+        if(currentUser.getId() != userId && !currentUser.getRole().equals(Role.ADMIN)) {
             throw new ErrorException(ErrorCode.COMMENT_INVALID_USER);
         }
 

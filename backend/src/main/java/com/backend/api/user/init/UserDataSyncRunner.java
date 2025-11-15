@@ -25,7 +25,7 @@ public class UserDataSyncRunner implements CommandLineRunner {
 
         List<UserDocument> docs = users.stream()
                 .map(u -> UserDocument.builder()
-                        .id(u.getId().toString())
+                        .id(String.valueOf(u.getId()))
                         .name(u.getName())
                         .nickname(u.getNickname())
                         .email(u.getEmail())

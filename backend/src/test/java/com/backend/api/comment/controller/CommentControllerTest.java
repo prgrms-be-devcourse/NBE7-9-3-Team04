@@ -1,18 +1,16 @@
 package com.backend.api.comment.controller;
 
 
+import com.backend.domain.comment.entity.Comment;
 import com.backend.domain.comment.repository.CommentRepository;
-import com.backend.domain.post.entity.PinStatus;
-import com.backend.domain.post.entity.PostCategoryType;
-import com.backend.domain.post.entity.PostStatus;
-import com.backend.domain.user.entity.Role;
+import com.backend.domain.post.repository.PostRepository;
 import com.backend.domain.user.entity.User;
 import com.backend.domain.user.repository.UserRepository;
-import com.backend.domain.comment.entity.Comment;
-import com.backend.domain.post.entity.Post;
-import com.backend.domain.post.repository.PostRepository;
 import com.backend.global.security.CustomUserDetails;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -157,7 +155,7 @@ public class CommentControllerTest {
         // 생성된 댓글 정보 동적 확인
         Comment createdComment = newComments.stream()
                 .filter(c -> c.getContent().equals(content))
-                .filter(c -> c.getPost().getId().equals(targetPostId))
+                .filter(c -> c.getPost().getId() == targetPostId)
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("새로 생성된 댓글을 찾을 수 없습니다."));
 

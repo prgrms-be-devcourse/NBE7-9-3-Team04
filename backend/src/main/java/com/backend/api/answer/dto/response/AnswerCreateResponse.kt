@@ -26,14 +26,14 @@ data class AnswerCreateResponse(
     companion object {
         @JvmStatic
         fun from(answer: Answer) = AnswerCreateResponse(
-            id = answer.id!!,
-            createDate = answer.createDate!!,
-            modifyDate = answer.modifyDate!!,
+            id = answer.id,
+            createDate = answer.createDate,
+            modifyDate = answer.modifyDate,
             content = answer.content,
             isPublic = answer.isPublic,
-            authorId = answer.author.id!!,
+            authorId = answer.author.id,
             authorNickName = answer.author.nickname,
-            questionId = answer.question.id!!
+            questionId = answer.question.id
         )
     }
 }

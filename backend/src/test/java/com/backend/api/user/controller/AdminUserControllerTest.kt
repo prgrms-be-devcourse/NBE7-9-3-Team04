@@ -210,7 +210,7 @@ class AdminUserControllerTest(
             )
 
             mockMvc.perform(
-                patch("/api/v1/admin/users/{userId}/status", user.id!!)
+                patch("/api/v1/admin/users/{userId}/status", user.id)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request))
             )

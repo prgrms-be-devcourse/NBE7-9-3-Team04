@@ -224,7 +224,7 @@ class SubscriptionControllerTest(
                 .andExpect(jsonPath("$.data.customerKey").value(activeSubscription.customerKey))
                 .andDo(print())
 
-            val updated= subscriptionRepository.findByCustomerKey(activeSubscription.customerKey!!)
+            val updated= subscriptionRepository.findByCustomerKey(activeSubscription.customerKey)
 
             assert(updated?.billingKey == null)
         }

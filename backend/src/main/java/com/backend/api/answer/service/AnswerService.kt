@@ -107,7 +107,7 @@ class AnswerService(
         val currentUser = rq.getUser()
 
         // 질문에 대해 현재 사용자가 작성한 답변 조회
-        return answerRepository.findFirstByQuestionIdAndAuthorId(questionId, currentUser.id!!)
+        return answerRepository.findFirstByQuestionIdAndAuthorId(questionId, currentUser.id)
             .map { answer: Answer -> AnswerReadResponse.from(answer) } // 있으면 DTO로 변환
             .orElse(null) // 없으면 null 반환
     }

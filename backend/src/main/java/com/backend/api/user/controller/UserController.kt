@@ -40,12 +40,11 @@ class UserController(
         )
     }
 
-    //TODO 더블뱅 제거
     @DeleteMapping("/logout")
     @Operation(summary = "사용자 로그아웃")
     fun logout(): ApiResponse<Void> {
         val user = rq.getUser()
-        userService.logout(user.id!!)
+        userService.logout(user.id)
 
         rq.deleteCookie("accessToken")
         rq.deleteCookie("refreshToken")

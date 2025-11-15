@@ -46,14 +46,13 @@ data class QnaResponse(
     @field:Schema(description = "관리자 답변 여부", example = "false")
     val isAnswered: Boolean
 ) {
-    //TODO 더블뱅 제거
     companion object {
         fun from(qna: Qna): QnaResponse {
             return QnaResponse(
-                qnaId = qna.id!!,
+                qnaId = qna.id,
                 title = qna.title,
                 content = qna.content,
-                authorId = qna.author.id!!,
+                authorId = qna.author.id,
                 authorNickname = qna.author.nickname,
                 categoryType = qna.categoryType,
                 categoryName = qna.categoryType?.displayName,

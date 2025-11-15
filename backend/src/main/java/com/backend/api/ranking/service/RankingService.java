@@ -125,7 +125,7 @@ public class RankingService {
             Long userId = Long.valueOf(tuple.getValue());
 
             Ranking ranking = dbRankings.stream()
-                    .filter(r -> r.getUser().getId().equals(userId))
+                    .filter(r -> r.getUser().getId()==userId)
                     .findFirst()
                     .orElse(null);
 

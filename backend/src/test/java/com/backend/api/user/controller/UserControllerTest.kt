@@ -38,7 +38,6 @@ TODO
  Verification Builder 제거
  user 전환 후 getter 등 제거 필요
  JwtTest 전환 후 getter 제거
- 더블뱅 제거
  */
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
@@ -298,14 +297,14 @@ class UserControllerTest(
         @DisplayName("토큰 갱신 정상 작동")
         fun success() {
             val refreshToken = jwtTokenProvider.generateRefreshToken(
-                mockUser.id!!,
+                mockUser.id,
                 mockUser.email,
                 mockUser.role
             )
 
 
             val refreshEntity = RefreshToken(
-                userId = mockUser.id!!,
+                userId = mockUser.id,
                 refreshToken = refreshToken,
                 expiration = jwtTokenProvider.getRefreshTokenExpireTime() / 1000
             )

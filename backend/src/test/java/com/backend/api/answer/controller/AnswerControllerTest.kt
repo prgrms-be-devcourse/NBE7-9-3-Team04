@@ -67,7 +67,7 @@ class AnswerControllerTest(
 
         userRepository.save(generalUser)
         userRepository.save(generalUser2)
-        userIdList = listOf(generalUser.id!!, generalUser2.id!!)
+        userIdList = listOf(generalUser.id, generalUser2.id)
 
         val question1 = Question.builder()
             .title("첫 번째 질문 제목")
@@ -75,7 +75,7 @@ class AnswerControllerTest(
             .author(mockUser)
             .build()
         questionRepository.save(question1)
-        questionId = question1.id!!
+        questionId = question1.id
 
         val answers = listOf(
             Answer("첫 번째 답변 내용", true, mockUser, question1),
@@ -93,7 +93,7 @@ class AnswerControllerTest(
             Answer("열세 번째 답변 내용", true, userRepository.findById(userIdList[0]).orElseThrow(), question1)
         )
 
-        answerIdList = answers.map { answerRepository.save(it).id!! }
+        answerIdList = answers.map { answerRepository.save(it).id }
     }
 
     @Nested
