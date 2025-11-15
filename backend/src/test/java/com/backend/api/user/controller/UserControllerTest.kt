@@ -21,7 +21,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestConstructor
 import org.springframework.test.web.servlet.MockMvc
@@ -36,7 +35,6 @@ import java.time.LocalDateTime
 /*
 TODO
  Verification Builder 제거
- user 전환 후 getter 등 제거 필요
  JwtTest 전환 후 getter 제거
  */
 @SpringBootTest
@@ -49,7 +47,6 @@ class UserControllerTest(
     private val mockMvc: MockMvc,
     private val objectMapper: ObjectMapper,
     private val userRepository: UserRepository,
-    private val passwordEncoder: BCryptPasswordEncoder,
     private val jwtTokenProvider: JwtTokenProvider,
     private val verificationCodeRepository: VerificationCodeRepository,
     private val refreshRedisRepository: RefreshRedisRepository
@@ -111,15 +108,15 @@ class UserControllerTest(
         @DisplayName("이미 존재하는 이메일로 회원가입")
         fun fail() {
             val existingUser = userRepository.save(
-                User.builder()
-                    .email("signup2@naver.com")
-                    .password(passwordEncoder.encode("test1234"))
-                    .name("test")
-                    .nickname("signupNick2")
-                    .age(27)
-                    .github("https://github.com/signup2")
-                    .role(Role.USER)
-                    .build()
+                User(
+                    email = "signup2@naver.com",
+                    password = "test1234",
+                    name = "test",
+                    nickname = "signupNick2",
+                    age = 27,
+                    github = "https://github.com/signup2",
+                    role = Role.USER
+                )
             )
 
             val request = UserSignupRequest(
