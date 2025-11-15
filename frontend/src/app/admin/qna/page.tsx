@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Pagination from "@/components/pagination";
 import { Qna } from "@/types/qna";
+import { toast } from "sonner";
+import { confirmAlert } from "@/lib/confirm";
 
 export default function AdminQnaPage() {
   const [qnaList, setQnaList] = useState<Qna[]>([]);
@@ -66,7 +68,9 @@ export default function AdminQnaPage() {
 
   // QnA 삭제
   const handleDelete = async (qnaId: number) => {
-    if (!confirm("정말 삭제하시겠습니까?")) return;
+    const confirmed = await confirmAlert("정말 삭제하시겠습니까?");
+    if (!confirmed) return;
+  
 
     try {
       const apiResponse = await fetchApi(`/api/v1/admin/qna/${qnaId}`, {
@@ -74,14 +78,14 @@ export default function AdminQnaPage() {
       });
 
       if (apiResponse.status === "OK") {
-        alert("QnA가 삭제되었습니다.");
+        toast.success("QnA가 삭제되었습니다.");
         // ✅ 삭제 후 현재 페이지 새로고침
         fetchQnaList();
       } else {
-        alert(apiResponse.message || "삭제에 실패했습니다.");
+        toast.error(apiResponse.message || "삭제에 실패했습니다.");
       }
     } catch {
-      alert("서버 오류가 발생했습니다.");
+      toast.error("서버 오류가 발생했습니다.");
     }
   };
 
@@ -89,7 +93,7 @@ export default function AdminQnaPage() {
   const handleSubmitAnswer = async () => {
     if (!selectedQna) return;
     if (!answerText.trim()) {
-      alert("답변 내용을 입력해주세요.");
+      toast.error("답변 내용을 입력해주세요.");
       return;
     }
 
@@ -101,15 +105,15 @@ export default function AdminQnaPage() {
       });
 
       if (apiResponse.status === "OK") {
-        alert("답변이 등록되었습니다!");
+        toast.success("답변이 등록되었습니다!");
         setSelectedQna(null);
         setAnswerText("");
         fetchQnaList();
       } else {
-        alert(apiResponse.message || "등록에 실패했습니다.");
+        toast.error(apiResponse.message || "등록에 실패했습니다.");
       }
     } catch {
-      alert("서버 오류가 발생했습니다.");
+      toast.error("서버 오류가 발생했습니다.");
     } finally {
       setIsSubmitting(false);
     }

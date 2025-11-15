@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { fetchApi } from "@/lib/client";
 import { Subscription } from "@/types/subscription";
+import { toast } from "sonner";
+import { confirmAlert } from "@/lib/confirm";
 
 export default function MyPremiumPage() {
   const router = useRouter();
@@ -28,11 +30,12 @@ export default function MyPremiumPage() {
 
   const handleCancel = async () => {
     if (!subscription?.customerKey) {
-      alert("구독 정보를 찾을 수 없습니다.");
+      toast.error("구독 정보를 찾을 수 없습니다.");
       return;
     }
 
-    const confirmCancel = confirm("구독을 정말 취소하시겠습니까?");
+
+    const confirmCancel = await confirmAlert("구독을 정말 취소하시겠습니까?");
     if (!confirmCancel) return;
 
     try {
@@ -42,10 +45,10 @@ export default function MyPremiumPage() {
           method: "DELETE",
         }
       );
-      alert(apiResponse.message);
+      toast.success(apiResponse.message);
       window.location.reload();
     } catch (err) {
-      alert("구독 취소에 실패했습니다.");
+      toast.error("구독 취소에 실패했습니다.");
     }
   };
 

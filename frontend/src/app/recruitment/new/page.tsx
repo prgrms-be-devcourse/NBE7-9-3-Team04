@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { PostAddRequest as CreatePost } from "@/types/post";
 import { fetchApi } from "@/lib/client";
+import { toast } from "sonner";
 
 export default function RecruitmentCreatePage() {
   const router = useRouter();
@@ -67,7 +68,7 @@ export default function RecruitmentCreatePage() {
     const currentDate = new Date();
 
     if (deadlineDate < currentDate) {
-      alert("마감일은 현재 시간 이후로 설정해야 합니다.");
+      toast.error("마감일은 현재 시간 이후로 설정해야 합니다.");
       return;
     }
 
@@ -84,13 +85,13 @@ export default function RecruitmentCreatePage() {
       });
 
       if (apiResponse.status === "OK") {
-        alert(apiResponse.message || "게시글이 성공적으로 작성되었습니다.");
+        toast.success(apiResponse.message || "게시글이 성공적으로 작성되었습니다.");
         router.replace("/recruitment");
       } else {
-        alert(apiResponse.message || "게시글 작성 중 오류가 발생했습니다.");
+        toast.error(apiResponse.message || "게시글 작성 중 오류가 발생했습니다.");
       }
     } catch (err: any) {
-      alert("API 통신 실패: " + err.message);
+      toast.error("API 통신 실패: " + err.message);
     }
   };
 

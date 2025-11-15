@@ -11,6 +11,7 @@ import {
 } from "@/types/answer";
 import { QuestionResponse } from "@/types/question";
 import { FeedbackReadResponse } from "@/types/feedback";
+import { toast } from "sonner";
 
 export default function QuestionDetailPage() {
   const router = useRouter();
@@ -41,7 +42,7 @@ export default function QuestionDetailPage() {
           message?: string;
         };
         if (res.status === "OK") setQuestion(res.data);
-        else alert(`질문 조회 실패: ${res.message}`);
+        else toast.error(`질문 조회 실패: ${res.message}`);
 
         // 내 답변 조회
         const myAnswerRes = (await fetchApi(
@@ -134,7 +135,7 @@ export default function QuestionDetailPage() {
   // 답변 제출
   const handleSubmit = async () => {
     if (!answer.trim()) {
-      alert("답변을 입력해주세요.");
+      toast.error("답변을 입력해주세요.");
       return;
     }
 
@@ -156,10 +157,10 @@ export default function QuestionDetailPage() {
           setSubmittedAnswer(res.data);
           setSubmitted(true);
           setIsJustSubmitted(true);
-          alert("답변이 수정되었습니다!");
+          toast.success("답변이 수정되었습니다!");
           startFeedbackPolling();
         } else {
-          alert(`답변 수정 실패: ${res.message}`);
+          toast.error(`답변 수정 실패: ${res.message}`);
         }
       } else {
         // 새 답변 POST
@@ -177,15 +178,15 @@ export default function QuestionDetailPage() {
           setSubmittedAnswer(res.data);
           setSubmitted(true);
           setIsJustSubmitted(true);
-          alert("답변이 제출되었습니다!");
+          toast.success("답변이 제출되었습니다!");
           startFeedbackPolling();
         } else {
-          alert(`답변 제출 실패: ${res.message}`);
+          toast.error(`답변 제출 실패: ${res.message}`);
         }
       }
     } catch (err) {
       console.error(err);
-      alert("답변 제출 중 오류가 발생했습니다.");
+      toast.error("답변 제출 중 오류가 발생했습니다.");
     }
   };
 
@@ -208,11 +209,11 @@ export default function QuestionDetailPage() {
         setIsPublic(updatedIsPublic);
         setSubmittedAnswer(res.data);
       } else {
-        alert(`공개/비공개 전환 실패: ${res.message}`);
+        toast.error(`공개/비공개 전환 실패: ${res.message}`);
       }
     } catch (err) {
       console.error(err);
-      alert("공개/비공개 전환 중 오류가 발생했습니다.");
+      toast.error("공개/비공개 전환 중 오류가 발생했습니다.");
     }
   };
 

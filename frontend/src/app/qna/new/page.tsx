@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { fetchApi } from "@/lib/client";
 import { CreateQna, QnaCategoryType } from "@/types/qna";
+import { toast } from "sonner";
 
 export default function NewQnAPage() {
   const router = useRouter();
@@ -61,7 +62,7 @@ export default function NewQnAPage() {
     e.preventDefault();
 
     if (!formData.title || !formData.content || !formData.categoryType) {
-      alert("모든 필드를 입력해주세요.");
+      toast.error("모든 필드를 입력해주세요.");
       return;
     }
 
@@ -74,13 +75,13 @@ export default function NewQnAPage() {
       });
 
       if (res.status === "CREATED" || res.status === "OK") {
-        alert("질문이 등록되었습니다!");
+        toast.success("질문이 등록되었습니다!");
         router.push("/qna");
       } else {
-        alert(res.message || "등록에 실패했습니다.");
+        toast.error(res.message || "등록에 실패했습니다.");
       }
     } catch (err) {
-      alert("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      toast.error("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
     } finally {
       setIsLoading(false);
     }

@@ -11,7 +11,7 @@ class RefreshRedisService(
 ) {
 
     fun saveRefreshToken(userId: Long, token: String, ttlSeconds: Long) {
-        val refreshToken: RefreshToken = RefreshToken(
+        val refreshToken= RefreshToken(
             userId = userId,
             refreshToken = token,
             expiration = ttlSeconds

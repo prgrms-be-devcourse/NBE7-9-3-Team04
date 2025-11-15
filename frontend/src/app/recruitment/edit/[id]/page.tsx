@@ -5,7 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { PostUpdateRequest, PostResponse } from "@/types/post";
 import { fetchApi } from "@/lib/client";
-
+import { toast } from "sonner";
 
 export default function RecruitmentEditPage() {
     const router = useRouter();
@@ -19,7 +19,7 @@ export default function RecruitmentEditPage() {
     useEffect(() => {
         if (!postId) {
             console.error("postId is undefined or invalid", params);
-            alert("잘못된 접근입니다. 게시글 ID가 없습니다.");
+            toast.error("잘못된 접근입니다. 게시글 ID가 없습니다.");
             router.replace("/recruitment");
             return;
         }
@@ -40,7 +40,7 @@ export default function RecruitmentEditPage() {
 
                 if (res.status === "OK" && res.data) {
                     if (!res.data.isMine) {
-                        alert("수정 권한이 없습니다. 본인이 작성한 글만 수정할 수 있습니다.");
+                        toast.error("수정 권한이 없습니다. 본인이 작성한 글만 수정할 수 있습니다.");
                         router.replace(`/recruitment/${postId}`);
                         return;
                     }
@@ -56,13 +56,13 @@ export default function RecruitmentEditPage() {
                         categoryType: res.data.categoryType,
                     });
                 } else {
-                    alert(res.message || "수정할 게시글 정보를 불러오는 데 실패했습니다.");
+                    toast.error(res.message || "수정할 게시글 정보를 불러오는 데 실패했습니다.");
                     router.replace(`/recruitment/${postId}`);
                 }
             } catch (err) {
                 if (!isMounted) return;
                 console.error("게시글 로딩 중 오류 발생:", err);
-                alert("게시글 로딩 중 오류 발생.");
+                toast.error("게시글 로딩 중 오류 발생.");
                 router.replace(`/recruitment/${postId}`);
             } finally {
                 if (isMounted) {
@@ -89,7 +89,7 @@ export default function RecruitmentEditPage() {
         };
 
         if (typeof formattedFormData.recruitCount !== 'number' || formattedFormData.recruitCount < 1) {
-            alert("모집 인원은 1명 이상이어야 합니다.");
+            toast.error("모집 인원은 1명 이상이어야 합니다.");
             return;
         }
 
@@ -102,13 +102,13 @@ export default function RecruitmentEditPage() {
             });
 
             if (apiResponse.status === "OK") {
-                alert(apiResponse.message || "게시글이 성공적으로 수정되었습니다.");
+                toast.success(apiResponse.message || "게시글이 성공적으로 수정되었습니다.");
                 router.replace(`/recruitment/${postId}`);
             } else {
-                alert(apiResponse.message || "게시글 수정 중 오류가 발생했습니다.");
+                toast.error(apiResponse.message || "게시글 수정 중 오류가 발생했습니다.");
             }
         } catch (err: any) {
-            alert("API 통신 실패: " + err.message);
+            toast.error("API 통신 실패: " + err.message);
         } finally {
             setIsSubmitting(false);
         }

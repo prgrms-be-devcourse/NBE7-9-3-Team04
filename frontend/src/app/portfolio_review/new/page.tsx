@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { fetchApi } from "@/lib/client";
 import { marked } from "marked";
+import { toast } from "sonner";
 
 export default function NewFeedbackPage() {
   const router = useRouter();
@@ -17,6 +18,8 @@ export default function NewFeedbackPage() {
 
   // 진행 상태 애니메이션
   useEffect(() => {
+    if (isPremium !== true) return;
+    
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -64,7 +67,7 @@ export default function NewFeedbackPage() {
     if (isPremium === null) return; // 아직 로딩 중이면 아무 것도 안 함
 
     if (isPremium === false) {
-      alert("포트폴리오 첨삭은 PREMIUM 등급 사용자만 이용 가능합니다.");
+      toast.error("포트폴리오 첨삭은 PREMIUM 등급 사용자만 이용 가능합니다.");
       router.push("/mypage/premium");
       return;
     }
@@ -91,13 +94,13 @@ export default function NewFeedbackPage() {
         setFeedbackContent(parsedContent);
         setCreateDate(createDate);
         setIsAnalysisComplete(true);
-        alert("✅ AI 포트폴리오 분석이 완료되었습니다!");
+        toast.success("✅ AI 포트폴리오 분석이 완료되었습니다!");
         return; // 성공 시 함수 종료
       } catch (error) {
         console.error(`❌ 리뷰 생성 실패 (시도 ${attempt + 1}):`, error);
         attempt++;
         if (attempt >= MAX_RETRIES) {
-          alert("❌ AI 포트폴리오 분석 생성에 실패했습니다. 나중에 다시 시도해주세요.");
+          toast.error("❌ AI 포트폴리오 분석 생성에 실패했습니다. 나중에 다시 시도해주세요.");
         }
       }
     }

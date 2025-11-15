@@ -7,10 +7,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { fetchApi } from "@/lib/client";
 import { UserSignupRequest } from "@/types/user";
-import {UserResponse} from "@/lib/userResponse";
+import { toast } from "sonner";
 
 export default function SignupPage() {
-  const [userResponse, setUserResponse] = useState<UserResponse | null>(null);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [isSendingCode, setIsSendingCode] = useState(false);
@@ -40,7 +39,7 @@ export default function SignupPage() {
   // ✅ 이메일 인증코드 전송
   const handleSendVerificationCode = async () => {
     if (!formData.email) {
-      alert("이메일을 입력해주세요.");
+      toast.error("이메일을 입력해주세요.");
       return;
     }
 
@@ -49,10 +48,10 @@ export default function SignupPage() {
       const res = await fetchApi(`/api/v1/users/sendEmail?email=${formData.email}`, {
         method: "POST",
       });
-      alert(res.message || "인증 코드가 이메일로 전송되었습니다.");
+      toast.success(res.message || "인증 코드가 이메일로 전송되었습니다.");
       setIsCodeSent(true);
     } catch (err: any) {
-      alert(err.message || "이메일 전송에 실패했습니다.");
+      toast.error(err.message || "이메일 전송에 실패했습니다.");
     } finally {
       setIsSendingCode(false);
     }
@@ -61,7 +60,7 @@ export default function SignupPage() {
   // ✅ 인증코드 검증
   const handleVerifyCode = async () => {
     if (!verificationCode) {
-      alert("인증 코드를 입력해주세요.");
+      toast.error("인증 코드를 입력해주세요.");
       return;
     }
 
@@ -70,29 +69,29 @@ export default function SignupPage() {
         `/api/v1/users/verifyCode?email=${formData.email}&code=${verificationCode}`,
         { method: "POST" }
       );
-      alert(res.message || "이메일 인증이 완료되었습니다.");
+      toast.success(res.message || "이메일 인증이 완료되었습니다.");
       setIsEmailVerified(true);
     } catch (err: any) {
-      alert(err.message || "인증 코드가 올바르지 않습니다.");
+      toast.error(err.message || "인증 코드가 올바르지 않습니다.");
     }
   };
 
   // ✅ 입력값 검증
   const validate = (): boolean => {
     if (!isEmailVerified) {
-      alert("이메일 인증을 완료해주세요.");
+      toast.error("이메일 인증을 완료해주세요.");
       return false;
     }
     if (!formData.email || !formData.password || !formData.name) {
-      alert("필수 항목을 모두 입력해주세요.");
+      toast.error("필수 항목을 모두 입력해주세요.");
       return false;
     }
     if (formData.password !== confirmPassword) {
-      alert("비밀번호가 일치하지 않습니다.");
+      toast.error("비밀번호가 일치하지 않습니다.");
       return false;
     }
     if (formData.password.length < 6) {
-      alert("비밀번호는 최소 6자 이상이어야 합니다.");
+      toast.error("비밀번호는 최소 6자 이상이어야 합니다.");
       return false;
     }
     return true;
@@ -112,13 +111,13 @@ export default function SignupPage() {
       });
 
       if (apiResponse.status === "OK") {
-        alert(apiResponse.message);
+        toast.success(apiResponse.message);
         router.replace("/auth");
       } else {
-        alert(apiResponse.message);
+        toast.success(apiResponse.message);
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message);
     } finally {
       setIsLoading(false);
     }

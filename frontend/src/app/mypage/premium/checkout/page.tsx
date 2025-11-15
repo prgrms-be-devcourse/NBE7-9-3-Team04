@@ -5,6 +5,7 @@ import { fetchApi } from "@/lib/client";
 import { loadTossPayments, ANONYMOUS } from "@tosspayments/tosspayments-sdk";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY!;
 
@@ -53,7 +54,7 @@ export default function PaymentCheckoutPage() {
         return;
       }
 
-      alert("카드 등록창이 정상적으로 열리지 않았습니다. 다시 시도해주세요.");
+      toast.error("카드 등록창이 정상적으로 열리지 않았습니다. 다시 시도해주세요.");
     }
   }
 

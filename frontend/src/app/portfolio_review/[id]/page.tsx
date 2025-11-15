@@ -4,6 +4,7 @@ import { marked } from "marked"; // 마크다운 파싱 라이브러리 추가
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { fetchApi } from "@/lib/client";
+import { toast } from "sonner";
 
 export default function FeedbackDetailPage() {
   const router = useRouter();
@@ -27,7 +28,7 @@ export default function FeedbackDetailPage() {
         });
       } catch (error) {
         console.error("❌ Failed to fetch feedback:", error);
-        alert("피드백을 불러오는 데 실패했습니다.");
+        toast.error("피드백을 불러오는 데 실패했습니다.");
         router.push("/portfolio_review");
       } finally {
         setIsLoading(false);

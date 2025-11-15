@@ -77,6 +77,13 @@ public class FeedbackService {
         AiFeedbackResponse aiFeedback = createAiFeedback(question, answer);
         Feedback feedback = getFeedbackByAnswerId(answer.getId());
         feedback.update(answer,aiFeedback.score(),aiFeedback.content());
+
+        int baseScore = question.getScore();
+        double ratio = feedback.getAiScore() / 100.0;
+        int finalScore = (int)Math.round(ratio * baseScore);
+
+        userQuestionService.updateUserQuestionScore(answer.getAuthor(), question, finalScore);
+        rankingService.updateUserRanking(answer.getAuthor());
     }
 
     public Feedback getFeedbackByAnswerId(Long answerId){

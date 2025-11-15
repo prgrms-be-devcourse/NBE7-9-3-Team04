@@ -6,6 +6,7 @@ import Link from "next/link";
 import CategoryTab from "@/components/categoryTab";
 import { PostResponse, PostPageResponse, PostStatus, PinStatus } from "@/types/post";
 
+
 export default function RecruitmentPage() {
   const [pinnedPosts, setPinnedPosts] = useState<PostResponse[]>([]);
   const [posts, setPosts] = useState<PostResponse[]>([]);
@@ -121,10 +122,10 @@ export default function RecruitmentPage() {
     setCurrentSlide((prev) => (prev - 1 + pinnedPosts.length) % pinnedPosts.length);
 
   return (
-    <div className="max-w-[1200px] mx-auto px-6 py-10">
+    <div className="max-w-screen-xl mx-auto px-6 py-10">
       {/* 헤더 */}
       <div className="mb-10">
-        <h1 className="text-3xl font-bold mb-2">팀 프로젝트 & 스터디 모집</h1>
+        <h1 className="text-3xl font-bold mb-2">👥 팀 프로젝트 & 스터디 모집</h1>
         <p className="text-gray-500">함께 성장할 팀원을 찾아보세요</p>
       </div>
 

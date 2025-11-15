@@ -98,6 +98,7 @@ enum class ErrorCode(
     BILLING_KEY_NOT_FOUND(HttpStatus.NOT_FOUND, "빌링키를 찾을 수 없습니다."),
     INVALID_AUTH_KEY(HttpStatus.BAD_REQUEST, "AUTH_KEY가 누락되었거나 유효하지 않습니다."),
     INVALID_CUSTOMER_KEY(HttpStatus.BAD_REQUEST, "CUSTOMER_KEY가 누락되었거나 유효하지 않습니다."),
+    BILLING_RESPONSE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "빌링키 발급 응답을 받지 못했습니다"),
 
 
     // feedback

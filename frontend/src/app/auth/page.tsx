@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { fetchApi } from "@/lib/client";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -24,7 +25,7 @@ export default function LoginPage() {
       });
 
       if (apiResponse.status === "OK") {
-        alert(apiResponse.message);
+        toast.success(apiResponse.message);
 
         // 로그인 성공 시 상단바 업데이트 이벤트 발생
         window.dispatchEvent(new Event("loginSuccess"));
@@ -40,10 +41,10 @@ export default function LoginPage() {
 
         router.refresh();
       } else {
-        alert(apiResponse.message);
+        toast.success(apiResponse.message);
       }
     } catch (err: any) {
-      alert(err.message);
+      toast.error(err.message);
     } finally {
       setIsLoading(false);
     }

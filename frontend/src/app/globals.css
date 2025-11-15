@@ -55,6 +55,18 @@
     --foreground: #ededed;
   }
 } */
+.swal-sm-icon {
+  transform: scale(0.7) !important;
+  transform-origin: center center !important;
+}
+
+.swal-small-title {
+  font-size: 14px !important;
+}
+
+.swal-small-text {
+  font-size: 12px !important;
+}
 
 body {
   background: var(--background);
