@@ -3,18 +3,15 @@ package com.backend.api.billing.service
 import com.backend.api.billing.client.TossBillingClient
 import com.backend.api.billing.dto.request.BillingRequest
 import com.backend.api.billing.dto.response.BillingResponse
-import com.backend.api.subscription.service.SubscriptionService
 import com.backend.domain.subscription.entity.Subscription
 import com.backend.global.exception.ErrorCode
 import com.backend.global.exception.ErrorException
 import org.springframework.stereotype.Service
 
-//DB 작어
 @Service
 class BillingFacade(
     private val tossBillingClient: TossBillingClient,
     private val billingService: BillingService,
-    private val subscriptionService: SubscriptionService
 ) {
 
 
