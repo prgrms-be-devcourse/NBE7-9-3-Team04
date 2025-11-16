@@ -12,43 +12,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class PaymentService(
     private val paymentRepository: PaymentRepository,
-    //private val webClient: WebClient,
-   // private val rq: Rq
 ) {
-
-    //결제 승인
-//    @Transactional
-//    fun confirmPayment(request: PaymentRequest): PaymentResponse {
-//        val user = rq.getUser()
-//        val response = webClient.post()
-//            .uri("/confirm") // 결제 승인 API 호출
-//            .bodyValue(request)
-//            .retrieve()
-//            .onStatus({ it.isError }) { clientResponse ->
-//                clientResponse.bodyToMono(String::class.java)
-//                    .flatMap { errorBody ->
-//                        Mono.error(ErrorException(errorBody, ErrorCode.PAYMENT_APPROVE_FAILED))
-//                    }
-//            }
-//            .bodyToMono(PaymentConfirmResponse::class.java)
-//            .block()
-//            ?: throw ErrorException(ErrorCode.PAYMENT_APPROVE_FAILED)
-//
-//        val payment = Payment(
-//            orderId = response.orderId,
-//            paymentKey = response.paymentKey,
-//            orderName = response.orderName,
-//            totalAmount = response.totalAmount,
-//            method = response.method,
-//            status = PaymentStatus.DONE,
-//            approvedAt = LocalDateTime.now(),
-//            user = user
-//        )
-//
-//        paymentRepository.save(payment)
-//
-//        return from(payment)
-//    }
 
     @Transactional(readOnly = true)
     fun geyPaymentByKey(paymentKey: String): PaymentResponse {

@@ -8,7 +8,7 @@ import java.time.LocalDate
 
 @Component
 class BillingScheduler(
-    private val billingService: BillingService,
+    private val billingFacade: BillingFacade,
     private val subscriptionService: SubscriptionService
 
 ) {
@@ -34,7 +34,7 @@ class BillingScheduler(
                 subscriptionService.saveSubscription(subscription)
                 return@forEach
             }
-            billingService.autoPayment(subscription)
+            billingFacade.autoPayment(subscription)
         }
 
         log.info("[스케줄러 완료] 자동 결제 작업 종료 - 총 {}건 처리", subscriptions.size)

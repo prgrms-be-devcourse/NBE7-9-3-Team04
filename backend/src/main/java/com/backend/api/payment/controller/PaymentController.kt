@@ -30,7 +30,7 @@ class PaymentController(
 
     @GetMapping("/key/{paymentKey}")
     @Operation(summary = "paymentKey로 결제 조회")
-    fun geyPaymentByKey(
+    fun getPaymentByKey(
         @PathVariable paymentKey: String
     ): ApiResponse<PaymentResponse> {
         val response = paymentService.geyPaymentByKey(paymentKey)
@@ -39,7 +39,7 @@ class PaymentController(
 
     @GetMapping("/order/{orderId}")
     @Operation(summary = "orderId로 결제 조회")
-    fun geyPaymentByOrderId(
+    fun getPaymentByOrderId(
         @PathVariable orderId: String
     ): ApiResponse<PaymentResponse> {
         val response = paymentService.getPaymentByOrderId(orderId)
