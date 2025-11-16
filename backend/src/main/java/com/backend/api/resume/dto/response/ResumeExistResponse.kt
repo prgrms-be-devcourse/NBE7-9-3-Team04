@@ -1,14 +1,17 @@
-package com.backend.api.resume.dto.response;
+package com.backend.api.resume.dto.response
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema
 
 
-public record ResumeExistResponse(
-
-        @Schema(description = "이력서 존재 여부", example = "true")
-        boolean hasResume
+data class ResumeExistResponse(
+    @field:Schema(
+        description = "이력서 존재 여부",
+        example = "true"
+    ) @param:Schema(description = "이력서 존재 여부", example = "true") val hasResume: Boolean
 ) {
-    public static ResumeExistResponse from(boolean hasResume) {
-        return new ResumeExistResponse(hasResume);
+    companion object {
+        fun from(hasResume: Boolean): ResumeExistResponse {
+            return ResumeExistResponse(hasResume)
+        }
     }
 }

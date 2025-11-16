@@ -1,27 +1,30 @@
-package com.backend.api.resume.dto.response;
+package com.backend.api.resume.dto.response
 
-import com.backend.domain.resume.entity.Resume;
+import com.backend.domain.resume.entity.Resume
 
-public record ResumeReadResponse(
-        Long id,
-        String skill,
-        String activity,
-        String career,
-        String certification,
-        String content,
-        String portfolioUrl,
-        Long userId
+
+data class ResumeReadResponse(
+    val id: Long,
+    val skill: String?,
+    val activity: String?,
+    val career: String?,
+    val certification: String?,
+    val content: String?,
+    val portfolioUrl: String?,
+    val userId: Long
 ) {
-    public static ResumeReadResponse from(Resume resume) {
-        return new ResumeReadResponse(
-                resume.getId(),
-                resume.getSkill(),
-                resume.getActivity(),
-                resume.getCareer(),
-                resume.getCertification(),
-                resume.getContent(),
-                resume.getPortfolioUrl(),
-                resume.getUser().getId()
-        );
+    companion object {
+        fun from(resume: Resume): ResumeReadResponse {
+            return ResumeReadResponse(
+                resume.id,
+                resume.skill,
+                resume.activity,
+                resume.career,
+                resume.certification,
+                resume.content,
+                resume.portfolioUrl,
+                resume.user.id
+            )
+        }
     }
 }
