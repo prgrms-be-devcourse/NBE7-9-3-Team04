@@ -82,8 +82,7 @@ class CommentController(
         var currentUser: User? = null
         try {
             currentUser = rq.getUser()
-        } catch (e: Exception) {
-        }
+        } catch (_: Exception) {}
 
         val commentsPage: CommentPageResponse<CommentResponse> = commentService.getCommentsByPostId(
             currentUser,
