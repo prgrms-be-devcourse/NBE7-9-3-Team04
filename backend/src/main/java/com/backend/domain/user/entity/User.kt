@@ -1,6 +1,5 @@
 package com.backend.domain.user.entity
 
-import com.backend.domain.subscription.entity.Subscription
 import com.backend.global.entity.BaseEntity
 import jakarta.persistence.*
 
@@ -40,16 +39,15 @@ class User(
     @Column(nullable = false)
     var aiQuestionUsedCount: Int = 0, // AI 질문 사용 횟수
 
-    @OneToOne(
-        mappedBy = "user",
-        cascade = [CascadeType.ALL],
-        orphanRemoval = true,
-        fetch = FetchType.LAZY
-    )
-    var subscription: Subscription? = null
+//    @OneToOne(
+//        mappedBy = "user",
+//        cascade = [CascadeType.ALL],
+//        orphanRemoval = true,
+//        fetch = FetchType.LAZY
+//    )
+//    var subscription: Subscription? = null
 
 ) : BaseEntity() {
-
     constructor() : this(
         email = "",
         password = "",
@@ -60,13 +58,13 @@ class User(
         image = null,
         role = Role.USER,
         accountStatus = AccountStatus.ACTIVE,
-        aiQuestionUsedCount = 0,
-        subscription = null
+        aiQuestionUsedCount = 0
     )
 
-    fun assignSubscription(subscription: Subscription) {
-        this.subscription = subscription
-    }
+
+//    fun assignSubscription(subscription: Subscription) {
+//        this.subscription = subscription
+//    }
 
     fun updateUser(
         email: String, password: String, name: String,
@@ -96,11 +94,11 @@ class User(
                 this.accountStatus == AccountStatus.SUSPENDED
     }
 
-    fun isPremium(): Boolean = this.subscription?.isValid() == true
-
-
-    fun getAiQuestionLimit(): Int =
-        subscription?.questionLimit ?: 5 // 구독 정보가 없는 예외적인 경우, 기본값 5를 반환합니다.
+//    fun isPremium(): Boolean = this.subscription?.isValid() == true
+//
+//
+//    fun getAiQuestionLimit(): Int =
+//        subscription?.questionLimit ?: 5 // 구독 정보가 없는 예외적인 경우, 기본값 5를 반환합니다.
 
     fun incrementAiQuestionUsedCount() {
         this.aiQuestionUsedCount++
@@ -127,7 +125,7 @@ class User(
         private var role: Role = Role.USER
         private var accountStatus: AccountStatus = AccountStatus.ACTIVE
         private var aiQuestionUsedCount: Int = 0
-        private var subscription: Subscription? = null
+        //private var subscription: Subscription? = null
 
         fun email(email: String) = apply { this.email = email }
         fun password(password: String) = apply { this.password = password }
@@ -137,9 +135,9 @@ class User(
         fun github(github: String) = apply { this.github = github }
         fun image(image: String?) = apply { this.image = image }
         fun role(role: Role) = apply { this.role = role }
-        fun accountStatus(status: AccountStatus) = apply { this.accountStatus = status }
-        fun aiQuestionUsedCount(count: Int) = apply { this.aiQuestionUsedCount = count }
-        fun subscription(subscription: Subscription?) = apply { this.subscription = subscription }
+        //fun accountStatus(status: AccountStatus) = apply { this.accountStatus = status }
+        //fun aiQuestionUsedCount(count: Int) = apply { this.aiQuestionUsedCount = count }
+       // fun subscription(subscription: Subscription?) = apply { this.subscription = subscription }
 
         fun build(): User = User(
             email,
@@ -152,7 +150,7 @@ class User(
             role,
             accountStatus,
             aiQuestionUsedCount,
-            subscription
+           // subscription
         )
     }
 }

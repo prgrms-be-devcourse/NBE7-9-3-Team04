@@ -61,7 +61,7 @@ class SubscriptionControllerTest(
             role = Role.USER,
             accountStatus = AccountStatus.ACTIVE,
             aiQuestionUsedCount = 0,
-            subscription = null
+           // subscription = null
         )
         userRepository.save(testUser1)
 
@@ -92,7 +92,7 @@ class SubscriptionControllerTest(
             role = Role.USER,
             accountStatus = AccountStatus.ACTIVE,
             aiQuestionUsedCount = 0,
-            subscription = null
+            //subscription = null
         )
         userRepository.save(testUser2)
 
@@ -164,7 +164,7 @@ class SubscriptionControllerTest(
                 role = Role.USER,
                 accountStatus = AccountStatus.ACTIVE,
                 aiQuestionUsedCount = 0,
-                subscription = null
+               // subscription = null
             )
             userRepository.save(newUser)
 

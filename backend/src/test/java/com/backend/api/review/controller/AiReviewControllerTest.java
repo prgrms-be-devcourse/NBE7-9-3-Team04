@@ -99,7 +99,7 @@ class AiReviewControllerTest extends JwtTest {
 
         // 관계 설정 및 저장
         subscription = subscriptionRepository.save(subscription);
-        user.setSubscription(subscription);
+        //user.setSubscription(subscription);
         userRepository.saveAndFlush(user);
 
         return subscription;
@@ -188,7 +188,7 @@ class AiReviewControllerTest extends JwtTest {
                             .startDate(LocalDateTime.now())
                             .build()
             );
-            testUser.setSubscription(basic);
+            //testUser.setSubscription(basic);
             userRepository.saveAndFlush(testUser);
 
             // when

@@ -4,6 +4,7 @@ import com.backend.api.question.service.AiQuestionService;
 import com.backend.api.resume.service.ResumeService;
 import com.backend.api.review.dto.request.AiReviewbackRequest;
 import com.backend.api.review.dto.response.AiReviewResponse;
+import com.backend.api.subscription.service.SubscriptionService;
 import com.backend.domain.resume.entity.Resume;
 import com.backend.domain.review.entity.Review;
 import com.backend.domain.review.repository.ReviewRepository;
@@ -27,6 +28,7 @@ public class AiReviewService {
     private final ReviewRepository reviewRepository;
     private final ResumeService resumeService;
     private final AiQuestionService aiQuestionService;
+    private final SubscriptionService subscriptionService;
 
     @Transactional
     public AiReviewResponse createAiReview(User user) throws JsonProcessingException {
@@ -34,7 +36,11 @@ public class AiReviewService {
             throw new ErrorException(ErrorCode.UNAUTHORIZED_USER);
         }
 
-        if (!user.isPremium()) {
+//        if (!user.isPremium()) {
+//            throw new ErrorException(ErrorCode.AI_FEEDBACK_FOR_PREMIUM_ONLY);
+//        }
+
+        if (!subscriptionService.isPremium(user)) {
             throw new ErrorException(ErrorCode.AI_FEEDBACK_FOR_PREMIUM_ONLY);
         }
 

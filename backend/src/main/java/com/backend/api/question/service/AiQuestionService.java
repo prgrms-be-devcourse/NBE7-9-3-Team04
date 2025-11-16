@@ -1,16 +1,16 @@
 package com.backend.api.question.service;
 
-import com.backend.global.ai.handler.AiRequestHandler;
 import com.backend.api.question.dto.request.AiQuestionRequest;
 import com.backend.api.question.dto.response.*;
-
 import com.backend.api.resume.service.ResumeService;
 import com.backend.api.review.dto.request.AiReviewbackRequest;
+import com.backend.api.subscription.service.SubscriptionService;
 import com.backend.api.user.service.UserService;
 import com.backend.domain.question.entity.Question;
 import com.backend.domain.question.entity.QuestionCategoryType;
 import com.backend.domain.resume.entity.Resume;
 import com.backend.domain.user.entity.User;
+import com.backend.global.ai.handler.AiRequestHandler;
 import com.backend.global.exception.ErrorCode;
 import com.backend.global.exception.ErrorException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -33,6 +33,7 @@ public class AiQuestionService {
     private final ResumeService resumeService;
     private final ObjectMapper objectMapper;
     private final AiRequestHandler aiRequestHandler;
+    private final SubscriptionService subscriptionService;
 
     public AIQuestionCreateResponse createAiQuestion(Long userId) throws JsonProcessingException {
 
@@ -41,7 +42,7 @@ public class AiQuestionService {
         validateQuestionLimit(user);
 
         Resume resume = resumeService.getResumeByUser(user);
-        AiQuestionRequest request = AiQuestionRequest.of(resume.getSkill(), resume.getPortfolioUrl(), user.getAiQuestionLimit());
+        AiQuestionRequest request = AiQuestionRequest.of(resume.getSkill(), resume.getPortfolioUrl(), subscriptionService.getAiQuestionLimit(user));
 
         String connectionAi = aiRequestHandler.connectionAi(request);
 
@@ -62,7 +63,7 @@ public class AiQuestionService {
 
     // AI 질문 생성 횟수 제한 검증
     private void validateQuestionLimit(User user) {
-        int availableCount = user.getAiQuestionLimit();
+        int availableCount = subscriptionService.getAiQuestionLimit(user);
         int usedCount = user.getAiQuestionUsedCount();
 
         if (usedCount >= availableCount) {

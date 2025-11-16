@@ -99,3 +99,31 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+kapt {
+    correctErrorTypes = true
+    includeCompileClasspath = false
+}
+
+
+//sourceSets.main {
+//    java.srcDirs("src/main/java")
+//}
+////-----------querydsl-----------//
+//val querydslDir = file("build/generated/source/kapt/main")
+//
+//sourceSets {
+//    main {
+//        java.srcDir(querydslDir)
+//    }
+//}
+//
+//tasks.withType<JavaCompile> {
+//    options.generatedSourceOutputDirectory.set(querydslDir)
+//}
+//
+//tasks.named("clean") {
+//    doLast {
+//        querydslDir.deleteRecursively()
+//    }
+//}
+//

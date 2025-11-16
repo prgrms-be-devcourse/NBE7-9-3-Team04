@@ -2,6 +2,7 @@ package com.backend.api.payment.controller
 
 import com.backend.api.payment.dto.request.PaymentRequest
 import com.backend.api.payment.dto.response.PaymentResponse
+import com.backend.api.payment.service.PaymentFacade
 import com.backend.api.payment.service.PaymentService
 import com.backend.global.dto.response.ApiResponse
 import io.swagger.v3.oas.annotations.Operation
@@ -12,7 +13,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/v1/payments")
 @Tag(name = "Payments", description = "결제 관련 API")
 class PaymentController(
-    private val paymentService: PaymentService
+    private val paymentService: PaymentService,
+    private val paymentFacade: PaymentFacade
 ) {
 
     //결제 승인
@@ -21,7 +23,8 @@ class PaymentController(
     fun confirm(
         @RequestBody request: PaymentRequest
     ): ApiResponse<PaymentResponse> {
-        val response = paymentService.confirmPayment(request)
+        val response = paymentFacade
+            .confirmPayment(request)
         return ApiResponse.created("결제가 승인되었습니다.", response)
     }
 

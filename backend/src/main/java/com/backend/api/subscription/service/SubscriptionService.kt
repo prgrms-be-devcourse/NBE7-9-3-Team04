@@ -5,6 +5,7 @@ import com.backend.api.subscription.dto.response.SubscriptionResponse.Companion.
 import com.backend.api.user.service.UserService
 import com.backend.domain.subscription.entity.Subscription
 import com.backend.domain.subscription.repository.SubscriptionRepository
+import com.backend.domain.user.entity.User
 import com.backend.global.exception.ErrorCode
 import com.backend.global.exception.ErrorException
 import org.springframework.stereotype.Service
@@ -90,5 +91,15 @@ class SubscriptionService(
     @Transactional(readOnly = true)
     fun getActiveSubscriptionsByBillingDate(billingDate: LocalDate): List<Subscription> {
         return subscriptionRepository.findByNextBillingDateAndActive(billingDate, true)
+    }
+
+    fun isPremium(user: User): Boolean {
+        val subscription = subscriptionRepository.findByUser(user)
+        return subscription?.isValid() ?: false
+    }
+
+    fun getAiQuestionLimit(user: User): Int{
+        val subscription = subscriptionRepository.findByUser(user)
+        return subscription?.questionLimit ?: 5
     }
 }
