@@ -91,7 +91,7 @@ enum class ErrorCode(
     PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "결제 내역을 찾을 수 없습니다."),
     PAYMENT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "결제 처리 중 오류가 발생했습니다."),
     AUTO_PAYMENT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "자동 결제 처리 중 오류가 발생했습니다."),
-
+    ALREADY_PAID(HttpStatus.BAD_REQUEST, "이미 결제가 완료된 주문입니다."),
     //billing
     SUBSCRIPTION_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 고객의 구독 정보를 찾을 수 없습니다."),
     SUBSCRIPTION_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 구독 중입니다."),

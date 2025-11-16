@@ -20,7 +20,7 @@ class PaymentController(
     //결제 승인
     @PostMapping("/confirm")
     @Operation(summary = "결제 승인")
-    fun confirm(
+    suspend fun confirm(
         @RequestBody request: PaymentRequest
     ): ApiResponse<PaymentResponse> {
         val response = paymentFacade

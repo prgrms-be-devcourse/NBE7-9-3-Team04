@@ -10,4 +10,5 @@ interface PaymentRepository : JpaRepository<Payment, Long> {
 
     fun findAllByOrderByApprovedAtDesc(): List<Payment>
     fun countByStatus(status: PaymentStatus): Long
+    fun existsByOrderId(orderId: String): Boolean
 }
