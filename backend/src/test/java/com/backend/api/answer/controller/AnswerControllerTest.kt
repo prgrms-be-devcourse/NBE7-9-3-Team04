@@ -13,11 +13,11 @@ import com.jayway.jsonpath.JsonPath
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.*
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.TestConstructor
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
@@ -29,15 +29,12 @@ import org.springframework.transaction.annotation.Transactional
 @AutoConfigureMockMvc(addFilters = false)
 @Transactional
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 class AnswerControllerTest(
-    @Autowired
-    val mvc: MockMvc,
-    @Autowired
-    val questionRepository: QuestionRepository,
-    @Autowired
-    val answerRepository: AnswerRepository,
-    @Autowired
-    val feedbackRepository: FeedbackRepository
+    private val mvc: MockMvc,
+    private val questionRepository: QuestionRepository,
+    private val answerRepository: AnswerRepository,
+    private val feedbackRepository: FeedbackRepository
 ) : JwtTest() {
 
     private var questionId: Long = 0
@@ -72,7 +69,7 @@ class AnswerControllerTest(
 
         userRepository.save(generalUser)
         userRepository.save(generalUser2)
-        userIdList = listOf(generalUser.id!!, generalUser2.id!!)
+        userIdList = listOf(generalUser.id, generalUser2.id)
 
         val question1 = Question.builder()
             .title("첫 번째 질문 제목")
@@ -80,7 +77,7 @@ class AnswerControllerTest(
             .author(mockUser)
             .build()
         questionRepository.save(question1)
-        questionId = question1.id!!
+        questionId = question1.id
 
         val answers = listOf(
             Answer("첫 번째 답변 내용", true, mockUser, question1),
@@ -98,7 +95,7 @@ class AnswerControllerTest(
             Answer("열세 번째 답변 내용", true, userRepository.findById(userIdList[0]).orElseThrow(), question1)
         )
 
-        answerIdList = answers.map { answerRepository.save(it).id!! }
+        answerIdList = answers.map { answerRepository.save(it).id }
 
         val feedbacks = listOf(
             Feedback.builder().content("0").aiScore(0).answer(answers[0]).build(),

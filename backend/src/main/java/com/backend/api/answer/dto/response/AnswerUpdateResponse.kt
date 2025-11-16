@@ -6,6 +6,7 @@ import java.time.LocalDateTime
 
 @JvmRecord
 data class AnswerUpdateResponse(
+
     @field:Schema(description = "면접 답변 ID", example = "1")
     val id: Long?,
 
@@ -29,6 +30,7 @@ data class AnswerUpdateResponse(
 
     @field:Schema(description = "질문 ID", example = "1")
     val questionId: Long?
+
 ) {
     companion object {
         @JvmStatic
