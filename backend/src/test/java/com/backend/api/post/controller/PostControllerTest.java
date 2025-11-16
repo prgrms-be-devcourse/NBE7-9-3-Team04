@@ -13,6 +13,9 @@ import com.backend.domain.question.entity.Question;
 import com.backend.domain.question.repository.QuestionRepository;
 import com.backend.domain.ranking.repository.RankingRepository;
 import com.backend.domain.resume.repository.ResumeRepository;
+import com.backend.domain.subscription.entity.Subscription;
+import com.backend.domain.subscription.entity.SubscriptionType;
+import com.backend.domain.subscription.repository.SubscriptionRepository;
 import com.backend.domain.user.entity.Role;
 import com.backend.domain.user.entity.User;
 import com.backend.domain.user.repository.UserRepository;
@@ -83,6 +86,10 @@ class PostControllerTest {
     @Autowired
     private ResumeRepository resumeRepository;
 
+    @Autowired
+    private SubscriptionRepository subscriptionRepository;
+
+
     private User testUser;
     private User otherUser;
     private Post savedPost;
@@ -103,7 +110,9 @@ class PostControllerTest {
         postRepository.deleteAll();
         questionRepository.deleteAll();
 
+        subscriptionRepository.deleteAll();
         userRepository.deleteAll();
+
 
 
         testUser = User.builder()
@@ -111,10 +120,32 @@ class PostControllerTest {
                 .github("").build();
         userRepository.save(testUser);
 
+        Subscription basicSub1 = Subscription.builder()
+                .user(testUser)
+                .subscriptionType(SubscriptionType.BASIC)
+                .subscriptionName("BASIC")
+                .price(0L)
+                .questionLimit(5)
+                .startDate(LocalDateTime.now())
+                .build();
+
+        subscriptionRepository.save(basicSub1);
+
         otherUser = User.builder()
                 .email("other@test.com").password("pw").name("다른사람").nickname("other").age(20).role(Role.USER)
                 .github("").build();
         userRepository.save(otherUser);
+
+        Subscription basicSub2 = Subscription.builder()
+                .user(otherUser)
+                .subscriptionType(SubscriptionType.BASIC)
+                .subscriptionName("BASIC")
+                .price(0L)
+                .questionLimit(5)
+                .startDate(LocalDateTime.now())
+                .build();
+
+        subscriptionRepository.save(basicSub2);
 
         Post post = Post.builder()
                 .title("기존 제목")
