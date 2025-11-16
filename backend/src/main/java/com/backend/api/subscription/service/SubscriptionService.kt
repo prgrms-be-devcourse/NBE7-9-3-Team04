@@ -37,6 +37,7 @@ class SubscriptionService(
         return from(subscription)
     }
 
+
     @Transactional
     fun getSubscriptionByUserId(userId: Long): SubscriptionResponse {
         val user = userService.getUser(userId)

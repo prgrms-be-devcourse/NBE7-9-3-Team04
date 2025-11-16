@@ -19,11 +19,7 @@ class PaymentService(
 ) {
 
     @Transactional
-    fun createPayment(response: PaymentConfirmResponse, user: User): Payment {
-
-        if (paymentRepository.existsByOrderId(response.orderId)) {
-            throw ErrorException(ErrorCode.ALREADY_PAID)
-        }
+    suspend fun createPayment(response: PaymentConfirmResponse, user: User): Payment {
 
         val payment = Payment(
             orderId = response.orderId,
