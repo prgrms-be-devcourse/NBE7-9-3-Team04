@@ -94,6 +94,10 @@ allOpen {
     annotation("jakarta.persistence.Embeddable")
 }
 
+kapt {
+    correctErrorTypes = true
+    includeCompileClasspath = false
+}
 
 tasks.withType<Test> {
     useJUnitPlatform()

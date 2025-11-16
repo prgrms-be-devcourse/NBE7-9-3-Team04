@@ -1,106 +1,107 @@
-package com.backend.api.resume.service;
+package com.backend.api.resume.service
 
-import com.backend.api.resume.dto.request.ResumeCreateRequest;
-import com.backend.api.resume.dto.request.ResumeUpdateRequest;
-import com.backend.api.resume.dto.response.ResumeCreateResponse;
-import com.backend.api.resume.dto.response.ResumeExistResponse;
-import com.backend.api.resume.dto.response.ResumeReadResponse;
-import com.backend.api.resume.dto.response.ResumeUpdateResponse;
-import com.backend.api.user.service.UserService;
-import com.backend.domain.resume.entity.Resume;
-import com.backend.domain.resume.repository.ResumeRepository;
-import com.backend.domain.user.entity.User;
-import com.backend.global.exception.ErrorCode;
-import com.backend.global.exception.ErrorException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import com.backend.api.resume.dto.request.ResumeCreateRequest
+import com.backend.api.resume.dto.request.ResumeUpdateRequest
+import com.backend.api.resume.dto.response.ResumeCreateResponse
+import com.backend.api.resume.dto.response.ResumeExistResponse
+import com.backend.api.resume.dto.response.ResumeReadResponse
+import com.backend.api.resume.dto.response.ResumeUpdateResponse
+import com.backend.api.user.service.UserService
+import com.backend.domain.resume.entity.Resume
+
+import com.backend.domain.resume.repository.ResumeRepository
+import com.backend.domain.user.entity.User
+import com.backend.global.exception.ErrorCode
+import com.backend.global.exception.ErrorException
+
+import org.springframework.data.repository.findByIdOrNull
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class ResumeService {
-
-    private final ResumeRepository resumeRepository;
-
-    private final UserService userService;
+class ResumeService(
+    private val resumeRepository: ResumeRepository,
+    private val userService: UserService
+) {
 
     @Transactional
-    public ResumeCreateResponse createResume(Long userId, ResumeCreateRequest request) {
-        validateResumeNotExists(userId);
+    fun createResume(userId: Long, request: ResumeCreateRequest): ResumeCreateResponse {
+        validateResumeNotExists(userId)
 
-        User user = userService.getUser(userId);
+        val user = userService.getUser(userId)
 
-        Resume resume = Resume.builder()
-                .user(user)
-                .skill(request.skill())
-                .activity(request.activity())
-                .career(request.career())
-                .certification(request.certification())
-                .content(request.content())
-                .portfolioUrl(request.portfolioUrl())
-                .build();
+        val resume = Resume(
+            request.content,
+            request.skill,
+            request.activity,
+            request.certification,
+            request.career,
+            request.portfolioUrl,
+            user
+        )
 
-        resumeRepository.save(resume);
+        resumeRepository.save(resume)
 
-        return ResumeCreateResponse.from(resume, user);
+        return ResumeCreateResponse.from(resume, user)
     }
 
-    private Boolean hasResume(Long userId) {
-        return resumeRepository.existsByUserId(userId);
+    fun hasResume(userId: Long) : Boolean {
+        return resumeRepository.existsByUserId(userId)
     }
 
-    private void validateResumeNotExists(Long userId) {
-        if (hasResume(userId)) {
-            throw new ErrorException(ErrorCode.DUPLICATE_RESUME);
+    fun validateResumeNotExists(userId: Long) {
+        if (resumeRepository.existsByUserId(userId)) {
+            throw ErrorException(ErrorCode.DUPLICATE_RESUME)
         }
     }
 
     @Transactional
-    public ResumeUpdateResponse updateResume(Long userId,  ResumeUpdateRequest request) {
-        User user = userService.getUser(userId);
+    fun updateResume(userId: Long, request: ResumeUpdateRequest): ResumeUpdateResponse {
+        val user = userService.getUser(userId)
 
-        Resume resume = getResumeByUser(user);
-        validateResumeAuthor(resume, user);
-        resume.update(request);
+        val resume = getResumeByUser(user)
+        validateResumeAuthor(resume, user)
+        resume.update(request)
 
-        return ResumeUpdateResponse.from(resume, user);
-    }
-
-    public Resume getResume(Long resumeId) {
-        return resumeRepository.findById(resumeId)
-                .orElseThrow(() -> new ErrorException(ErrorCode.NOT_FOUND_RESUME));
-    }
-
-    private void validateResumeAuthor(Resume resume, User user) {
-        if (resume.getUser().getId() != user.getId()) {
-            throw new ErrorException(ErrorCode.INVALID_USER);
-        }
+        return ResumeUpdateResponse.from(resume, user)
     }
 
     @Transactional
-    public void deleteResume(Long userId, Long resumeId) {
-        User user = userService.getUser(userId);
+    fun deleteResume(userId: Long, resumeId: Long) {
+        val user = userService.getUser(userId)
+        val resume = getResume(resumeId)
 
-        Resume resume = getResume(resumeId);
-        validateResumeAuthor(resume, user);
+        validateResumeAuthor(resume, user)
 
-        resumeRepository.delete(resume);
+        resumeRepository.delete(resume)
     }
 
-    public ResumeReadResponse readResume(Long userId) {
-        User user = userService.getUser(userId);
-        Resume resume = getResumeByUser(user);
-        return ResumeReadResponse.from(resume);
+    fun getResume(resumeId: Long): Resume {
+        return resumeRepository.findByIdOrNull(resumeId)
+            ?: throw ErrorException(ErrorCode.NOT_FOUND_RESUME)
     }
 
-    public Resume getResumeByUser(User user) {
+    fun validateResumeAuthor(resume: Resume, user: User) {
+        if (resume.user.id != user.id) {
+            throw ErrorException(ErrorCode.INVALID_USER)
+        }
+    }
+
+    fun readResume(userId: Long): ResumeReadResponse {
+        val user = userService.getUser(userId)
+        val resume = getResumeByUser(user)
+        return ResumeReadResponse.from(resume)
+    }
+
+    fun getResumeByUser(user: User): Resume {
         return resumeRepository.findByUser(user)
-                .orElseThrow(() -> new ErrorException(ErrorCode.NOT_FOUND_RESUME));
+            ?: throw ErrorException(ErrorCode.NOT_FOUND_RESUME)
     }
 
-    public ResumeExistResponse checkResumeExists(Long userId) {
-        boolean hasResume = hasResume(userId);
-        return ResumeExistResponse.from(hasResume);
+    fun checkResumeExists(userId: Long): ResumeExistResponse {
+        val hasResume: Boolean = hasResume(userId)
+        return ResumeExistResponse.from(hasResume)
     }
 }

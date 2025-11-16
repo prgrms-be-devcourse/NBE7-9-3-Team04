@@ -1,380 +1,388 @@
-package com.backend.api.resume.controller;
+package com.backend.api.resume.controller
 
+import com.backend.api.global.JwtTest
+import com.backend.api.resume.dto.request.ResumeCreateRequest
+import com.backend.api.resume.dto.request.ResumeUpdateRequest
 
-import com.backend.api.global.JwtTest;
-import com.backend.api.resume.dto.request.ResumeCreateRequest;
-import com.backend.api.resume.dto.request.ResumeUpdateRequest;
-import com.backend.domain.resume.entity.Resume;
-import com.backend.domain.resume.repository.ResumeRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.transaction.annotation.Transactional;
+import com.backend.domain.resume.entity.Resume
+import com.backend.domain.resume.repository.ResumeRepository
+import com.fasterxml.jackson.databind.ObjectMapper
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.MediaType
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import org.springframework.transaction.annotation.Transactional
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
-@AutoConfigureMockMvc(addFilters = false)  // security filter disable
+@AutoConfigureMockMvc(addFilters = false) // security filter disable
 @Transactional
-class ResumeControllerTest extends JwtTest {
+internal class ResumeControllerTest : JwtTest() {
+    @Autowired
+    private val mockMvc: MockMvc? = null
 
     @Autowired
-    private MockMvc mockMvc;
+    private val objectMapper: ObjectMapper? = null
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private ResumeRepository resumeRepository;
+    private val resumeRepository: ResumeRepository? = null
 
     @BeforeEach
-    void setUp() {
-        Resume resume = Resume.builder()
-                .content("이력서 내용입니다.")
-                .skill("Java, Spring Boot")
-                .activity("대외 활동 내용입니다.")
-                .certification("없음")
-                .career("경력 사항 내용입니다.")
-                .portfolioUrl("http://portfolio.example.com")
-                .user(mockUser)
-                .build();
-        resumeRepository.save(resume);
+    fun setUp() {
+        val resume = Resume(
+            "이력서 내용입니다.",
+            "Java, Spring Boot",
+            "대외 활동 내용입니다.",
+            "없음",
+            "경력 사항 내용입니다.",
+            "http://portfolio.example.com",
+            mockUser
+        )
+        resumeRepository!!.save<Resume?>(resume)
     }
 
     @Nested
     @DisplayName("이력서 생성 API")
-    class t1 {
-
+    internal inner class t1 {
         @Test
         @DisplayName("정상 작동")
-        void success() throws Exception {
+        @Throws(Exception::class)
+        fun success() {
             // given
-            resumeRepository.deleteAll();
-            ResumeCreateRequest request = new ResumeCreateRequest(
-                    "이력서 내용입니다.",
-                    "Java, Spring Boot",
-                    "대외 활동 내용입니다.",
-                    "없음",
-                    "경력 사항 내용입니다.",
-                    "http://portfolio.example.com"
-            );
+            resumeRepository!!.deleteAll()
+            val request = ResumeCreateRequest(
+                "이력서 내용입니다.",
+                "Java, Spring Boot",
+                "대외 활동 내용입니다.",
+                "없음",
+                "경력 사항 내용입니다.",
+                "http://portfolio.example.com"
+            )
 
             // when
-            ResultActions resultActions = mockMvc.perform(
-                    post("/api/v1/users/resumes")
-                            .accept(MediaType.APPLICATION_JSON)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request))
-            );
+            val resultActions = mockMvc!!.perform(
+                MockMvcRequestBuilders.post("/api/v1/users/resumes")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper!!.writeValueAsString(request))
+            )
             // then
             resultActions
-                    .andExpect(handler().handlerType(ResumeController.class))
-                    .andExpect(handler().methodName("createResume"))
-                    .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.status").value("CREATED"))
-                    .andExpect(jsonPath("$.message").value("이력서가 생성되었습니다."))
-                    .andExpect(jsonPath("$.data.userId").value(mockUser.getId()))
-                    .andExpect(jsonPath("$.data.content").value("이력서 내용입니다."))
-                    .andExpect(jsonPath("$.data.skill").value("Java, Spring Boot"))
-                    .andExpect(jsonPath("$.data.activity").value("대외 활동 내용입니다."))
-                    .andExpect(jsonPath("$.data.certification").value("없음"))
-                    .andExpect(jsonPath("$.data.career").value("경력 사항 내용입니다."))
-                    .andExpect(jsonPath("$.data.portfolioUrl").value("http://portfolio.example.com"))
-                    .andDo(print());
+                .andExpect(MockMvcResultMatchers.handler().handlerType(ResumeController::class.java))
+                .andExpect(MockMvcResultMatchers.handler().methodName("createResume"))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("CREATED"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("이력서가 생성되었습니다."))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.userId").value(mockUser.id))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content").value("이력서 내용입니다."))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.skill").value("Java, Spring Boot"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.activity").value("대외 활동 내용입니다."))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.certification").value("없음"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.career").value("경력 사항 내용입니다."))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.portfolioUrl").value("http://portfolio.example.com"))
+                .andDo(MockMvcResultHandlers.print())
         }
 
         @Test
         @DisplayName("로그인 안 된 상태에서 요청할 때")
-        void fail1() throws Exception {
+        @Throws(Exception::class)
+        fun fail1() {
             // given
-            SecurityContextHolder.clearContext();
-            ResumeCreateRequest request = new ResumeCreateRequest(
-                    "이력서 내용입니다.",
-                    "Java, Spring Boot",
-                    "대외 활동 내용입니다.",
-                    "없음",
-                    "경력 사항 내용입니다.",
-                    "http://portfolio.example.com"
-            );
+            SecurityContextHolder.clearContext()
+            val request = ResumeCreateRequest(
+                "이력서 내용입니다.",
+                "Java, Spring Boot",
+                "대외 활동 내용입니다.",
+                "없음",
+                "경력 사항 내용입니다.",
+                "http://portfolio.example.com"
+            )
             // when
-            ResultActions resultActions = mockMvc.perform(
-                    post("/api/v1/users/resumes")
+            val resultActions = mockMvc!!.perform(
+                MockMvcRequestBuilders.post("/api/v1/users/resumes")
 
-                            .accept(MediaType.APPLICATION_JSON)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request))
-            );
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper!!.writeValueAsString(request))
+            )
             // then
             resultActions
-                    .andExpect(handler().handlerType(ResumeController.class))
-                    .andExpect(handler().methodName("createResume"))
-                    .andExpect(status().isUnauthorized())
-                    .andExpect(jsonPath("$.status").value("UNAUTHORIZED"))
-                    .andExpect(jsonPath("$.message").value("로그인된 사용자가 없습니다."))
-                    .andDo(print());
+                .andExpect(MockMvcResultMatchers.handler().handlerType(ResumeController::class.java))
+                .andExpect(MockMvcResultMatchers.handler().methodName("createResume"))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("UNAUTHORIZED"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("로그인된 사용자가 없습니다."))
+                .andDo(MockMvcResultHandlers.print())
         }
 
         @Test
         @DisplayName("이미 이력서가 존재할 때")
-        void fail2() throws Exception {
+        @Throws(Exception::class)
+        fun fail2() {
             // given
-            ResumeCreateRequest request = new ResumeCreateRequest(
-                    "이력서 내용입니다.",
-                    "Java, Spring Boot",
-                    "대외 활동 내용입니다.",
-                    "없음",
-                    "경력 사항 내용입니다.",
-                    "http://portfolio.example.com"
-            );
+            val request = ResumeCreateRequest(
+                "이력서 내용입니다.",
+                "Java, Spring Boot",
+                "대외 활동 내용입니다.",
+                "없음",
+                "경력 사항 내용입니다.",
+                "http://portfolio.example.com"
+            )
             // when
-            mockMvc.perform(
-                    post("/api/v1/users/resumes")
-                            .accept(MediaType.APPLICATION_JSON)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request))
-            );
+            mockMvc!!.perform(
+                MockMvcRequestBuilders.post("/api/v1/users/resumes")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper!!.writeValueAsString(request))
+            )
 
-            ResultActions resultActions = mockMvc.perform(
-                    post("/api/v1/users/resumes")
-                            .accept(MediaType.APPLICATION_JSON)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request))
-            );
+            val resultActions = mockMvc.perform(
+                MockMvcRequestBuilders.post("/api/v1/users/resumes")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request))
+            )
             // then
             resultActions
-                    .andExpect(handler().handlerType(ResumeController.class))
-                    .andExpect(handler().methodName("createResume"))
-                    .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
-                    .andExpect(jsonPath("$.message").value("이미 등록된 이력서가 있습니다."))
-                    .andDo(print());
+                .andExpect(MockMvcResultMatchers.handler().handlerType(ResumeController::class.java))
+                .andExpect(MockMvcResultMatchers.handler().methodName("createResume"))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("이미 등록된 이력서가 있습니다."))
+                .andDo(MockMvcResultHandlers.print())
         }
     }
 
     @Nested
     @DisplayName("이력서 수정 API")
-    class t2 {
+    internal inner class t2 {
         @Test
         @DisplayName("정상 작동")
-        void success() throws Exception {
+        @Throws(Exception::class)
+        fun success() {
             //given
-            ResumeUpdateRequest request = new ResumeUpdateRequest(
-                    "수정된 이력서 내용입니다.",
-                    "Java, Spring Boot, mysql",
-                    "수정된 대외 활동 내용입니다.",
-                    "없음",
-                    "수정된 경력 사항 내용입니다.",
-                    "http://portfolio.example2.com"
-            );
+            val request = ResumeUpdateRequest(
+                "수정된 이력서 내용입니다.",
+                "Java, Spring Boot, mysql",
+                "수정된 대외 활동 내용입니다.",
+                "없음",
+                "수정된 경력 사항 내용입니다.",
+                "http://portfolio.example2.com"
+            )
 
             // when
-            ResultActions resultActions = mockMvc.perform(
-                    put("/api/v1/users/resumes" )
-                            .accept(MediaType.APPLICATION_JSON)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request))
-            );
+            val resultActions = mockMvc!!.perform(
+                MockMvcRequestBuilders.put("/api/v1/users/resumes")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper!!.writeValueAsString(request))
+            )
             // then
             resultActions
-                    .andExpect(handler().handlerType(ResumeController.class))
-                    .andExpect(handler().methodName("updateResume"))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value("OK"))
-                    .andExpect(jsonPath("$.message").value("이력서가 수정되었습니다."))
-                    .andExpect(jsonPath("$.data.userId").value(mockUser.getId()))
-                    .andExpect(jsonPath("$.data.content").value("수정된 이력서 내용입니다."))
-                    .andExpect(jsonPath("$.data.skill").value("Java, Spring Boot, mysql"))
-                    .andExpect(jsonPath("$.data.activity").value("수정된 대외 활동 내용입니다."))
-                    .andExpect(jsonPath("$.data.certification").value("없음"))
-                    .andExpect(jsonPath("$.data.career").value("수정된 경력 사항 내용입니다."))
-                    .andExpect(jsonPath("$.data.portfolioUrl").value("http://portfolio.example2.com"))
-                    .andDo(print());
+                .andExpect(MockMvcResultMatchers.handler().handlerType(ResumeController::class.java))
+                .andExpect(MockMvcResultMatchers.handler().methodName("updateResume"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("OK"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("이력서가 수정되었습니다."))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.userId").value(mockUser.id))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content").value("수정된 이력서 내용입니다."))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.skill").value("Java, Spring Boot, mysql"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.activity").value("수정된 대외 활동 내용입니다."))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.certification").value("없음"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.career").value("수정된 경력 사항 내용입니다."))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.portfolioUrl").value("http://portfolio.example2.com"))
+                .andDo(MockMvcResultHandlers.print())
         }
 
         @Test
         @DisplayName("이력서가 존재하지 않을 때")
-        void fail1() throws Exception {
-            resumeRepository.deleteAll();
+        @Throws(Exception::class)
+        fun fail1() {
+            resumeRepository!!.deleteAll()
             //given
-            ResumeUpdateRequest request = new ResumeUpdateRequest(
-                    "수정된 이력서 내용입니다.",
-                    "Java, Spring Boot, mysql",
-                    "수정된 대외 활동 내용입니다.",
-                    "없음",
-                    "수정된 경력 사항 내용입니다.",
-                    "http://portfolio.example2.com"
-            );
+            val request = ResumeUpdateRequest(
+                "수정된 이력서 내용입니다.",
+                "Java, Spring Boot, mysql",
+                "수정된 대외 활동 내용입니다.",
+                "없음",
+                "수정된 경력 사항 내용입니다.",
+                "http://portfolio.example2.com"
+            )
             // when
-            ResultActions resultActions = mockMvc.perform(
-                    put("/api/v1/users/resumes")
-                            .accept(MediaType.APPLICATION_JSON)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(request))
-            );
+            val resultActions = mockMvc!!.perform(
+                MockMvcRequestBuilders.put("/api/v1/users/resumes")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper!!.writeValueAsString(request))
+            )
             // then
             resultActions
-                    .andExpect(handler().handlerType(ResumeController.class))
-                    .andExpect(handler().methodName("updateResume"))
-                    .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("$.status").value("NOT_FOUND"))
-                    .andExpect(jsonPath("$.message").value("이력서를 찾을 수 없습니다."))
-                    .andDo(print());
+                .andExpect(MockMvcResultMatchers.handler().handlerType(ResumeController::class.java))
+                .andExpect(MockMvcResultMatchers.handler().methodName("updateResume"))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("NOT_FOUND"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("이력서를 찾을 수 없습니다."))
+                .andDo(MockMvcResultHandlers.print())
         }
     }
 
     @Nested
     @DisplayName("이력서 삭제 API")
-    class t3 {
+    internal inner class t3 {
         @Test
         @DisplayName("정상 작동")
-        void success() throws Exception {
-
+        @Throws(Exception::class)
+        fun success() {
             //given
-            Resume resume = resumeRepository.findByUser(mockUser)
-                    .orElseGet(null);
 
-            System.out.println("resume id = " + resume.getId());
+            val resume: Resume? = resumeRepository!!.findByUser(mockUser)
 
             // when
-            ResultActions resultActions = mockMvc.perform(
-                    delete("/api/v1/users/resumes/%d" .formatted( resume.getId()))
-                            .accept(MediaType.APPLICATION_JSON)
-                            .contentType(MediaType.APPLICATION_JSON)
-            );
+            val resultActions = mockMvc!!.perform(
+                MockMvcRequestBuilders.delete("/api/v1/users/resumes/${resume?.id}")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
             // then
             resultActions
-                    .andExpect(handler().handlerType(ResumeController.class))
-                    .andExpect(handler().methodName("deleteResume"))
-                    .andExpect(status().isNoContent())
-                    .andExpect(jsonPath("$.status").value("NO_CONTENT"))
-                    .andExpect(jsonPath("$.message").value("이력서가 삭제되었습니다."))
-                    .andDo(print());
+                .andExpect(MockMvcResultMatchers.handler().handlerType(ResumeController::class.java))
+                .andExpect(MockMvcResultMatchers.handler().methodName("deleteResume"))
+                .andExpect(MockMvcResultMatchers.status().isNoContent())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("NO_CONTENT"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("이력서가 삭제되었습니다."))
+                .andDo(MockMvcResultHandlers.print())
         }
 
         @Test
         @DisplayName("이력서가 존재하지 않을 때")
-        void fail1() throws Exception {
+        @Throws(Exception::class)
+        fun fail1() {
             // given
-            Long resumeId = 999L;
+            val resumeId = 999L
             // when
-            ResultActions resultActions = mockMvc.perform(
-                    delete("/api/v1/users/resumes/%d" .formatted( resumeId))
-                            .accept(MediaType.APPLICATION_JSON)
-                            .contentType(MediaType.APPLICATION_JSON)
-            );
+            val resultActions = mockMvc!!.perform(
+                MockMvcRequestBuilders.delete("/api/v1/users/resumes/${resumeId}")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
             // then
             resultActions
-                    .andExpect(handler().handlerType(ResumeController.class))
-                    .andExpect(handler().methodName("deleteResume"))
-                    .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("$.status").value("NOT_FOUND"))
-                    .andExpect(jsonPath("$.message").value("이력서를 찾을 수 없습니다."))
-                    .andDo(print());
+                .andExpect(MockMvcResultMatchers.handler().handlerType(ResumeController::class.java))
+                .andExpect(MockMvcResultMatchers.handler().methodName("deleteResume"))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("NOT_FOUND"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("이력서를 찾을 수 없습니다."))
+                .andDo(MockMvcResultHandlers.print())
         }
 
         @Test
         @DisplayName("작성자 불일치")
-        void fail2() throws Exception {
+        @Throws(Exception::class)
+        fun fail2() {
             // given
-            Long resumeId = 1L;
+            val resumeId = 1L
             // when
-            ResultActions resultActions = mockMvc.perform(
-                    delete("/api/v1/users/resumes/%d" .formatted(resumeId))
-                            .accept(MediaType.APPLICATION_JSON)
-                            .contentType(MediaType.APPLICATION_JSON)
-            );
+            val resultActions = mockMvc!!.perform(
+                MockMvcRequestBuilders.delete("/api/v1/users/resumes/${resumeId}")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
             // then
             resultActions
-                    .andExpect(handler().handlerType(ResumeController.class))
-                    .andExpect(handler().methodName("deleteResume"))
-                    .andExpect(status().isForbidden())
-                    .andExpect(jsonPath("$.status").value("FORBIDDEN"))
-                    .andExpect(jsonPath("$.message").value("이력서 수정 권한이 없습니다."))
-                    .andDo(print());
+                .andExpect(MockMvcResultMatchers.handler().handlerType(ResumeController::class.java))
+                .andExpect(MockMvcResultMatchers.handler().methodName("deleteResume"))
+                .andExpect(MockMvcResultMatchers.status().isForbidden())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("FORBIDDEN"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("이력서 수정 권한이 없습니다."))
+                .andDo(MockMvcResultHandlers.print())
         }
+
         @Test
         @DisplayName("유저가 존재하지 않을 때")
-        void fail4() throws Exception {
+        @Throws(Exception::class)
+        fun fail4() {
             // given
-            Long resumeId = 1L;
-            userRepository.deleteAll();
+            val resumeId = 1L
+            userRepository.deleteAll()
             // when
-            ResultActions resultActions = mockMvc.perform(
-                    delete("/api/v1/users/resumes/%d" .formatted( resumeId))
-                            .accept(MediaType.APPLICATION_JSON)
-                            .contentType(MediaType.APPLICATION_JSON)
-            );
+            val resultActions = mockMvc!!.perform(
+                MockMvcRequestBuilders.delete("/api/v1/users/resumes/${resumeId}")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
             // then
             resultActions
-                    .andExpect(handler().handlerType(ResumeController.class))
-                    .andExpect(handler().methodName("deleteResume"))
-                    .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("$.status").value("NOT_FOUND"))
-                    .andExpect(jsonPath("$.message").value("유저를 찾을 수 없습니다."))
-                    .andDo(print());
+                .andExpect(MockMvcResultMatchers.handler().handlerType(ResumeController::class.java))
+                .andExpect(MockMvcResultMatchers.handler().methodName("deleteResume"))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("NOT_FOUND"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("유저를 찾을 수 없습니다."))
+                .andDo(MockMvcResultHandlers.print())
         }
     }
 
     @Nested
     @DisplayName("이력서 조회 API")
-    class t4 {
+    internal inner class t4 {
         @Test
         @DisplayName("정상 작동")
-        void success() throws Exception {
+        @Throws(Exception::class)
+        fun success() {
             //given
 
             // when
-            ResultActions resultActions = mockMvc.perform(
-                    get("/api/v1/users/resumes")
-                            .accept(MediaType.APPLICATION_JSON)
-                            .contentType(MediaType.APPLICATION_JSON)
-            );
+
+            val resultActions = mockMvc!!.perform(
+                MockMvcRequestBuilders.get("/api/v1/users/resumes")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
             // then
             resultActions
-                    .andExpect(handler().handlerType(ResumeController.class))
-                    .andExpect(handler().methodName("getResume"))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value("OK"))
-                    .andExpect(jsonPath("$.message").value("이력서를 조회했습니다."))
-                    .andExpect(jsonPath("$.data.userId").value(mockUser.getId()))
-                    .andExpect(jsonPath("$.data.content").value("이력서 내용입니다."))
-                    .andExpect(jsonPath("$.data.skill").value("Java, Spring Boot"))
-                    .andExpect(jsonPath("$.data.activity").value("대외 활동 내용입니다."))
-                    .andExpect(jsonPath("$.data.certification").value("없음"))
-                    .andExpect(jsonPath("$.data.career").value("경력 사항 내용입니다."))
-                    .andExpect(jsonPath("$.data.portfolioUrl").value("http://portfolio.example.com"))
-                    .andDo(print());
+                .andExpect(MockMvcResultMatchers.handler().handlerType(ResumeController::class.java))
+                .andExpect(MockMvcResultMatchers.handler().methodName("readResume"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("OK"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("이력서를 조회했습니다."))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.userId").value(mockUser.id))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.content").value("이력서 내용입니다."))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.skill").value("Java, Spring Boot"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.activity").value("대외 활동 내용입니다."))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.certification").value("없음"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.career").value("경력 사항 내용입니다."))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.portfolioUrl").value("http://portfolio.example.com"))
+                .andDo(MockMvcResultHandlers.print())
         }
 
         @Test
         @DisplayName("유저가 존재하지 않을 때")
-        void fail1() throws Exception {
+        @Throws(Exception::class)
+        fun fail1() {
             // given
-            userRepository.deleteAll();
+            userRepository.deleteAll()
             // when
-            ResultActions resultActions = mockMvc.perform(
-                    get("/api/v1/users/resumes")
-                            .accept(MediaType.APPLICATION_JSON)
-                            .contentType(MediaType.APPLICATION_JSON)
-            );
+            val resultActions = mockMvc!!.perform(
+                MockMvcRequestBuilders.get("/api/v1/users/resumes")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
             // then
             resultActions
-                    .andExpect(handler().handlerType(ResumeController.class))
-                    .andExpect(handler().methodName("getResume"))
-                    .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("$.status").value("NOT_FOUND"))
-                    .andExpect(jsonPath("$.message").value("유저를 찾을 수 없습니다."))
-                    .andDo(print());
+                .andExpect(MockMvcResultMatchers.handler().handlerType(ResumeController::class.java))
+                .andExpect(MockMvcResultMatchers.handler().methodName("readResume"))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("NOT_FOUND"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("유저를 찾을 수 없습니다."))
+                .andDo(MockMvcResultHandlers.print())
         }
-
     }
-
 }
