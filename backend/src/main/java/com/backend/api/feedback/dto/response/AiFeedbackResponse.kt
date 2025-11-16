@@ -1,7 +1,7 @@
-package com.backend.api.feedback.dto.response;
+package com.backend.api.feedback.dto.response
 
-public record AiFeedbackResponse(
-        String content,
-        int score
-) {
-}
+
+data class AiFeedbackResponse(
+    val content: String,
+    val score: Int
+)

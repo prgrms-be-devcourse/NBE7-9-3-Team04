@@ -1,6 +1,6 @@
-package com.backend.api.feedback.event.publisher;
+package com.backend.api.feedback.event.publisher
 
-import com.backend.domain.answer.entity.Answer;
+import com.backend.domain.answer.entity.Answer
 
-public record FeedbackUpdateEvent(Answer answer) {
-}
+
+data class FeedbackUpdateEvent(val answer: Answer)

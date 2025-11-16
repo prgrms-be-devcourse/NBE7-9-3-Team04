@@ -1,13 +1,16 @@
-package com.backend.api.feedback.dto.response;
+package com.backend.api.feedback.dto.response
 
-import com.backend.domain.feedback.entity.Feedback;
+import com.backend.domain.feedback.entity.Feedback
 
-public record FeedbackReadResponse(
-        Long feedbackId,
-        String content,
-        int score
+
+data class FeedbackReadResponse(
+    val feedbackId: Long,
+    val content: String,
+    val score: Int
 ) {
-    public static FeedbackReadResponse from(Feedback feedback) {
-        return new FeedbackReadResponse(feedback.getId(),feedback.getContent(),feedback.getAiScore());
+    companion object {
+        fun from(feedback: Feedback): FeedbackReadResponse {
+            return FeedbackReadResponse(feedback.id, feedback.content, feedback.aiScore)
+        }
     }
 }

@@ -1,10 +1,9 @@
-package com.backend.domain.feedback.repository;
+package com.backend.domain.feedback.repository
 
-import com.backend.domain.feedback.entity.Feedback;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.backend.domain.feedback.entity.Feedback
+import org.springframework.data.jpa.repository.JpaRepository
+import java.util.*
 
-import java.util.Optional;
-
-public interface FeedbackRepository extends JpaRepository<Feedback,Long> {
-    Optional<Feedback> findByAnswerId(Long answerId);
+interface FeedbackRepository : JpaRepository<Feedback, Long> {
+    fun findByAnswerId(answerId: Long): Feedback?
 }

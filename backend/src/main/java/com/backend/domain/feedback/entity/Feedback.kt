@@ -1,44 +1,46 @@
-package com.backend.domain.feedback.entity;
+package com.backend.domain.feedback.entity
 
-import com.backend.domain.answer.entity.Answer;
-import com.backend.global.entity.BaseEntity;
-import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import com.backend.domain.answer.entity.Answer
+import com.backend.global.entity.BaseEntity
+import jakarta.persistence.*
+import lombok.AccessLevel
+import lombok.AllArgsConstructor
+import lombok.Builder
+import lombok.NoArgsConstructor
 
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
-public class Feedback extends BaseEntity {
-
-    @Column(nullable = false,columnDefinition = "TEXT")
-    private String content;
+class Feedback(
+    @Column(nullable = false, columnDefinition = "TEXT")
+    var content: String,
 
     @Column(nullable = false)
-    private Integer aiScore;
+    var aiScore: Int,
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "answer_id", unique = true) // FK는 Feedback이 갖음
-    private Answer answer;
+    var answer: Answer
+) : BaseEntity() {
 
-    public void update(Answer answer, int score, String content) {
-        this.answer = answer;
-        this.aiScore = score;
-        this.content = content;
+    fun update(answer: Answer, score: Int, content: String) {
+        this.answer = answer
+        this.aiScore = score
+        this.content = content
+    }
+    companion object {
+        @JvmStatic
+        fun builder() = Builder()
     }
 
-    public String getContent() {
-        return content;
+    class Builder {
+        private var content: String = ""
+        private var aiScore: Int = 0
+        private lateinit var answer: Answer
+
+        fun content(content: String) = apply { this.content = content }
+        fun aiScore(aiScore: Int) = apply { this.aiScore = aiScore }
+        fun answer(answer: Answer) = apply { this.answer = answer }
+
+        fun build() = Feedback(content, aiScore, answer)
     }
 
-    public Integer getAiScore() {
-        return aiScore;
-    }
-
-    public Answer getAnswer() {
-        return answer;
-    }
 }
