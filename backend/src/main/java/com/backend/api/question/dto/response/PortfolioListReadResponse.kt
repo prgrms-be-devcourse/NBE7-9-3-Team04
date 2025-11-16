@@ -1,14 +1,18 @@
-package com.backend.api.question.dto.response;
-
-import java.util.List;
+package com.backend.api.question.dto.response
 
 
-public record PortfolioListReadResponse(
-        String title,
-        Long count,
-        List<PortfolioReadResponse> questions
+data class PortfolioListReadResponse(
+    val title: String,
+    val count: Long,
+    val questions: List<PortfolioReadResponse>
 ) {
-    public static PortfolioListReadResponse from(String title,Long count,List<PortfolioReadResponse> questions) {
-        return new PortfolioListReadResponse(title,count, questions);
+    companion object {
+        fun from(
+            title: String,
+            count: Long,
+            questions: List<PortfolioReadResponse>
+        ): PortfolioListReadResponse {
+            return PortfolioListReadResponse(title, count, questions)
+        }
     }
 }

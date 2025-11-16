@@ -58,7 +58,7 @@ class FeedbackService(
         )
         feedbackRepository.save<Feedback?>(feedback)
 
-        val baseScore = question.getScore()
+        val baseScore = question.score
         val ratio = feedback.aiScore / 100.0
         val finalScore = Math.round(ratio * baseScore).toInt()
 
@@ -73,7 +73,7 @@ class FeedbackService(
         val feedback = getFeedbackByAnswerId(answer.id)
         feedback.update(answer, aiFeedback.score, aiFeedback.content)
 
-        val baseScore = question.getScore()
+        val baseScore = question.score
         val ratio = feedback.aiScore / 100.0
         val finalScore = Math.round(ratio * baseScore).toInt()
 
@@ -89,7 +89,7 @@ class FeedbackService(
 
     fun createAiFeedback(question: Question, answer: Answer): AiFeedbackResponse {
         // 리퀘스트 dto 정의
-        val request = AiFeedbackRequest.of(question.getContent(), answer.content)
+        val request = AiFeedbackRequest.of(question.content, answer.content)
 
         val prompt = createPrompt(request.systemMessage, request.userMessage, request.assistantMessage)
 

@@ -1,18 +1,15 @@
-package com.backend.api.question.dto.response;
+package com.backend.api.question.dto.response
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.format.annotation.DateTimeFormat;
+import com.fasterxml.jackson.annotation.JsonFormat
+import java.time.LocalDateTime
+import java.util.*
 
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.UUID;
-
-public record AiQuestionReadResponse(
-    UUID groupId,
-    String title,
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    LocalDateTime date,
-    Long count
-) {
-}
+data class AiQuestionReadResponse(
+    val groupId: UUID,
+    val title: String,
+    @field:JsonFormat(pattern = "yyyy-MM-dd HH:mm") @param:JsonFormat(
+        pattern = "yyyy-MM-dd HH:mm"
+    ) val date: LocalDateTime,
+    @JvmField val count: Long
+) 

@@ -1,14 +1,20 @@
-package com.backend.api.question.dto.request;
+package com.backend.api.question.dto.request
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema
 
-public record MessagesRequest(
-        @Schema(description = "프롬프트 작성 규칙")
-        String role,
-        @Schema(description = "프롬프트 내용")
-        String content
+
+data class MessagesRequest(
+    @field:Schema(description = "프롬프트 작성 규칙") @param:Schema(
+        description = "프롬프트 작성 규칙"
+    ) val role: String?,
+    @field:Schema(description = "프롬프트 내용") @param:Schema(
+        description = "프롬프트 내용"
+    ) val content: String?
 ) {
-    public static MessagesRequest of(String role ,String content){
-        return new MessagesRequest(role,content);
+    companion object {
+        @JvmStatic
+        fun of(role: String?, content: String?): MessagesRequest {
+            return MessagesRequest(role, content)
+        }
     }
 }

@@ -1,13 +1,14 @@
-package com.backend.api.question.dto.response;
+package com.backend.api.question.dto.response
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*
 
-public record AIQuestionCreateResponse(
-        UUID groudId,
-        List<AiQuestionResponse> questions
+data class AIQuestionCreateResponse(
+    val groudId: UUID?,
+    val questions: List<AiQuestionResponse>
 ) {
-    public static AIQuestionCreateResponse from(UUID groudId, List<AiQuestionResponse> responses){
-        return new AIQuestionCreateResponse(groudId,responses);
+    companion object {
+        fun from(groudId: UUID?, responses: List<AiQuestionResponse>): AIQuestionCreateResponse {
+            return AIQuestionCreateResponse(groudId, responses)
+        }
     }
 }

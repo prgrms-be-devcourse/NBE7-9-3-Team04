@@ -1,7 +1,7 @@
-package com.backend.api.question.dto.response;
+package com.backend.api.question.dto.response
 
-public record PortfolioReadResponse(
-        Long id,
-        String content
-) {
-}
+
+data class PortfolioReadResponse(
+    val id: Long,
+    val content: String
+)

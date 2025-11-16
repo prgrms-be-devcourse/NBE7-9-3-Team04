@@ -1,10 +1,11 @@
 package com.backend.global.ai.handler
 
+import com.backend.global.exception.ErrorCode
+import com.backend.global.exception.ErrorException
 import lombok.RequiredArgsConstructor
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.openai.OpenAiChatModel
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.cglib.core.internal.Function
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
 
@@ -25,12 +26,13 @@ class AiRequestHandler(
         return mapper(chatClient)
     }
 
-    fun <T> connectionAi(request: T): String? {
+    fun <T> connectionAi(request: T): String {
         return restClient.post()
             .uri(apiUrl)
             .header("Authorization", "Bearer " + apiKey)
             .body(request!!)
             .retrieve()
             .body(String::class.java)
+            ?: throw ErrorException(ErrorCode.AI_SERVICE_ERROR)
     }
 }

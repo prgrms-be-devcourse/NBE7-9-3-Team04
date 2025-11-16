@@ -1,34 +1,41 @@
-package com.backend.api.question.dto.response;
+package com.backend.api.question.dto.response
 
-import com.backend.domain.question.entity.Question;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.v3.oas.annotations.media.Schema;
-
-import java.util.List;
+import com.backend.domain.question.entity.Question
+import com.fasterxml.jackson.annotation.JsonProperty
+import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(description = "AI 면접 질문 생성 응답")
-public record AiQuestionResponse(
-        @Schema(description = "제목")
-        @JsonProperty("title")
-        String title,
-        @Schema(description = "내용")
-        @JsonProperty("content")
-        String content,
-        @Schema(description = "점수")
-        @JsonProperty("score")
-        Integer score
+
+data class AiQuestionResponse(
+    @field:JsonProperty("title") @field:Schema(
+        description = "제목"
+    ) @param:Schema(description = "제목") @param:JsonProperty(
+        "title"
+    ) val title: String,
+    @field:JsonProperty("content") @field:Schema(
+        description = "내용"
+    ) @param:Schema(description = "내용") @param:JsonProperty(
+        "content"
+    ) val content: String,
+    @field:JsonProperty("score") @field:Schema(
+        description = "점수"
+    ) @param:Schema(description = "점수") @param:JsonProperty(
+        "score"
+    ) val score: Int
 ) {
-        public static List<AiQuestionResponse> toDtoList(List<Question> questions){
-                return questions.stream()
-                        .map(AiQuestionResponse::toDto)
-                        .toList();
+    companion object {
+        fun toDtoList(questions: List<Question>): List<AiQuestionResponse> {
+            return questions.stream()
+                .map{ question: Question -> toDto(question) }
+                .toList()
         }
 
-        public static AiQuestionResponse toDto(Question question) {
-                return new AiQuestionResponse(
-                        question.getTitle(),
-                        question.getContent(),
-                        question.getScore()
-                );
+        fun toDto(question: Question): AiQuestionResponse {
+            return AiQuestionResponse(
+                question.title,
+                question.content,
+                question.score
+            )
         }
+    }
 }
