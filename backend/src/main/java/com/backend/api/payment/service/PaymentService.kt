@@ -15,7 +15,7 @@ class PaymentService(
 ) {
 
     @Transactional(readOnly = true)
-    fun geyPaymentByKey(paymentKey: String): PaymentResponse {
+    fun getPaymentByKey(paymentKey: String): PaymentResponse {
         val payment= paymentRepository.findByPaymentKey(paymentKey)
             ?: throw ErrorException(ErrorCode.PAYMENT_NOT_FOUND)
 

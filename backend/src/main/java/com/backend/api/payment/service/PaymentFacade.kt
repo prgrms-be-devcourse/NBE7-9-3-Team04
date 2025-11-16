@@ -6,6 +6,8 @@ import com.backend.api.payment.dto.response.PaymentResponse
 import com.backend.domain.payment.entity.Payment
 import com.backend.domain.payment.entity.PaymentStatus
 import com.backend.global.Rq.Rq
+import com.backend.global.exception.ErrorCode
+import com.backend.global.exception.ErrorException
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
@@ -19,7 +21,9 @@ class PaymentFacade(
     fun confirmPayment(request: PaymentRequest): PaymentResponse {
         val user = rq.getUser()
 
+        // 트랜잭션이 시작되기 전, 안전한 위치에서 block
         val response = tossPaymentClient.confirmPayment(request)
+            .block() ?: throw ErrorException(ErrorCode.PAYMENT_APPROVE_FAILED)
 
         val payment = Payment(
             orderId = response.orderId,

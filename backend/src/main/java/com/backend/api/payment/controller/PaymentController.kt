@@ -33,7 +33,7 @@ class PaymentController(
     fun getPaymentByKey(
         @PathVariable paymentKey: String
     ): ApiResponse<PaymentResponse> {
-        val response = paymentService.geyPaymentByKey(paymentKey)
+        val response = paymentService.getPaymentByKey(paymentKey)
         return ApiResponse.ok("결제 정보를 조회합니다", response)
     }
 

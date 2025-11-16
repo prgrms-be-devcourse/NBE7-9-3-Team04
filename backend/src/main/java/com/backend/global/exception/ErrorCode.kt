@@ -89,6 +89,7 @@ enum class ErrorCode(
     PAYMENT_LOAD_FAILED(HttpStatus.BAD_REQUEST, "결제 조회를 실패했습니다."),
     PAYMENT_CANCEL_FAILED(HttpStatus.BAD_REQUEST, "결제 취소를 실패했습니다."),
     PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "결제 내역을 찾을 수 없습니다."),
+    PAYMENT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "결제 처리 중 오류가 발생했습니다."),
     AUTO_PAYMENT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "자동 결제 처리 중 오류가 발생했습니다."),
 
     //billing
