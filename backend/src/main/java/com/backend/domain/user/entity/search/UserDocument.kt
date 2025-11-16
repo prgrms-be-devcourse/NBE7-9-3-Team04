@@ -7,50 +7,36 @@ import org.springframework.data.elasticsearch.annotations.Field
 import org.springframework.data.elasticsearch.annotations.FieldType
 
 @Document(indexName = "users", createIndex = false)
-open class UserDocument(
+class UserDocument(
 
     @Id
-    var id: String? = null,
+    var id: String,
 
     @Field(type = FieldType.Text, analyzer = "nori_analyzer", searchAnalyzer = "nori_analyzer")
-    var name: String? = null,
+    var name: String,
 
     @Field(type = FieldType.Text, analyzer = "nori_analyzer", searchAnalyzer = "nori_analyzer")
-    var nickname: String? = null,
+    var nickname: String,
 
     @Field(type = FieldType.Keyword)
-    var email: String? = null,
+    var email: String,
 
     @Field(type = FieldType.Keyword)
-    var role: Role? = null
+    var role: Role
 
 ) {
-    protected constructor() : this(null, null, null, null, null)
+    // JPA/ES 에 필요한 기본 생성자
+    protected constructor() : this("", "", "", "", Role.USER)
 
     companion object {
-        fun builder(): Builder = Builder()
-    }
-
-    class Builder {
-        private var id: String? = null
-        private var name: String? = null
-        private var nickname: String? = null
-        private var email: String? = null
-        private var role: Role? = null
-
-        fun id(id: String) = apply { this.id = id }
-        fun name(name: String) = apply { this.name = name }
-        fun nickname(nickname: String) = apply { this.nickname = nickname }
-        fun email(email: String) = apply { this.email = email }
-        fun role(role: Role) = apply { this.role = role }
-
-        fun build(): UserDocument {
+        // Kotlin 팩토리 메서드
+        fun from(user: com.backend.domain.user.entity.User): UserDocument {
             return UserDocument(
-                id = id,
-                name = name,
-                nickname = nickname,
-                email = email,
-                role = role
+                id = user.id.toString(),
+                name = user.name,
+                nickname = user.nickname,
+                email = user.email,
+                role = user.role
             )
         }
     }

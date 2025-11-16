@@ -19,13 +19,7 @@ class UserDataSyncRunner(
         val users = userRepository.findAll()
 
         val docs = users.map { u ->
-            UserDocument.builder()
-                .id(u.id.toString())
-                .name(u.name)
-                .nickname(u.nickname)
-                .email(u.email)
-                .role(u.role)       // 필요 시 직접 포함
-                .build()
+            UserDocument.from(u)
         }
 
         userSearchRepository.saveAll(docs)

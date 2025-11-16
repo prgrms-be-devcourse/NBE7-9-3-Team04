@@ -76,15 +76,8 @@ class UserService(
 
         userRepository.save(user)
 
-        //TODO UserDocument builder 제거 필요
-        userSearchRepository.save(
-            UserDocument.builder()
-                .id(user.id.toString())
-                .name(user.name)
-                .nickname(user.nickname)
-                .email(user.email)
-                .build()
-        )
+        userSearchRepository.save(UserDocument.from(user))
+
         val basicSubscription = Subscription(
             user = user,
             subscriptionType = SubscriptionType.BASIC,
