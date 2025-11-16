@@ -41,11 +41,9 @@ class BillingFacade(
             ?: throw ErrorException(ErrorCode.BILLING_KEY_NOT_FOUND)
 
         val body = billingService.buildPaymentBody(subscription)
+        val response = tossBillingClient.billingPayment(billingKey, body)
 
-        val paymentRes = tossBillingClient.billingPayment(billingKey, body)
-
-        billingService.savePayment(subscription, paymentRes)
-
+        billingService.savePayment(subscription, response)
         billingService.updateNextBillingDate(subscription)
     }
 }
