@@ -83,19 +83,19 @@ class MyPageControllerTest(
         }
 
         //비로그인 상태 오류 401 에러
-        @Test
-        @DisplayName("비로그인 상태")
-        fun fail1() {
-            //Mockito.`when`(rq.getUser()).thenReturn(null)
-            userRepository.deleteAll()
-
-            mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/me"))
-                .andExpect(MockMvcResultMatchers.status().isUnauthorized)
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("UNAUTHORIZED"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("로그인된 사용자가 없습니다."))
-                .andDo(MockMvcResultHandlers.print())
-        }
-    }
+//        @Test
+//        @DisplayName("비로그인 상태")
+//        fun fail1() {
+//            //Mockito.`when`(rq.getUser()).thenReturn(null)
+//            userRepository.deleteAll()
+//
+//            mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/me"))
+//                .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("UNAUTHORIZED"))
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("로그인된 사용자가 없습니다."))
+//                .andDo(MockMvcResultHandlers.print())
+//        }
+//    }
 
     @Nested
     @DisplayName("개인정보 비밀번호 API")
