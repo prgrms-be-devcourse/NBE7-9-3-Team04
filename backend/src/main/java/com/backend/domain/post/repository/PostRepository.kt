@@ -22,5 +22,5 @@ interface PostRepository : JpaRepository<Post, Long> {
     @EntityGraph(attributePaths = ["users"])
     fun findByPinStatusAndStatusOrderByCreateDateDesc(pinStatus: PinStatus, status: PostStatus): List<Post>
 
-    fun findByStatusAndDeadlineLessThan(status: PostStatus, now: LocalDateTime):List<Post>?
+    fun findByStatusAndDeadlineLessThan(status: PostStatus, now: LocalDateTime):List<Post>
 }

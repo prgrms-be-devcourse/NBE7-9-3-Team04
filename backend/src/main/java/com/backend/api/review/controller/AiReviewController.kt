@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/v1/portfolio-review")
-// @RequiredArgsConstructor // 제거
 @Tag(name = "Portfolio Ai Feedback", description = "포트폴리오 AI 첨삭")
-// 1. 주 생성자 주입 (DI)
 class AiReviewController(
     private val aiReviewService: AiReviewService,
     private val rq: Rq
