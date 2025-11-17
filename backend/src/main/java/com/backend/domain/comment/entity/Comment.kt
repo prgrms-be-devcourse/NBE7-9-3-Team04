@@ -5,13 +5,8 @@ import com.backend.domain.user.entity.User
 import com.backend.global.entity.BaseEntity
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
-import lombok.*
 
 @Entity
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 @Table(
     indexes = [Index(
         name = "idx_comment_post_create",
