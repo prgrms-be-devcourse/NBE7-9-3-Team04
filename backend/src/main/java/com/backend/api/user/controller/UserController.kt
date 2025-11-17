@@ -3,7 +3,6 @@ package com.backend.api.user.controller
 import com.backend.api.user.dto.request.UserLoginRequest
 import com.backend.api.user.dto.request.UserSignupRequest
 import com.backend.api.user.dto.response.UserLoginResponse
-import com.backend.api.user.dto.response.UserLoginResponse.Companion.from
 import com.backend.api.user.dto.response.UserSignupResponse
 import com.backend.api.user.service.EmailService
 import com.backend.api.user.service.UserService
@@ -92,16 +91,12 @@ class UserController(
         return ApiResponse.ok("새로운 토큰이 발급되었습니다.", null)
     }
 
-    @get:Operation(summary = "현재 로그인된 사용자 정보")
-    @get:GetMapping("/check")
-    val currentUser: ApiResponse<UserLoginResponse>
-        get() {
-            val user = rq.getUser()
-            return ApiResponse.ok(
-                "현재 로그인된 사용자 정보입니다.",
-                from(user)
-            )
-        }
+    @GetMapping("/check")
+    @Operation(summary = "현재 로그인된 사용자 정보")
+    fun getCurrentUser(): ApiResponse<UserLoginResponse> {
+        val user = rq.getUser()
+        return ApiResponse.ok("현재 로그인된 사용자 정보입니다.", UserLoginResponse.from(user))
+    }
 
     @PostMapping("/findId")
     @Operation(summary = "아이디 찾기", description = "사용자 아이디를 찾습니다.")

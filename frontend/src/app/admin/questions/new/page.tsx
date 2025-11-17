@@ -7,6 +7,7 @@ import {
   QuestionCategoryType,
   QUESTION_CATEGORY_LIST,
 } from "@/types/question";
+import { toast } from "sonner";
 
 export default function AdminQuestionAddPage() {
   const router = useRouter();
@@ -30,7 +31,7 @@ export default function AdminQuestionAddPage() {
         const res = await fetchApi("/api/v1/users/check", { method: "GET" });
 
         if (res.status !== "OK" || res.data.role !== "ADMIN") {
-          alert("관리자만 접근할 수 있습니다.");
+          toast.error("관리자만 접근할 수 있습니다.");
           router.replace("/auth?returnUrl=/admin/questions/new");
           return;
         }
@@ -60,7 +61,7 @@ export default function AdminQuestionAddPage() {
     e.preventDefault();
 
     if (!formData.title || !formData.content || !formData.category) {
-      alert("모든 필드를 입력해주세요.");
+      toast.error("모든 필드를 입력해주세요.");
       return;
     }
 
@@ -80,13 +81,13 @@ export default function AdminQuestionAddPage() {
       });
 
       if (apiResponse.status === "OK" || apiResponse.status === "CREATED") {
-        alert("질문이 성공적으로 등록되었습니다!");
+        toast.success("질문이 성공적으로 등록되었습니다!");
         router.push("/admin/questions");
       } else {
-        alert(apiResponse.message || "등록에 실패했습니다.");
+        toast.error(apiResponse.message || "등록에 실패했습니다.");
       }
     } catch {
-      alert("서버 오류가 발생했습니다.");
+      toast.error("서버 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
     }

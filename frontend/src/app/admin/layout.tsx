@@ -15,22 +15,22 @@ export default function ProfileLayout({
     {
       title: "사용자 관리",
       href: "/admin",
-      icon: "👥",
+      icon: "🧑‍💻",
     },
     {
       title: "질문 관리",
       href: "/admin/questions",
-      icon: "💬",
+      icon: "📖",
     },
     {
-      title: "게시글 관리",
+      title: "모집글 관리",
       href: "/admin/recruitments",
-      icon: "📰",
+      icon: "👥",
     },
     {
       title: "QnA 관리",
       href: "/admin/qna",
-      icon: "📰",
+      icon: "💬",
     },
     {
       title: "결제 관리",

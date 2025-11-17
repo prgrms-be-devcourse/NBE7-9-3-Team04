@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { fetchApi } from "@/lib/client";
 import { UserMyPageResponse } from "@/types/user";
+import { toast } from "sonner";
 
 export default function MySettingsPage() {
   const router = useRouter();
@@ -74,12 +75,12 @@ export default function MySettingsPage() {
         method: "PUT",
         body: JSON.stringify(formData),
       });
-      alert(res.message || "개인정보가 수정되었습니다.");
+      toast.success(res.message || "개인정보가 수정되었습니다.");
       window.dispatchEvent(new Event("profileUpdated"));
       
     } catch (err: any) {
       console.error(err);
-      alert(err.message || "정보 수정 중 오류가 발생했습니다.");
+      toast.error(err.message || "정보 수정 중 오류가 발생했습니다.");
     }
   };
   if (isLoading) {

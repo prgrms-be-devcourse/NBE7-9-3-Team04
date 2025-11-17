@@ -22,13 +22,6 @@ class UserQuestion(
     var aiScore: Int
 ) : BaseEntity() {
 
-    //TODO 생성자 필요시 생성
-//    constructor() : this(
-//        user = User(),
-//        question = Question(),
-//        aiScore = 0
-//    )
-
     fun updateAiScoreIfHigher(newAiScore: Int?) {
 
         if (newAiScore != null && newAiScore > this.aiScore) {

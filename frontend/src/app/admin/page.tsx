@@ -23,6 +23,7 @@ import {
   AccountStatus,
   ACCOUNT_STATUS_LABELS,
 } from "@/types/user";
+import { toast } from "sonner";
 
 /*계정 상태 뱃지 */
 const getStatusBadge = (status: AccountStatus) => {
@@ -146,17 +147,17 @@ export default function AdminUsersPage() {
       });
 
       if (res.status === "OK") {
-        alert(`사용자 상태가 "${ACCOUNT_STATUS_LABELS[newStatus]}"로 변경되었습니다.`);
+        toast.success(`사용자 상태가 "${ACCOUNT_STATUS_LABELS[newStatus]}"로 변경되었습니다.`);
         setUsers((prev) =>
           prev.map((u) =>
             u.id === userId ? { ...u, accountStatus: newStatus } : u
           )
         );
       } else {
-        alert(res.message || "상태 변경 실패");
+        toast.error(res.message || "상태 변경 실패");
       }
     } catch {
-      alert("서버 오류가 발생했습니다.");
+      toast.error("서버 오류가 발생했습니다.");
     }
   };
 
@@ -175,7 +176,7 @@ export default function AdminUsersPage() {
   return (
     <div className="max-w-7xl mx-auto p-8 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold mb-2">👥 사용자 관리</h1>
+        <h1 className="text-3xl font-bold mb-2">🧑‍💻 사용자 관리</h1>
         <p className="text-gray-500">플랫폼 사용자의 상태를 관리합니다.</p>
       </div>
 

@@ -50,9 +50,9 @@ class EmailEventListener(
                 ?.let { verificationCodeRepository.delete(it) }
 
             // 환영 메일 발송
-            emailService.sendWelcomeMail(user)
+//            emailService.sendWelcomeMail(user)
 
-            log.info("[이메일 이벤트] 회원가입 환영 메일 전송 완료: {}", user.email)
+//            log.info("[이메일 이벤트] 회원가입 환영 메일 전송 완료: {}", user.email)
 
         } catch (e: Exception) {
             log.error(

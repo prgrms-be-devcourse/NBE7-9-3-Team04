@@ -26,7 +26,7 @@ public class GlobalSearchMySQLService {
         List<SearchResultDto> content = userPage.getContent().stream()
                 .map(u -> SearchResultDto.builder()
                         .type("user")
-                        .id(u.getId().toString())
+                        .id(String.valueOf(u.getId()))
                         .title(u.getName())
                         .snippet(u.getNickname())
                         .build())

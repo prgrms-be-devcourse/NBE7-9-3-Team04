@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { fetchApi } from "@/lib/client";
 import { CreateQuestionRequest, QUESTION_CATEGORY_LIST, QuestionResponse } from "@/types/question";
+import { toast } from "sonner";
 
 export default function CsQuestionEditPage() {
   const router = useRouter();
@@ -49,12 +50,12 @@ export default function CsQuestionEditPage() {
             categoryType: data.categoryType,
           });
         } else {
-          alert(res.message || "질문 불러오기 실패");
+          toast.error(res.message || "질문 불러오기 실패");
           router.replace("/interview/cs");
         }
       } catch (err) {
         console.error("질문 불러오기 실패:", err);
-        alert("승인되지 않은 질문이거나 접근 권한이 없습니다.");
+        toast.error("승인되지 않은 질문이거나 접근 권한이 없습니다.");
         router.replace("/interview/cs");
       } finally {
         setIsLoading(false);
@@ -76,14 +77,14 @@ export default function CsQuestionEditPage() {
       });
 
       if (res.status === "OK") {
-        alert("질문이 수정되었습니다!");
+        toast.success("질문이 수정되었습니다!");
         router.replace("/mypage/activity");
       } else {
-        alert(res.message || "질문 수정 실패");
+        toast.error(res.message || "질문 수정 실패");
       }
     } catch (err) {
       console.error(err);
-      alert("수정 중 오류가 발생했습니다.");
+      toast.error("수정 중 오류가 발생했습니다.");
     } finally {
       setIsSubmitting(false);
     }

@@ -14,7 +14,7 @@ class UserPenalty(
     val user: User,
 
     @Column(nullable = false, length = 255)
-    val reason: String,
+    val reason: String?,
 
     @Column(nullable = false)
     val startAt: LocalDateTime,

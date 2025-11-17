@@ -48,7 +48,7 @@ public class UserMyPageService {
                 modify.getGithub(),
                 modify.getImage()
         );
-        if (!rq.getUser().getId().equals(userId)) {
+        if (rq.getUser().getId() != userId) {
             throw new ErrorException(ErrorCode.SELF_INFORMATION);
         }
 

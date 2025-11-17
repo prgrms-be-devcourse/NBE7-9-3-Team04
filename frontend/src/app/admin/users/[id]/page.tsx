@@ -9,6 +9,7 @@ import {
   AccountStatus,
   ACCOUNT_STATUS_LABELS,
 } from "@/types/user";
+import { toast } from "sonner";
 
 export default function AdminUserDetailPage() {
   const { id } = useParams();
@@ -40,9 +41,9 @@ export default function AdminUserDetailPage() {
     try {
       const res = await fetchApi(`/api/v1/admin/users/${id}`, { method: "GET" });
       if (res.status === "OK") setUser(res.data);
-      else alert(res.message || "사용자 정보를 불러오지 못했습니다.");
+      else toast.error(res.message || "사용자 정보를 불러오지 못했습니다.");
     } catch {
-      alert("서버 오류가 발생했습니다.");
+      toast.error("서버 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
     }
@@ -58,7 +59,7 @@ export default function AdminUserDetailPage() {
 
     // 정지/영구정지 시 사유 필수
     if (status !== "ACTIVE" && !reason.trim()) {
-      return alert("정지 사유를 입력해주세요.");
+      return toast.error("정지 사유를 입력해주세요.");
     }
 
     const body: AdminUserStatusUpdateRequest = {
@@ -75,7 +76,7 @@ export default function AdminUserDetailPage() {
       });
 
       if (res.status === "OK") {
-        alert(`"${ACCOUNT_STATUS_LABELS[status]}" 상태로 변경되었습니다.`);
+        toast.success(`"${ACCOUNT_STATUS_LABELS[status]}" 상태로 변경되었습니다.`);
         setShowModal(false);
         setReason("");
         setSuspendEndDate("");
@@ -83,10 +84,10 @@ export default function AdminUserDetailPage() {
         // 상세 페이지 새로고침
         window.location.href = `/admin/users/${user.id}`;
       } else {
-        alert(res.message || "상태 변경 실패");
+        toast.error(res.message || "상태 변경 실패");
       }
     } catch {
-      alert("서버 오류가 발생했습니다.");
+      toast.error("서버 오류가 발생했습니다.");
     } finally {
       setIsProcessing(false);
     }

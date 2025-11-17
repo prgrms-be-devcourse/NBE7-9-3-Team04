@@ -61,6 +61,10 @@ class AnswerController(
         val currentUser: User = rq.getUser()
         answerService.deleteAnswer(currentUser, answerId)
 
+        val a:Int = 1
+        var b:Int? = null
+        b = a
+
         return ApiResponse.ok(
             "${answerId}번 답변이 삭제되었습니다.",
             null

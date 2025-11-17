@@ -2,6 +2,7 @@
 import { fetchApi } from "@/lib/client";  
 import { ResumeCreateRequest } from "@/types/resume";
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 export default function MyResumePage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -37,12 +38,12 @@ export default function MyResumePage() {
         method: "POST",
         body: JSON.stringify(resumeData),
       });
-      alert("이력서가 성공적으로 등록되었습니다.");
+      toast.success("이력서가 성공적으로 등록되었습니다.");
       setResumeData(res.data);
       setIsEditing(true);
     } catch (error) {
       console.error("이력서 등록 실패:", error);
-      alert("이력서 등록 중 오류가 발생했습니다.");
+      toast.error("이력서 등록 중 오류가 발생했습니다.");
     }
   };
 
@@ -53,10 +54,10 @@ export default function MyResumePage() {
         method: "PUT",
         body: JSON.stringify(resumeData),
       });
-      alert("이력서가 성공적으로 수정되었습니다.");
+      toast.success("이력서가 성공적으로 수정되었습니다.");
     } catch (error) {
       console.error("이력서 수정 실패:", error);
-      alert("이력서 수정 중 오류가 발생했습니다.");
+      toast.error("이력서 수정 중 오류가 발생했습니다.");
     }
   };
 

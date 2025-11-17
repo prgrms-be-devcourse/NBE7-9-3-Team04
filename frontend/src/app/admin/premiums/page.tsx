@@ -12,6 +12,7 @@ import {
 
 import { AdminPayment, AdminPaymentSummary } from "@/types/payment";
 import { fetchApi } from "@/lib/client";
+import { toast } from "sonner";
 
 export default function AdminPaymentsPage() {
   const [payments, setPayments] = useState<AdminPayment[]>([]);
@@ -32,7 +33,7 @@ export default function AdminPaymentsPage() {
         setSummary(summaryRes.data)
       } catch (error: any) {
         console.error("결제 정보 조회 실패:", error.message)
-        alert(error.message || "결제 데이터를 불러오지 못했습니다.")
+        toast.error(error.message || "결제 데이터를 불러오지 못했습니다.")
       } finally {
         setLoading(false)
       }
@@ -56,7 +57,7 @@ export default function AdminPaymentsPage() {
     <div className="max-w-7xl mx-auto p-8 space-y-8">
 
       <div>
-        <h1 className="text-3xl font-bold mb-2">💳 결제 관리</h1>
+        <h1 className="text-3xl font-bold mb-2">💰 결제 관리</h1>
         <p className="text-gray-500">
           프리미엄 멤버십 결제 내역과 통계를 조회합니다
         </p>

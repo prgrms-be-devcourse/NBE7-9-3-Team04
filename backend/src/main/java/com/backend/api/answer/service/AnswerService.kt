@@ -16,7 +16,6 @@ import com.backend.domain.user.entity.User
 import com.backend.global.Rq.Rq
 import com.backend.global.exception.ErrorCode
 import com.backend.global.exception.ErrorException
-import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -24,7 +23,6 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 class AnswerService(
     private val answerRepository: AnswerRepository,
@@ -100,14 +98,14 @@ class AnswerService(
         return AnswerPageResponse.from(answersPage, answers)
     }
 
-    fun findMyAnswer(questionId: Long): AnswerReadResponse? {
+    fun findMyAnswer(questionId: Long): AnswerReadResponse {
         // 질문 존재 여부 확인
         questionService.findByIdOrThrow(questionId)
 
         val currentUser = rq.getUser()
 
         // 질문에 대해 현재 사용자가 작성한 답변 조회
-        return answerRepository.findFirstByQuestionIdAndAuthorId(questionId, currentUser.id!!)
+        return answerRepository.findFirstByQuestionIdAndAuthorId(questionId, currentUser.id)
             .map { answer: Answer -> AnswerReadResponse.from(answer) } // 있으면 DTO로 변환
             .orElse(null) // 없으면 null 반환
     }

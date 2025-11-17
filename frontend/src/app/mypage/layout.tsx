@@ -48,7 +48,7 @@ export default function ProfileLayout({
     <>
       <div className="max-w-screen-xl mx-auto px-6 py-10">
         <div className="mb-10">
-          <h1 className="text-3xl font-bold mb-2">마이페이지</h1>
+          <h1 className="text-3xl font-bold mb-2">🧑‍💻 마이페이지</h1>
           <p className="text-gray-500">내 활동과 정보를 관리하세요</p>
         </div>
 

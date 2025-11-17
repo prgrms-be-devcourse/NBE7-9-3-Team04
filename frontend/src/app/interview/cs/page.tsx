@@ -194,7 +194,7 @@ export default function CsQuestionPage() {
     <div className="max-w-screen-xl mx-auto px-6 py-10">
       {/* 헤더 */}
       <div className="mb-10">
-        <h1 className="text-3xl font-bold mb-2">CS 면접 질문</h1>
+        <h1 className="text-3xl font-bold mb-2">💻 CS 면접 질문</h1>
         <p className="text-gray-500">컴퓨터 과학 지식을 문제로 학습하세요</p>
       </div>
 

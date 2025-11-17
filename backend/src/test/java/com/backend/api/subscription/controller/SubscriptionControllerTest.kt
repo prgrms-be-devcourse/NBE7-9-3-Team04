@@ -8,24 +8,21 @@ import com.backend.domain.user.entity.Role
 import com.backend.domain.user.entity.User
 import com.backend.domain.user.repository.UserRepository
 import com.backend.global.Rq.Rq
-import org.assertj.core.api.AssertionsForClassTypes
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.TestConstructor
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -35,23 +32,20 @@ import java.time.LocalDateTime
 @AutoConfigureMockMvc(addFilters = false)
 @Transactional
 @ActiveProfiles("test")
-class SubscriptionControllerTest {
-    @Autowired
-    lateinit var mockMvc: MockMvc
-
-    @Autowired
-    lateinit var subscriptionRepository: SubscriptionRepository
-
-    @Autowired
-    lateinit var userRepository: UserRepository
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
+class SubscriptionControllerTest(
+    private val mockMvc: MockMvc,
+    private val subscriptionRepository: SubscriptionRepository,
+    private val userRepository: UserRepository,
+) {
 
     @MockBean
     lateinit var rq: Rq
 
-    private lateinit var testUser1: User
-    private lateinit var testUser2: User
-    private lateinit var activeSubscription: Subscription
-    private lateinit var deactiveSubscription: Subscription
+    lateinit var testUser1: User
+    lateinit var testUser2: User
+    lateinit var activeSubscription: Subscription
+    lateinit var deactiveSubscription: Subscription
 
     @BeforeEach
     fun setUp() {
@@ -130,7 +124,7 @@ class SubscriptionControllerTest {
 
             //when
             val resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.get("/api/v1/subscriptions/me")
+                get("/api/v1/subscriptions/me")
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
 
@@ -150,7 +144,7 @@ class SubscriptionControllerTest {
                 .andExpect(jsonPath("$.data.price").value(9900))
                 .andExpect(jsonPath("$.data.customerKey").value("customerKey123"))
                 .andExpect(jsonPath("$.data.billingKey").value("billingKey123"))
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
         }
 
         @Test
@@ -179,7 +173,7 @@ class SubscriptionControllerTest {
 
             //when
             val resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.get("/api/v1/subscriptions/me")
+                get("/api/v1/subscriptions/me")
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
 
@@ -192,7 +186,7 @@ class SubscriptionControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value("NOT_FOUND"))
                 .andExpect(jsonPath("$.message").value("해당 고객의 구독 정보를 찾을 수 없습니다."))
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
         }
     }
 
@@ -205,12 +199,12 @@ class SubscriptionControllerTest {
         fun success() {
             //given
 
-            Mockito.`when`<User>(rq.getUser()).thenReturn(testUser1)
+            Mockito.`when`(rq.getUser()).thenReturn(testUser1)
 
 
             //when
             val resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.delete(
+                delete(
                     "/api/v1/subscriptions/cancel/{customerKey}",
                     activeSubscription.customerKey
                 )
@@ -226,9 +220,9 @@ class SubscriptionControllerTest {
                 .andExpect(jsonPath("$.status").value("OK"))
                 .andExpect(jsonPath("$.message").value("구독이 성공적으로 취소되었습니다."))
                 .andExpect(jsonPath("$.data.customerKey").value(activeSubscription.customerKey))
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
 
-            val updated= subscriptionRepository.findByCustomerKey(activeSubscription.customerKey!!)
+            val updated= subscriptionRepository.findByCustomerKey(activeSubscription.customerKey)
 
             assert(updated?.billingKey == null)
         }
@@ -243,7 +237,7 @@ class SubscriptionControllerTest {
 
             //when
             val resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.delete(
+                delete(
                     "/api/v1/subscriptions/cancel/{customerKey}",
                     deactiveSubscription.customerKey
                 )
@@ -258,7 +252,7 @@ class SubscriptionControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.message").value("비활성화된 구독입니다."))
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
         }
 
         @Test
@@ -271,7 +265,7 @@ class SubscriptionControllerTest {
 
             //when
             val resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.delete("/api/v1/subscriptions/cancel/{customerKey}", "invalid_key")
+                delete("/api/v1/subscriptions/cancel/{customerKey}", "invalid_key")
                     .accept(MediaType.APPLICATION_JSON)
 
             )
@@ -283,7 +277,7 @@ class SubscriptionControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value("NOT_FOUND"))
                 .andExpect(jsonPath("$.message").value("해당 고객의 구독 정보를 찾을 수 없습니다."))
-                .andDo(MockMvcResultHandlers.print())
+                .andDo(print())
         }
     }
 }

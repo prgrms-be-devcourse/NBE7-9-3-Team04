@@ -73,7 +73,7 @@ public class ResumeService {
     }
 
     private void validateResumeAuthor(Resume resume, User user) {
-        if (!resume.getUser().getId().equals(user.getId())) {
+        if (resume.getUser().getId() != user.getId()) {
             throw new ErrorException(ErrorCode.INVALID_USER);
         }
     }

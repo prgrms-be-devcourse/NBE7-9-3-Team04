@@ -75,7 +75,7 @@ export default function RankingPage() {
     <div className="max-w-screen-xl mx-auto px-6 py-10">
       {/* 제목 */}
       <div className="mb-10">
-        <h1 className="text-3xl font-bold mb-2">랭킹 & 티어</h1>
+        <h1 className="text-3xl font-bold mb-2">🏆 랭킹 & 티어</h1>
         <p className="text-gray-500">문제를 풀고 티어를 올려보세요!</p>
       </div>
 
@@ -245,7 +245,6 @@ export default function RankingPage() {
       </div>
 
       {/* 전체 랭킹 */}
-      {/* 전체 랭킹 */}
       <div className="bg-white rounded-xl p-6 shadow-lg border-2 border-gray-200">
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-xl font-bold">전체 랭킹</h3>
@@ -274,7 +273,6 @@ export default function RankingPage() {
           </div>
         </div>
 
-        {/* 전체 랭킹 */}
         <div className="space-y-3">
           {sortedRankings.map((user, index) => (
             <div
@@ -285,14 +283,19 @@ export default function RankingPage() {
                 {getRankEmoji(user.rankValue)}
               </div>
 
-              <div
-                className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-md ${
-                  index < 3
-                    ? "bg-white text-gray-800"
-                    : "bg-gray-200 text-gray-700"
-                }`}
-              >
-                {user.nickName[0]}
+              <div className="relative w-12 h-12">
+                <div
+                  className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-md transition-all duration-300 ${
+                    index < 3
+                      ? "bg-white text-gray-800"
+                      : "bg-gray-200 text-gray-700"
+                  }`}
+                >
+                  {user.nickName[0]}
+                </div>
+                <div className="absolute -bottom-1 -right-1 text-xl">
+                  {tierOf(user.currentTier).icon}
+                </div>
               </div>
 
               <div className="flex-1">

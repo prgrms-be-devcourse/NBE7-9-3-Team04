@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { fetchApi } from "@/lib/client";
-
 import { Question, Feedback } from "@/types/aiquestion";
+import { toast } from "sonner";
 
 export default function PortfolioQuestionDetailPage() {
   const router = useRouter();
@@ -20,7 +20,7 @@ export default function PortfolioQuestionDetailPage() {
   const [loading, setLoading] = useState(false);
   const [feedbackLoading, setFeedbackLoading] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
-  const [alertMsg, setAlertMsg] = useState<string | null>(null);
+  //const [alertMsg, setAlertMsg] = useState<string | null>(null);
 
   const current = questions[currentIndex];
   const progress = ((currentIndex + 1) / questions.length) * 100;
@@ -60,7 +60,7 @@ export default function PortfolioQuestionDetailPage() {
           3000
         );
       } else {
-        setAlertMsg("❌ 피드백 조회 실패");
+        toast.error("❌ 피드백 조회 실패");
         setShowFeedback(true);
         setFeedbackLoading(false);
       }
@@ -116,7 +116,7 @@ export default function PortfolioQuestionDetailPage() {
         }
       } catch (err) {
         console.error("❌ 질문 조회 실패:", err);
-        setAlertMsg("질문 조회 중 오류가 발생했습니다.");
+        toast.error("질문 조회 중 오류가 발생했습니다.");
       }
     };
 
@@ -128,8 +128,7 @@ export default function PortfolioQuestionDetailPage() {
   // -------------------------------
   const handleSubmit = async () => {
     if (!input.trim()) {
-      setAlertMsg("답변을 입력해주세요!");
-      setTimeout(() => setAlertMsg(null), 2000);
+      toast.error("답변을 입력해주세요!");
       return;
     }
 
@@ -151,7 +150,7 @@ export default function PortfolioQuestionDetailPage() {
       fetchFeedbackWithRetry(current.id);
     } catch (err) {
       console.error("❌ 답변 생성 실패:", err);
-      setAlertMsg("답변 생성 중 오류가 발생했습니다.");
+      toast.error("답변 생성 중 오류가 발생했습니다.");
       setLoading(false);
       setFeedbackLoading(false);
     } finally {
@@ -167,7 +166,6 @@ export default function PortfolioQuestionDetailPage() {
       setCurrentIndex((prev) => prev + 1);
       setInput("");
       setShowFeedback(false);
-      setAlertMsg(null);
     }
   };
 
@@ -289,12 +287,12 @@ export default function PortfolioQuestionDetailPage() {
         </div>
       )}
 
-      {/* 경고 메시지 */}
+      {/* 경고 메시지
       {alertMsg && (
         <div className="mt-4 text-red-500 font-medium text-center">
           {alertMsg}
-        </div>
-      )}
+        </div> */}
+      {/* )} */}
     </div>
   );
 }

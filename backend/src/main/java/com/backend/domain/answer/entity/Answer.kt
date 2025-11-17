@@ -27,7 +27,6 @@ class Answer(
 
     @OneToOne(mappedBy = "answer", cascade = [CascadeType.REMOVE])
     var feedback: Feedback? = null
-        protected set
 
     fun update(content: String?, isPublic: Boolean?) {
         if (content != null && !content.isBlank()) {

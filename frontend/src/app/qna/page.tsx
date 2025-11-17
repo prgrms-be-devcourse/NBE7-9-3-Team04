@@ -86,7 +86,7 @@ export default function QnAPage() {
       <div className="w-full max-w-5xl space-y-10">
         {/* 상단 헤더 */}
         <div className="text-center">
-          <h1 className="text-4xl font-bold mb-2 text-gray-900">QnA 게시판</h1>
+          <h1 className="text-4xl font-bold mb-2 text-gray-900">💬 QnA 게시판</h1>
           <p className="text-gray-500">카테고리를 선택해 질문을 찾아보세요</p>
         </div>
 

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { fetchApi } from "@/lib/client";
 import { CreateQuestionRequest, QUESTION_CATEGORY_LIST } from "@/types/question";
+import { toast } from "sonner";
 
 export default function CsQuestionCreatePage() {
   const router = useRouter();
@@ -62,13 +63,13 @@ export default function CsQuestionCreatePage() {
       });
 
       if (res.status === "CREATED" || res.status === "OK") {
-        alert("질문이 등록되었습니다!");
+        toast.success("질문이 등록되었습니다!");
         router.replace("/interview/cs");
       } else {
-        alert(res.message || "질문 등록에 실패했습니다.");
+        toast.error(res.message || "질문 등록에 실패했습니다.");
       }
     } catch (error: any) {
-      alert(error.message || "질문 등록 중 오류가 발생했습니다.");
+      toast.error(error.message || "질문 등록 중 오류가 발생했습니다.");
     } finally {
       setIsSubmitting(false);
     }

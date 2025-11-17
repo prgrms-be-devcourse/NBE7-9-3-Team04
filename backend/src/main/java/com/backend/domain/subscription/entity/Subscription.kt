@@ -43,11 +43,11 @@ class Subscription(
     var billingKey: String? = null,
 
     @Column(nullable = false, unique = true)
-    var customerKey: String ?= null,
+    var customerKey: String = "",
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
-    var user: User,
+    val user: User,
 
     ) : BaseEntity() {
 
@@ -78,7 +78,7 @@ class Subscription(
 
     @PrePersist
     fun generateCustomerKey() {
-        if (this.customerKey == null) {
+        if (this.customerKey.isBlank()) {
             this.customerKey = UUID.randomUUID().toString()
         }
     }
@@ -103,7 +103,6 @@ class Subscription(
         private var subscriptionName: String = "BASIC"
         private var price: Long = 0L
         private var billingKey: String? = null
-        private var customerKey: String? = null
         private lateinit var user: User
 
         fun subscriptionType(subscriptionType: SubscriptionType) = apply { this.subscriptionType = subscriptionType }
@@ -115,7 +114,6 @@ class Subscription(
         fun subscriptionName(subscriptionName: String) = apply { this.subscriptionName = subscriptionName }
         fun price(price: Long) = apply { this.price = price }
         fun billingKey(billingKey: String?) = apply { this.billingKey = billingKey }
-        fun customerKey(customerKey: String?) = apply { this.customerKey = customerKey }
         fun user(user: User) = apply { this.user = user }
 
         fun build(): Subscription =
@@ -129,7 +127,7 @@ class Subscription(
                 subscriptionName,
                 price,
                 billingKey,
-                customerKey,
+                "",
                 user
             )
     }
@@ -138,4 +136,5 @@ class Subscription(
         @JvmStatic
         fun builder(): Builder = Builder()
     }
+
 }
