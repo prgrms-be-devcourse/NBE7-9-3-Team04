@@ -12,16 +12,20 @@ import com.backend.domain.ranking.repository.RankingRepository
 import com.backend.domain.user.entity.User
 import com.backend.global.exception.ErrorCode
 import com.backend.global.exception.ErrorException
+import com.backend.global.lock.DistributedLockManager
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.transaction.support.TransactionTemplate
 
 @Service
 class RankingService(
     private val rankingRepository: RankingRepository,
     private val userQuestionService: UserQuestionService,
     private val questionService: QuestionService,
-    private val stringRedisTemplate: StringRedisTemplate
+    private val stringRedisTemplate: StringRedisTemplate,
+    private val lockManager: DistributedLockManager,
+    private val transactionTemplate: TransactionTemplate
 ) {
 
     companion object {
@@ -44,6 +48,9 @@ class RankingService(
         return rankingRepository.save(ranking)
     }
 
+    /*
+    락 획득 -> 트랜잭션 시작 -> DB/Redis 업데이트 -> 트랜잭션 커밋 -> 락 해제
+     */
     @Transactional
     fun updateUserRanking(user: User) {
 

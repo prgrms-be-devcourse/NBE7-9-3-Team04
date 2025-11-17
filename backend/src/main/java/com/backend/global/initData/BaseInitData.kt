@@ -97,7 +97,7 @@ class BaseInitData(
 
             val user = User(
                 email,
-                "abc12345",
+                passwordEncoder.encode("abc12345"),
                 "홍길동" + (i + 1),
                 "user" + (i + 1),
                 20 + (i % 5),
