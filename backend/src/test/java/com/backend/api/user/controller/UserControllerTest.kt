@@ -43,7 +43,7 @@ TODO
 @ActiveProfiles("test")
 @Import(TestRedisConfig::class)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-class UserControllerTest(
+class AUserControllerTest(
     private val mockMvc: MockMvc,
     private val objectMapper: ObjectMapper,
     private val userRepository: UserRepository,

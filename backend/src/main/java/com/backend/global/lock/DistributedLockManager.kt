@@ -32,4 +32,25 @@ class DistributedLockManager(
             }
         }
     }
+    fun <T> withLockSync(
+        key: String,
+        waitTime: Long = 5,
+        leaseTime: Long = 3,
+        block: () -> T
+    ): T {
+        val lock = redissonClient.getLock(key)
+
+        val locked = lock.tryLock(waitTime, leaseTime, TimeUnit.SECONDS)
+        if (!locked) {
+            throw ErrorException(ErrorCode.LOCK_ACQUIRE_FAILED)
+        }
+
+        try {
+            return block()
+        } finally {
+            if (lock.isHeldByCurrentThread) {
+                lock.unlock()
+            }
+        }
+    }
 }
