@@ -6,11 +6,13 @@ import com.backend.api.user.service.EmailService
 import com.backend.domain.user.repository.VerificationCodeRepository
 import com.backend.domain.userPenalty.entity.UserPenalty
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Profile
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
 
+@Profile("!test")
 @Component
 class EmailEventListener(
     private val emailService: EmailService,

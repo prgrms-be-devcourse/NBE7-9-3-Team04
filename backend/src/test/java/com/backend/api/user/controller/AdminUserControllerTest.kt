@@ -1,6 +1,7 @@
 package com.backend.api.user.controller
 
 import com.backend.api.user.dto.request.AdminUserStatusUpdateRequest
+import com.backend.api.user.service.EmailService
 import com.backend.domain.user.entity.AccountStatus
 import com.backend.domain.user.entity.Role
 import com.backend.domain.user.entity.User
@@ -39,6 +40,9 @@ class AdminUserControllerTest(
 ) {
     @MockBean
     lateinit var rq: Rq
+
+    @MockBean
+    lateinit var emailService: EmailService
 
     lateinit var admin: User
     lateinit var user: User
