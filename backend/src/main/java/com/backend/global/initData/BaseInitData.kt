@@ -22,9 +22,7 @@ import com.backend.domain.question.repository.QuestionRepository
 import com.backend.domain.resume.repository.ResumeRepository
 import com.backend.domain.user.entity.Role
 import com.backend.domain.user.entity.User
-import com.backend.domain.user.entity.VerificationCode
 import com.backend.domain.user.repository.UserRepository
-import com.backend.domain.user.repository.VerificationCodeRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.ApplicationArguments
@@ -48,7 +46,6 @@ class BaseInitData(
     private val qnaRepository: QnaRepository,
     private val answerService: AnswerService,
     private val passwordEncoder: PasswordEncoder,
-    private val verificationCodeRepository: VerificationCodeRepository,
     private val userService: UserService,
     private val resumeService: ResumeService,
     private val adminQuestionService: AdminQuestionService,
@@ -85,15 +82,6 @@ class BaseInitData(
 
         for (i in emails.indices) {
             val email = emails[i]
-
-            // 1️⃣ 이메일 인증 코드 더미 데이터 생성
-            val verification = VerificationCode(
-                email = email,
-                code = "INITOK$i", // 임의의 더미 코드
-                expiresAt = LocalDateTime.now().plusHours(1),
-                verified = true // ✅ 인증 완료 상태로 저장
-            )
-            verificationCodeRepository.save(verification)
 
             val user = User(
                 email,
