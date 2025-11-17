@@ -46,7 +46,7 @@ class ResumeControllerTest(
             "http://portfolio.example.com",
             mockUser
         )
-        resumeRepository.save<Resume?>(resume)
+        resumeRepository.save(resume)
     }
 
     @Nested
