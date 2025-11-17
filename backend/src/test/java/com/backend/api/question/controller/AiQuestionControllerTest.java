@@ -96,7 +96,7 @@ class AiQuestionControllerTest extends JwtTest {
         void success() throws Exception {
             //given
             Question question = questionRepository.findById(questionId).get();
-            AiQuestionReadAllResponse response = questionRepository.getQuestionByCategoryTypeAndUserId(QuestionCategoryType.PORTFOLIO, mockUser).orElseGet(null);
+            AiQuestionReadAllResponse response = questionRepository.getQuestionByCategoryTypeAndUserId(QuestionCategoryType.PORTFOLIO, mockUser);
             // when
             ResultActions resultActions = mockMvc.perform(
                     get("/api/v1/ai/questions")
@@ -148,7 +148,7 @@ class AiQuestionControllerTest extends JwtTest {
         void success() throws Exception {
             //given
             Question question = questionRepository.findById(questionId).get();
-            AiQuestionReadAllResponse response = questionRepository.getQuestionByCategoryTypeAndUserId(QuestionCategoryType.PORTFOLIO, mockUser).orElseGet(null);
+            AiQuestionReadAllResponse response = questionRepository.getQuestionByCategoryTypeAndUserId(QuestionCategoryType.PORTFOLIO, mockUser);
             // when
             ResultActions resultActions = mockMvc.perform(
                     get("/api/v1/ai/questions/%s".formatted(groupId))

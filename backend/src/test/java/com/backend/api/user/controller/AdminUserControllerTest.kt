@@ -1,19 +1,15 @@
 package com.backend.api.user.controller
 
 import com.backend.api.user.dto.request.AdminUserStatusUpdateRequest
-import com.backend.api.user.service.EmailService
 import com.backend.domain.user.entity.AccountStatus
 import com.backend.domain.user.entity.Role
 import com.backend.domain.user.entity.User
-import com.backend.domain.user.entity.User.Companion.builder
 import com.backend.domain.user.repository.UserRepository
 import com.backend.global.Rq.Rq
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.hamcrest.Matchers
 import org.hamcrest.Matchers.hasItem
 import org.junit.jupiter.api.*
 import org.mockito.Mockito
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
@@ -22,7 +18,6 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestConstructor
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.transaction.annotation.Transactional
@@ -44,9 +39,6 @@ class AdminUserControllerTest(
 ) {
     @MockBean
     lateinit var rq: Rq
-
-    @MockBean
-    lateinit var emailService: EmailService
 
     lateinit var admin: User
     lateinit var user: User
@@ -100,7 +92,6 @@ class AdminUserControllerTest(
 
         @Test
         @DisplayName("실패 - 비로그인 상태")
-
         fun fail1() {
             Mockito.`when`(rq.getUser()).thenReturn(null)
 
