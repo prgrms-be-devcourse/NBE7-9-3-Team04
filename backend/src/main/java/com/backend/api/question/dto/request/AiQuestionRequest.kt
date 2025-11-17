@@ -8,7 +8,7 @@ data class AiQuestionRequest(
     val messages: List<MessagesRequest>
 ) {
     companion object {
-        fun of(skill: String, url: String, count: Int): AiQuestionRequest {
+        fun of(skill: String?, url: String?, count: Int): AiQuestionRequest {
 
             val system = MessagesRequest.of(
                 "system", "#요청 사항:\n" +

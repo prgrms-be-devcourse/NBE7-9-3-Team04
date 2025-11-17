@@ -13,7 +13,6 @@ import com.backend.domain.user.entity.User
 import com.backend.global.ai.handler.AiRequestHandler
 import com.backend.global.exception.ErrorCode
 import com.backend.global.exception.ErrorException
-import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.springframework.stereotype.Service
@@ -38,7 +37,7 @@ class AiQuestionService(
         val resume = resumeService.getResumeByUser(user)
         val request = AiQuestionRequest.of(resume.skill, resume.portfolioUrl, user.getAiQuestionLimit())
 
-        val connectionAi = aiRequestHandler.connectionAi<AiQuestionRequest>(request)
+        val connectionAi = aiRequestHandler.connectionAi(request)
 
         val responses = parseChatGptResponse(connectionAi)
 
@@ -99,7 +98,7 @@ class AiQuestionService(
                 ?: throw ErrorException(ErrorCode.NOT_FOUND_CONTENT)
 
             Question(
-                resume.portfolioUrl,
+                resume.portfolioUrl ?: "포트폴리오 URL 없음",
                 content,
                 true,
                 2,

@@ -283,7 +283,7 @@ class PostControllerTest(
             resultActions
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(ErrorCode.INVALID_DEADLINE.getMessage()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(ErrorCode.INVALID_DEADLINE.message))
                 .andDo(MockMvcResultHandlers.print())
         }
     }
@@ -457,7 +457,7 @@ class PostControllerTest(
             resultActions
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("BAD_REQUEST"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(ErrorCode.INVALID_DEADLINE.getMessage()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(ErrorCode.INVALID_DEADLINE.message))
                 .andDo(MockMvcResultHandlers.print())
         }
     }

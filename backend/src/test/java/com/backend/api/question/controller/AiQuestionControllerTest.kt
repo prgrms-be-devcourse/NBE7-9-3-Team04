@@ -45,7 +45,7 @@ class AiQuestionControllerTest(
             .build()
         question1 = questionRepository.save<Question>(question1)
         questionId = question1.id
-        groupId = question1.groupId
+        groupId = question1.groupId!!
 
         val question2 = builder()
             .title("기존 제목")
@@ -109,7 +109,7 @@ class AiQuestionControllerTest(
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("OK"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("AI 면접 질문 목록이 조회되었습니다."))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.data.questions[0].groupId").value(groupId.toString()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data.questions[0].title").value(question.title))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data.questions[0].title").value(question?.title))
                 .andExpect(
                     MockMvcResultMatchers.jsonPath("$.data.questions[0].count").value(response?.questions?.get(0)?.count)
                 )
