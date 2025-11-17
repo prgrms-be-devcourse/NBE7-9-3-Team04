@@ -56,6 +56,7 @@ class AiReviewControllerTest(
 
     @MockBean
     private lateinit var rq: Rq
+
     private lateinit var testUser: User
 
     @BeforeEach
@@ -180,6 +181,13 @@ class AiReviewControllerTest(
             )
             testUser.subscription = basic
             userRepository.saveAndFlush(testUser)
+
+            resumeRepository.save(
+                Resume.builder()
+                    .user(testUser)
+                    .content("테스트 이력서 내용입니다.")
+                    .build()
+            )
 
             // when
             val resultActions = mockMvc.perform(
