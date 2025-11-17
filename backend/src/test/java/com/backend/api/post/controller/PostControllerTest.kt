@@ -15,6 +15,9 @@ import com.backend.domain.question.entity.QuestionCategoryType
 import com.backend.domain.question.repository.QuestionRepository
 import com.backend.domain.ranking.repository.RankingRepository
 import com.backend.domain.resume.repository.ResumeRepository
+import com.backend.domain.subscription.entity.Subscription
+import com.backend.domain.subscription.entity.SubscriptionType
+import com.backend.domain.subscription.repository.SubscriptionRepository
 import com.backend.domain.user.entity.Role
 import com.backend.domain.user.entity.User
 import com.backend.domain.user.repository.UserRepository
@@ -59,7 +62,8 @@ class PostControllerTest(
     private val rankingRepository: RankingRepository,
     private val userQuestionRepository: UserQuestionRepository,
     private val resumeRepository: ResumeRepository,
-    private val feedbackRepository: FeedbackRepository
+    private val feedbackRepository: FeedbackRepository,
+    @Autowired private val subscriptionRepository: SubscriptionRepository
 ) {
     @MockBean
     private lateinit var rq: Rq
@@ -85,6 +89,7 @@ class PostControllerTest(
         postRepository.deleteAll()
         questionRepository.deleteAll()
 
+        subscriptionRepository.deleteAll()
         userRepository.deleteAll()
 
 
@@ -99,6 +104,18 @@ class PostControllerTest(
         )
         userRepository.save(testUser)
 
+        val basicSub1 = Subscription(
+            subscriptionType = SubscriptionType.BASIC,
+            startDate = LocalDateTime.now(),
+            questionLimit = 5,
+            subscriptionName = "BASIC",
+            price = 0L,
+            user = testUser
+        )
+
+        subscriptionRepository.save(basicSub1)
+
+
         otherUser =
             User(
                 email = "other@test.com",
@@ -110,6 +127,17 @@ class PostControllerTest(
                 role = Role.USER
             )
         userRepository.save(otherUser)
+
+        val basicSub2 = Subscription(
+            subscriptionType = SubscriptionType.BASIC,
+            startDate = LocalDateTime.now(),
+            questionLimit = 5,
+            subscriptionName = "BASIC",
+            price = 0L,
+            user = otherUser
+        )
+
+        subscriptionRepository.save(basicSub2)
 
         val post = Post(
             title = "기존 제목",
