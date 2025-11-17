@@ -37,12 +37,12 @@ class EmailService(
 
         val code = generateVerificationCode()
 
-        val verification = VerificationCode.builder()
-            .email(email)
-            .code(code)
-            .expiresAt(LocalDateTime.now().plusMinutes(5))
-            .verified(false)
-            .build()
+        val verification = VerificationCode(
+            email = email,
+            code = code,
+            expiresAt = LocalDateTime.now().plusMinutes(5),
+            verified = false
+        )
 
         verificationCodeRepository.save(verification)
 
