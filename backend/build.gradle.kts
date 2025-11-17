@@ -51,7 +51,7 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
     implementation("org.springframework.ai:spring-ai-starter-model-openai")
     implementation("org.springframework.ai:spring-ai-starter-model-vertex-ai-gemini")
-
+    implementation("com.mailgun:mailgun-java:1.0.1")
 
     implementation("org.springframework.boot:spring-boot-starter-webflux")
 

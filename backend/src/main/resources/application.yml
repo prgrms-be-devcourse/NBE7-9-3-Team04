@@ -1,6 +1,7 @@
 spring:
   profiles:
     active: prod
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${DB_JDBC_URL}
@@ -35,34 +36,20 @@ spring:
       ai:
         gemini:
           project-id: ${GOOGLE_API_KEY}
-          location : asia-northeast3
+          location: asia-northeast3
           chat:
             options:
               model: "vertex--pro-vision"
-
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${EMAIL_ID}
-    password: ${EMAIL_PW}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-            required: true
-          connectiontimeout: 10000
-          timeout: 10000
-          writetimeout: 10000
-          ssl:
-            trust: smtp.gmail.com
-
 
   data:
     redis:
       host: localhost
       port: 6379
+
+mailgun:
+  api-key: ${MAILGUN_API_KEY}
+  domain: ${MAILGUN_DOMAIN}
+  from: ${MAILGUN_FROM}
 
 logging:
   level:
