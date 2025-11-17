@@ -19,7 +19,13 @@ import com.backend.domain.qna.repository.QnaRepository
 import com.backend.domain.question.entity.Question
 import com.backend.domain.question.entity.QuestionCategoryType
 import com.backend.domain.question.repository.QuestionRepository
+import com.backend.domain.ranking.entity.Ranking
+import com.backend.domain.ranking.entity.Tier
+import com.backend.domain.ranking.repository.RankingRepository
 import com.backend.domain.resume.repository.ResumeRepository
+import com.backend.domain.subscription.entity.Subscription
+import com.backend.domain.subscription.entity.SubscriptionType
+import com.backend.domain.subscription.repository.SubscriptionRepository
 import com.backend.domain.user.entity.Role
 import com.backend.domain.user.entity.User
 import com.backend.domain.user.entity.VerificationCode
@@ -52,7 +58,9 @@ class BaseInitData(
     private val userService: UserService,
     private val resumeService: ResumeService,
     private val adminQuestionService: AdminQuestionService,
-    private val resumeRepository: ResumeRepository
+    private val resumeRepository: ResumeRepository,
+    private val subscriptionRepository: SubscriptionRepository,
+    private val rankingRepository: RankingRepository
 ) {
 
     @Autowired
@@ -107,6 +115,31 @@ class BaseInitData(
             )
 
             userRepository.save(user)
+
+            val subscription = Subscription(
+                subscriptionType = SubscriptionType.BASIC,
+                active = false,
+                startDate = LocalDateTime.now(),
+                endDate = null,
+                nextBillingDate = null,
+                questionLimit = 5,
+                subscriptionName = "BASIC",
+                price = 0L,
+                billingKey = null,
+                customerKey = "",
+                user = user
+            )
+
+            subscriptionRepository.save(subscription)
+
+            val ranking = Ranking(
+                totalScore = 0,
+                tier = Tier.UNRATED,
+                rankValue = 0,
+                user = user
+            )
+
+            rankingRepository.save(ranking)
         }
     }
 
