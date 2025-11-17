@@ -77,10 +77,7 @@ class CommentController(
         @PathVariable postId: Long,
         @RequestParam(defaultValue = "1") page: Int
     ): ApiResponse<CommentPageResponse<CommentResponse>> {
-        var currentUser: User? = null
-        try {
-            currentUser = rq.getUser()
-        } catch (_: Exception) {}
+        val currentUser: User? = runCatching { rq.getUser() }.getOrNull()
 
         val commentsPage: CommentPageResponse<CommentResponse> = commentService.getCommentsByPostId(
             currentUser,
