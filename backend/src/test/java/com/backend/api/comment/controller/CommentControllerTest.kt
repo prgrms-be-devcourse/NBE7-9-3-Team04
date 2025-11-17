@@ -10,7 +10,6 @@ import com.backend.domain.post.entity.PostStatus
 import com.backend.domain.post.repository.PostRepository
 import com.backend.domain.user.entity.Role
 import com.backend.domain.user.entity.User
-import com.backend.domain.user.entity.User.Companion.builder
 import com.backend.global.security.CustomUserDetails
 import org.assertj.core.api.Assertions
 import org.hamcrest.Matchers
@@ -49,42 +48,42 @@ class CommentControllerTest(
     @BeforeEach
     @Transactional
     fun setUp() {
-        val generalUser = builder()
-            .email("general@user.com")
-            .password("asdf1234!")
-            .name("홍길동")
-            .nickname("gildong")
-            .age(20)
-            .github("abc123")
-            .image(null)
-            .role(Role.USER)
-            .build()
+        val generalUser = User(
+            "general@user.com",
+            "asdf1234!",
+            "홍길동",
+            "gildong",
+            20,
+            "abc123",
+            null,
+            Role.USER
+        )
 
-        val generalUser2 = builder()
-            .email("general2@user.com")
-            .password("asdf1234!")
-            .name("홍길똥")
-            .nickname("gilddong")
-            .age(25)
-            .github("abc1233")
-            .image(null)
-            .role(Role.USER)
-            .build()
+        val generalUser2 = User(
+            "general2@user.com",
+            "asdf1234!",
+            "홍길똥",
+            "gilddong",
+            25,
+            "abc1233",
+            null,
+            Role.USER
+        )
 
-        userRepository.save<User?>(generalUser)
-        userRepository.save<User?>(generalUser2)
+        userRepository.save(generalUser)
+        userRepository.save(generalUser2)
 
-        val post1 = Post.builder()
-            .title("제목")
-            .introduction("소개")
-            .content("내용12321321321321")
-            .deadline(LocalDateTime.now().plusDays(7))
-            .status(PostStatus.ING)
-            .pinStatus(PinStatus.NOT_PINNED)
-            .recruitCount(5)
-            .users(userRepository.findById(1L).orElseThrow())
-            .postCategoryType(PostCategoryType.PROJECT)
-            .build()
+        val post1 = Post(
+            "제목",
+            "소개",
+            "내용12321321321321",
+            LocalDateTime.now().plusDays(7),
+            PostStatus.ING,
+            PinStatus.NOT_PINNED,
+            5,
+            userRepository.findById(1L).orElseThrow(),
+            PostCategoryType.PROJECT
+        )
         postRepository.save(post1)
 
         val comment1 = Comment(

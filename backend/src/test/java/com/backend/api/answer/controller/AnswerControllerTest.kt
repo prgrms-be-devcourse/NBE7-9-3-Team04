@@ -6,6 +6,7 @@ import com.backend.domain.answer.repository.AnswerRepository
 import com.backend.domain.feedback.entity.Feedback
 import com.backend.domain.feedback.repository.FeedbackRepository
 import com.backend.domain.question.entity.Question
+import com.backend.domain.question.entity.QuestionCategoryType
 import com.backend.domain.question.repository.QuestionRepository
 import com.backend.domain.user.entity.Role
 import com.backend.domain.user.entity.User
@@ -45,37 +46,41 @@ class AnswerControllerTest(
     @BeforeEach
     @Transactional
     fun setUp() {
-        val generalUser = User.builder()
-            .email("general@user.com")
-            .password("asdf1234!")
-            .name("홍길동")
-            .nickname("gildong")
-            .age(20)
-            .github("abc123")
-            .image(null)
-            .role(Role.USER)
-            .build()
 
-        val generalUser2 = User.builder()
-            .email("general2@user.com")
-            .password("asdf1234!")
-            .name("홍길똥")
-            .nickname("gilddong")
-            .age(25)
-            .github("abc1233")
-            .image(null)
-            .role(Role.USER)
-            .build()
+        val generalUser = User(
+            "general@user.com",
+            "asdf1234!",
+            "홍길동",
+            "gildong",
+            20,
+            "abc123",
+            null,
+            Role.USER
+        )
+
+        val generalUser2 = User(
+            "general2@user.com",
+            "asdf1234!",
+            "홍길똥",
+            "gilddong",
+            25,
+            "abc1233",
+            null,
+            Role.USER
+        )
 
         userRepository.save(generalUser)
         userRepository.save(generalUser2)
         userIdList = listOf(generalUser.id, generalUser2.id)
 
-        val question1 = Question.builder()
-            .title("첫 번째 질문 제목")
-            .content("첫 번째 질문 내용")
-            .author(mockUser)
-            .build()
+        val question1 = Question(
+            "첫 번째 질문 제목",
+            "첫 번째 질문 내용",
+            true,
+            0,
+            mockUser,
+            QuestionCategoryType.DATABASE
+        )
         questionRepository.save(question1)
         questionId = question1.id
 
@@ -98,19 +103,19 @@ class AnswerControllerTest(
         answerIdList = answers.map { answerRepository.save(it).id }
 
         val feedbacks = listOf(
-            Feedback.builder().content("0").aiScore(0).answer(answers[0]).build(),
-            Feedback.builder().content("1").aiScore(1).answer(answers[1]).build(),
-            Feedback.builder().content("2").aiScore(2).answer(answers[2]).build(),
-            Feedback.builder().content("3").aiScore(3).answer(answers[3]).build(),
-            Feedback.builder().content("4").aiScore(4).answer(answers[4]).build(),
-            Feedback.builder().content("5").aiScore(5).answer(answers[5]).build(),
-            Feedback.builder().content("6").aiScore(6).answer(answers[6]).build(),
-            Feedback.builder().content("7").aiScore(7).answer(answers[7]).build(),
-            Feedback.builder().content("8").aiScore(8).answer(answers[8]).build(),
-            Feedback.builder().content("9").aiScore(9).answer(answers[9]).build(),
-            Feedback.builder().content("10").aiScore(10).answer(answers[10]).build(),
-            Feedback.builder().content("11").aiScore(11).answer(answers[11]).build(),
-            Feedback.builder().content("12").aiScore(12).answer(answers[12]).build()
+            Feedback("0", 0, answers[0]),
+            Feedback("1", 1, answers[1]),
+            Feedback("2", 2, answers[2]),
+            Feedback("3", 3, answers[3]),
+            Feedback("4", 4, answers[4]),
+            Feedback("5", 5, answers[5]),
+            Feedback("6", 6, answers[6]),
+            Feedback("7", 7, answers[7]),
+            Feedback("8", 8, answers[8]),
+            Feedback("9", 9, answers[9]),
+            Feedback("10", 10, answers[10]),
+            Feedback("11", 11, answers[11]),
+            Feedback("12", 12, answers[12])
         )
 
         feedbackList = feedbacks.map { feedbackRepository.save(it) }
