@@ -44,7 +44,8 @@ class RedisConfig(
 
             connectionFactory = redisConnectionFactory()
         }
-    @Bean(destroyMethod = "shutdown")
+
+    @Bean//(destroyMethod = "shutdown")
     fun redissonClient(): RedissonClient {
         val config = Config()
 

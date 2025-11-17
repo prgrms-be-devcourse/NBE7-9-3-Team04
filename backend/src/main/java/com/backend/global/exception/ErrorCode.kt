@@ -113,6 +113,7 @@ enum class ErrorCode(
     RANKING_NOT_AVAILABLE(HttpStatus.NOT_FOUND, "랭킹 정보를 사용할 수 없습니다."),
 
     REDIS_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Redis 처리 중 오류가 발생했습니다."),
+    LOCK_ACQUIRE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "Redis 락 획득에 실패했습니다.")
     ;
 
 }
