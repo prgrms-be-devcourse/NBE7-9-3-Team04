@@ -33,6 +33,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.TestConstructor
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
@@ -43,40 +44,21 @@ import java.time.LocalDateTime
 @AutoConfigureMockMvc(addFilters = false)
 @Transactional
 @ActiveProfiles("test")
-class PostControllerTest {
-
-    @Autowired
-    private lateinit var mockMvc: MockMvc
-
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
+class PostControllerTest(
+    private val mockMvc: MockMvc,
+    private val objectMapper: ObjectMapper,
+    private val postRepository: PostRepository,
+    private val userRepository: UserRepository,
+    private val questionRepository: QuestionRepository,
+    private val answerRepository: AnswerRepository,
+    private val qnaRepository: QnaRepository,
+    private val rankingRepository: RankingRepository,
+    private val userQuestionRepository: UserQuestionRepository,
+    private val resumeRepository: ResumeRepository
+) {
     @MockBean
     private lateinit var rq: Rq
-
-    @Autowired
-    private lateinit var objectMapper: ObjectMapper
-
-    @Autowired
-    private lateinit var postRepository: PostRepository
-
-    @Autowired
-    private lateinit var userRepository: UserRepository
-
-    @Autowired
-    private lateinit var questionRepository: QuestionRepository
-
-    @Autowired
-    private lateinit var answerRepository: AnswerRepository
-
-    @Autowired
-    private lateinit var qnaRepository: QnaRepository
-
-    @Autowired
-    private lateinit var rankingRepository: RankingRepository
-
-    @Autowired
-    private lateinit var userQuestionRepository: UserQuestionRepository
-
-    @Autowired
-    private lateinit var resumeRepository: ResumeRepository
 
     private lateinit var testUser: User
     private lateinit var otherUser: User

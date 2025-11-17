@@ -28,6 +28,7 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.TestConstructor
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
@@ -39,30 +40,20 @@ import java.time.LocalDateTime
 @AutoConfigureMockMvc(addFilters = false)
 @Transactional
 @ActiveProfiles("test")
-class AiReviewControllerTest : JwtTest() { // 'internal' 제거
-
-    // 2. DI 필드를 'lateinit var'로 수정 (모든 '!!' 제거)
-    @Autowired
-    private lateinit var mockMvc: MockMvc
-
-    @Autowired
-    private lateinit var reviewRepository: ReviewRepository
-
-    @Autowired
-    private lateinit var resumeRepository: ResumeRepository
-
-    @Autowired
-    private lateinit var subscriptionRepository: SubscriptionRepository
-
-    @Autowired
-    private lateinit var userRepository: UserRepository // JwtTest에서 상속받았다고 가정
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
+class AiReviewControllerTest(
+    private val mockMvc: MockMvc,
+    private val reviewRepository: ReviewRepository,
+    private val resumeRepository: ResumeRepository,
+    private val subscriptionRepository: SubscriptionRepository,
+    private val userRepository: UserRepository
+) : JwtTest() {
 
     @MockBean
     private lateinit var aiQuestionService: AiQuestionService
 
     @MockBean
     private lateinit var rq: Rq
-
     private lateinit var testUser: User
 
     @BeforeEach
