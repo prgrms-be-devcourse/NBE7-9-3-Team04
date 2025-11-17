@@ -92,49 +92,5 @@ class Subscription(
                 active &&
                 endDate?.isAfter(LocalDateTime.now()) == true
 
-    //TODO 임시 빌더 제거
-    class Builder {
-        private var subscriptionType: SubscriptionType = SubscriptionType.BASIC
-        private var isActive: Boolean = false
-        private var startDate: LocalDateTime = LocalDateTime.now()
-        private var endDate: LocalDateTime? = null
-        private var nextBillingDate: LocalDate? = null
-        private var questionLimit: Int = 5
-        private var subscriptionName: String = "BASIC"
-        private var price: Long = 0L
-        private var billingKey: String? = null
-        private lateinit var user: User
-
-        fun subscriptionType(subscriptionType: SubscriptionType) = apply { this.subscriptionType = subscriptionType }
-        fun isActive(isActive: Boolean) = apply { this.isActive = isActive }
-        fun startDate(startDate: LocalDateTime) = apply { this.startDate = startDate }
-        fun endDate(endDate: LocalDateTime?) = apply { this.endDate = endDate }
-        fun nextBillingDate(nextBillingDate: LocalDate?) = apply { this.nextBillingDate = nextBillingDate }
-        fun questionLimit(questionLimit: Int) = apply { this.questionLimit = questionLimit }
-        fun subscriptionName(subscriptionName: String) = apply { this.subscriptionName = subscriptionName }
-        fun price(price: Long) = apply { this.price = price }
-        fun billingKey(billingKey: String?) = apply { this.billingKey = billingKey }
-        fun user(user: User) = apply { this.user = user }
-
-        fun build(): Subscription =
-            Subscription(
-                subscriptionType,
-                isActive,
-                startDate,
-                endDate,
-                nextBillingDate,
-                questionLimit,
-                subscriptionName,
-                price,
-                billingKey,
-                "",
-                user
-            )
-    }
-
-    companion object {
-        @JvmStatic
-        fun builder(): Builder = Builder()
-    }
 
 }

@@ -54,40 +54,40 @@ class AdminPostControllerTest(
     @BeforeEach
     fun setUp() {
         admin = userRepository.save(
-            User.builder()
-                .email("admin@test.com")
-                .password("admin1234!")
-                .name("관리자")
-                .nickname("admin")
-                .age(30)
-                .github("github.com/admin")
-                .role(Role.ADMIN)
-                .build()
+            User(
+                email = "admin@test.com",
+                password = "admin1234!",
+                name = "관리자",
+                nickname = "admin",
+                age = 30,
+                github = "github.com/admin",
+                role = Role.ADMIN
+            )
         )
 
         user = userRepository.save(
-            User.builder()
-                .email("user@test.com")
-                .password("user1234!")
-                .name("일반유저")
-                .nickname("user")
-                .age(25)
-                .github("github.com/user")
-                .role(Role.USER)
-                .build()
+            User(
+                email = "user@test.com",
+                password = "user1234!",
+                name = "일반유저",
+                nickname = "user",
+                age = 25,
+                github = "github.com/user",
+                role = Role.USER
+            )
         )
 
-        post = Post.builder()
-            .title("관리자용 테스트 게시글")
-            .introduction("관리자 테스트용 소개입니다.")
-            .content("관리자 테스트용 내용입니다. 10자 이상입니다.")
-            .deadline(LocalDateTime.now().plusDays(7))
-            .status(PostStatus.ING)
-            .pinStatus(PinStatus.NOT_PINNED)
-            .recruitCount(3)
-            .postCategoryType(PostCategoryType.PROJECT)
-            .users(admin)
-            .build()
+        post = Post(
+            title = "관리자용 테스트 게시글",
+            introduction = "관리자 테스트용 소개입니다.",
+            content = "관리자 테스트용 내용입니다. 10자 이상입니다.",
+            deadline = LocalDateTime.now().plusDays(7),
+            status = PostStatus.ING,
+            pinStatus = PinStatus.NOT_PINNED,
+            recruitCount = 3,
+            postCategoryType = PostCategoryType.PROJECT,
+            users = admin
+        )
 
         post = postRepository.save(post)
 

@@ -11,6 +11,7 @@ import com.backend.domain.post.entity.PostStatus
 import com.backend.domain.post.repository.PostRepository
 import com.backend.domain.qna.repository.QnaRepository
 import com.backend.domain.question.entity.Question
+import com.backend.domain.question.entity.QuestionCategoryType
 import com.backend.domain.question.repository.QuestionRepository
 import com.backend.domain.ranking.repository.RankingRepository
 import com.backend.domain.resume.repository.ResumeRepository
@@ -87,34 +88,49 @@ class PostControllerTest(
         userRepository.deleteAll()
 
 
-        testUser = User.builder()
-            .email("test1@test.com").password("pw").name("작성자1").nickname("user1").age(20).role(Role.USER)
-            .github("").build()
+        testUser = User(
+            email = "test1@test.com",
+            password = "pw",
+            name = "작성자1",
+            nickname = "user1",
+            age = 20,
+            github = "",
+            role = Role.USER
+        )
         userRepository.save(testUser)
 
-        otherUser = User.builder()
-            .email("other@test.com").password("pw").name("다른사람").nickname("other").age(20).role(Role.USER)
-            .github("").build()
+        otherUser =
+            User(
+                email = "other@test.com",
+                password = "pw",
+                name = "다른사람",
+                nickname = "other",
+                age = 20,
+                github = "",
+                role = Role.USER
+            )
         userRepository.save(otherUser)
 
-        val post = Post.builder()
-            .title("기존 제목")
-            .introduction("기존 한줄 소개입니다. 10자 이상.")
-            .content("기존 프로젝트 모집글 내용입니다. 10자 이상.")
-            .users(testUser)
-            .deadline(FIXED_DEADLINE)
-            .status(PostStatus.ING)
-            .pinStatus(PinStatus.NOT_PINNED)
-            .recruitCount(4)
-            .postCategoryType(PostCategoryType.PROJECT)
-            .build()
+        val post = Post(
+            title = "기존 제목",
+            introduction = "기존 한줄 소개입니다. 10자 이상.",
+            content = "기존 프로젝트 모집글 내용입니다. 10자 이상.",
+            deadline =FIXED_DEADLINE,
+            status = PostStatus.ING,
+            pinStatus = PinStatus.NOT_PINNED,
+            recruitCount = 4,
+            postCategoryType = PostCategoryType.PROJECT,
+            users = testUser
+        )
+
         savedPost = postRepository.save(post)
 
-        val question = Question.builder()
-            .title("테스트 질문 제목")
-            .content("테스트 질문 내용입니다.")
-            .author(testUser)
-            .build()
+        val question = Question(
+            title = "테스트 질문 제목",
+            content = "테스트 질문 내용입니다.",
+            author = testUser,
+            categoryType = QuestionCategoryType.DATABASE
+        )
         questionRepository.save(question)
     }
 
@@ -586,23 +602,30 @@ class PostControllerTest(
         @Test
         @DisplayName("게시글 다건 조회 성공")
         fun success() {
-            val postAuthor = User.builder()
-                .email("post_author@test.com").password("pw").name("게시글작성자").nickname("post_author").age(25)
-                .role(Role.USER)
-                .github("").build()
+            val postAuthor = User(
+                email = "post_author@test.com",
+                password = "pw",
+                name = "게시글작성자",
+                nickname = "post_author",
+                age = 25,
+                github = "",
+                role = Role.USER
+            )
+
             userRepository.save(postAuthor)
 
-            val anotherPost = Post.builder()
-                .title("두 번째 게시글")
-                .introduction("두 번째 한줄 소개입니다. 10자 이상.")
-                .content("두 번째 내용입니다. 10자 이상.")
-                .users(postAuthor)
-                .deadline(FIXED_DEADLINE)
-                .status(PostStatus.ING)
-                .pinStatus(PinStatus.NOT_PINNED)
-                .recruitCount(2)
-                .postCategoryType(PostCategoryType.PROJECT)
-                .build()
+            val anotherPost =
+                Post(
+                    title = "두 번째 게시글",
+                    introduction = "두 번째 한줄 소개입니다. 10자 이상.",
+                    content = "두 번째 내용입니다. 10자 이상.",
+                    deadline =FIXED_DEADLINE,
+                    status = PostStatus.ING,
+                    pinStatus = PinStatus.NOT_PINNED,
+                    recruitCount = 2,
+                    postCategoryType = PostCategoryType.PROJECT,
+                    users = postAuthor
+                )
             postRepository.save(anotherPost)
 
 
@@ -633,30 +656,30 @@ class PostControllerTest(
         @DisplayName("카테고리별 게시글 조회 성공 - PROJECT")
         fun success_project() {
             // given
-            val post1 = Post.builder()
-                .title("프로젝트 게시글 1")
-                .introduction("프로젝트 소개 1")
-                .content("프로젝트 게시글의 내용입니다.")
-                .deadline(FIXED_DEADLINE)
-                .status(PostStatus.ING)
-                .pinStatus(PinStatus.NOT_PINNED)
-                .recruitCount(3)
-                .users(testUser)
-                .postCategoryType(PostCategoryType.PROJECT)
-                .build()
+            val post1 = Post(
+                title = "프로젝트 게시글 1",
+                introduction = "프로젝트 소개 1",
+                content = "프로젝트 게시글의 내용입니다.",
+                deadline =FIXED_DEADLINE,
+                status = PostStatus.ING,
+                pinStatus = PinStatus.NOT_PINNED,
+                recruitCount = 3,
+                postCategoryType = PostCategoryType.PROJECT,
+                users = testUser
+            )
             postRepository.save(post1)
 
-            val post2 = Post.builder()
-                .title("프로젝트 게시글 2")
-                .introduction("프로젝트 소개 2")
-                .content("프로젝트 게시글의 내용입니다.")
-                .deadline(FIXED_DEADLINE)
-                .status(PostStatus.ING)
-                .pinStatus(PinStatus.NOT_PINNED)
-                .recruitCount(5)
-                .users(testUser)
-                .postCategoryType(PostCategoryType.PROJECT)
-                .build()
+            val post2 = Post(
+                    title = "프로젝트 게시글 2",
+                    introduction = "프로젝트 소개 2",
+                    content = "프로젝트 게시글의 내용입니다.",
+                    deadline =FIXED_DEADLINE,
+                    status = PostStatus.ING,
+                    pinStatus = PinStatus.NOT_PINNED,
+                    recruitCount = 5,
+                    postCategoryType = PostCategoryType.PROJECT,
+                    users = testUser
+                )
             postRepository.save(post2)
 
             // when
@@ -682,17 +705,17 @@ class PostControllerTest(
         @DisplayName("카테고리별 게시글 조회 성공 - STUDY")
         fun success_study() {
             // given
-            val studyPost = Post.builder()
-                .title("스터디 게시글 1")
-                .introduction("스터디 소개 1")
-                .content("스터디 게시글의 내용입니다.")
-                .deadline(FIXED_DEADLINE)
-                .status(PostStatus.ING)
-                .pinStatus(PinStatus.NOT_PINNED)
-                .recruitCount(2)
-                .users(testUser)
-                .postCategoryType(PostCategoryType.STUDY)
-                .build()
+            val studyPost = Post(
+                title = "스터디 게시글 1",
+                introduction = "스터디 소개 1",
+                content = "스터디 게시글의 내용입니다.",
+                deadline =FIXED_DEADLINE,
+                status = PostStatus.ING,
+                pinStatus = PinStatus.NOT_PINNED,
+                recruitCount = 2,
+                postCategoryType = PostCategoryType.STUDY,
+                users = testUser
+            )
             postRepository.save(studyPost)
 
             // when

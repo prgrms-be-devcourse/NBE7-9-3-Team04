@@ -68,15 +68,16 @@ class AiReviewControllerTest(
     @BeforeEach
     fun setUp() {
         testUser = userRepository.save(
-            User.builder()
-                .email("premium@test.com")
-                .name("테스트 유저")
-                .nickname("tester")
-                .password("1234")
-                .image("default.png")
-                .github("https://github.com/tester")
-                .role(Role.USER)
-                .build()
+            User(
+                email = "premium@test.com",
+                password = "tester",
+                name = "테스트 유저",
+                nickname = "tester",
+                age = 25,
+                github = "https://github.com/tester",
+                image = "default.png",
+                role = Role.USER
+            )
         )
 
         Mockito.`when`(rq.getUser()).thenReturn(testUser)
@@ -126,10 +127,15 @@ class AiReviewControllerTest(
             createPremiumSubscription(testUser)
 
             val resume = resumeRepository.save(
-                Resume.builder()
-                    .user(testUser)
-                    .content("테스트 이력서 내용입니다.")
-                    .build()
+                Resume(
+                    user = testUser,
+                    content = "테스트 이력서 내용입니다.",
+                    skill = "",
+                    activity = "",
+                    certification = "",
+                    career = "",
+                    portfolioUrl = ""
+                )
             )
 
 
@@ -197,10 +203,15 @@ class AiReviewControllerTest(
             userRepository.saveAndFlush(testUser)
 
             resumeRepository.save(
-                Resume.builder()
-                    .user(testUser)
-                    .content("테스트 이력서 내용입니다.")
-                    .build()
+                Resume(
+                    user = testUser,
+                    content = "테스트 이력서 내용입니다.",
+                    skill = "",
+                    activity = "",
+                    certification = "",
+                    career = "",
+                    portfolioUrl = ""
+                )
             )
 
             Mockito.`when`(aiQuestionService.getAiReviewContent(anyNonNull()))

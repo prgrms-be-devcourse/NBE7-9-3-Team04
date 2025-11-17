@@ -5,6 +5,7 @@ import com.backend.api.question.dto.request.AdminQuestionAddRequest
 import com.backend.api.question.dto.request.AdminQuestionUpdateRequest
 import com.backend.api.question.dto.request.QuestionApproveRequest
 import com.backend.api.question.dto.request.QuestionScoreRequest
+import com.backend.domain.question.entity.QQuestion.question
 import com.backend.domain.question.entity.Question
 import com.backend.domain.question.entity.QuestionCategoryType
 import com.backend.domain.question.repository.QuestionRepository
@@ -53,25 +54,26 @@ class AdminQuestionControllerTest(
     @BeforeEach
     fun setUp() {
         testUser = userRepository.save(
-            User.builder()
-                .name("Admin")
-                .email("admin@test.com")
-                .github("https://github.com/admin")
-                .password("1234")
-                .nickname("admin")
-                .role(Role.ADMIN)
-                .build()
+            User(
+                email = "admin@test.com",
+                password = "1234",
+                name = "Admin",
+                nickname = "admin",
+                age = 25,
+                github = "https://github.com/admin",
+                image = null,
+                role = Role.ADMIN
+            )
         )
 
         Mockito.`when`(rq.getUser()).thenReturn(testUser)
 
-        val question = Question.builder()
-            .title("기존 제목")
-            .content("기존 내용")
-            .author(testUser)
-            .categoryType(QuestionCategoryType.DATABASE)
-            .build()
-
+        val question = Question(
+            title = "기존 제목",
+            content = "기존 내용",
+            author = testUser,
+            categoryType = QuestionCategoryType.DATABASE
+        )
         savedQuestion = questionRepository.save(question)
     }
 
@@ -403,22 +405,22 @@ class AdminQuestionControllerTest(
         @DisplayName("관리자 질문 목록 조회 성공 - 승인 여부 관계없이 전체 반환 (페이징)")
         fun success() {
             val approved = questionRepository.save(
-                Question.builder()
-                    .title("승인 질문")
-                    .content("승인된 질문 내용")
-                    .author(testUser)
-                    .categoryType(QuestionCategoryType.DATABASE)
-                    .build()
+                Question(
+                    title = "승인 질문",
+                    content = "승인된 질문 내용",
+                    author = testUser,
+                    categoryType = QuestionCategoryType.DATABASE
+                )
             )
             approved.updateApproved(true)
 
             val unapproved = questionRepository.save(
-                Question.builder()
-                    .title("미승인 질문")
-                    .content("미승인 질문 내용")
-                    .author(testUser)
-                    .categoryType(QuestionCategoryType.DATABASE)
-                    .build()
+                Question(
+                    title = "미승인 질문",
+                    content = "미승인 질문 내용",
+                    author = testUser,
+                    categoryType = QuestionCategoryType.DATABASE
+                )
             )
             unapproved.updateApproved(false)
 
@@ -464,11 +466,12 @@ class AdminQuestionControllerTest(
         @DisplayName("관리자 질문 단건 조회 성공 - 승인 여부 관계없이 조회 가능")
         fun success() {
             val question = questionRepository.save(
-                Question.builder()
-                    .title("관리자용 단건 조회 질문")
-                    .content("관리자는 승인 여부 관계없이 조회 가능")
-                    .author(testUser)
-                    .build()
+                Question(
+                    title = "관리자용 단건 조회 질문",
+                    content = "관리자는 승인 여부 관계없이 조회 가능",
+                    author = testUser,
+                    categoryType = QuestionCategoryType.DATABASE
+                )
             )
             question.updateApproved(false)
 
@@ -510,11 +513,13 @@ class AdminQuestionControllerTest(
         @DisplayName("관리자 질문 삭제 성공 - 존재하는 질문 정상 삭제")
         fun success() {
             val question = questionRepository.save(
-                Question.builder()
-                    .title("관리자용 삭제 테스트 질문")
-                    .content("삭제 성공 케이스")
-                    .author(testUser)
-                    .build()
+            Question(
+                    title = "기존 제목",
+                    content = "기존 내용",
+                    author = testUser,
+                    categoryType = QuestionCategoryType.DATABASE
+                )
+
             )
 
             mockMvc.perform(
@@ -546,24 +551,27 @@ class AdminQuestionControllerTest(
         @DisplayName("관리자 질문 삭제 실패 - 일반 사용자는 삭제 불가")
         fun fail2() {
             val normalUser = userRepository.save(
-                User.builder()
-                    .name("NormalUser")
-                    .email("user@test.com")
-                    .github("https://github.com/user")
-                    .password("1234")
-                    .nickname("user")
-                    .role(Role.USER)
-                    .build()
+                User(
+                    email = "user@test.com",
+                    password = "1234",
+                    name = "NormalUser",
+                    nickname = "user",
+                    age = 25,
+                    github ="https://github.com/user",
+                    image = null,
+                    role = Role.USER
+                )
             )
 
             Mockito.`when`(rq.getUser()).thenReturn(normalUser)
 
             val question = questionRepository.save(
-                Question.builder()
-                    .title("관리자용 삭제 테스트 질문")
-                    .content("삭제 불가 케이스")
-                    .author(testUser)
-                    .build()
+                Question(
+                    title = "관리자용 삭제 테스트 질문",
+                    content = "삭제 불가 케이스",
+                    author = testUser,
+                    categoryType = QuestionCategoryType.NETWORK
+                )
             )
 
             mockMvc.perform(

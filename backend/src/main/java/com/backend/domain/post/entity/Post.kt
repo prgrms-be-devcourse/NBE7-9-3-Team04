@@ -94,45 +94,5 @@ class Post(
 
     fun getComments(): List<Comment> = this.comments
 
-    // 임시 builder
-    class Builder {
-        private var title: String = ""
-        private var introduction: String = ""
-        private var content: String = ""
-        private var deadline: LocalDateTime = LocalDateTime.now().plusDays(7)
-        private var status: PostStatus = PostStatus.ING
-        private var pinStatus: PinStatus = PinStatus.PINNED
-        private var recruitCount: Int = 0
-        private lateinit var users: User
-        private var postCategoryType: PostCategoryType = PostCategoryType.PROJECT
-
-        fun title(title: String) = apply { this.title = title }
-        fun introduction(introduction: String) = apply { this.introduction = introduction }
-        fun content(content: String) = apply { this.content = content }
-        fun deadline(deadline: LocalDateTime) = apply { this.deadline = deadline }
-        fun status(status: PostStatus) = apply { this.status = status }
-        fun pinStatus(pinStatus: PinStatus) = apply { this.pinStatus = pinStatus }
-        fun recruitCount(recruitCount: Int) = apply { this.recruitCount = recruitCount }
-        fun users(users: User) = apply { this.users = users }
-        fun postCategoryType(postCategoryType: PostCategoryType) = apply { this.postCategoryType = postCategoryType }
-
-        fun build(): Post =
-            Post(
-                title = title,
-                introduction = introduction,
-                content = content,
-                deadline = deadline,
-                status = status,
-                pinStatus = pinStatus,
-                recruitCount = recruitCount,
-                users = users,
-                postCategoryType = postCategoryType
-            )
-    }
-
-    companion object {
-        @JvmStatic
-        fun builder(): Builder = Builder()
-    }
 }
 
