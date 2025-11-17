@@ -81,7 +81,6 @@ class MyPageControllerTest(
                 .andDo(MockMvcResultHandlers.print())
         }
 
-        //비로그인 상태 오류 401 에러
         @Test
         @DisplayName("비로그인 상태")
         fun fail1() {
