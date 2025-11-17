@@ -16,7 +16,6 @@ import com.backend.domain.user.entity.User
 import com.backend.global.Rq.Rq
 import com.backend.global.exception.ErrorCode
 import com.backend.global.exception.ErrorException
-import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -24,7 +23,6 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 class AnswerService(
     private val answerRepository: AnswerRepository,
