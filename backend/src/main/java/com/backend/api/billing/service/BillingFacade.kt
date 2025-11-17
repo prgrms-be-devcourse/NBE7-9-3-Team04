@@ -42,7 +42,6 @@ class BillingFacade(
         val body = billingService.buildPaymentBody(subscription)
         val response = tossBillingClient.billingPayment(billingKey, body)
 
-        billingService.savePayment(subscription, response)
-        billingService.updateNextBillingDate(subscription)
+        billingService.processAutoPayment(subscription.customerKey, response)
     }
 }

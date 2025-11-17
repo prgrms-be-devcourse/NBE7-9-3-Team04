@@ -61,6 +61,12 @@ class SubscriptionService(
     }
 
     @Transactional
+    fun getSubscriptionForUpdate(customerKey: String): Subscription{
+        return subscriptionRepository.findByCustomerKeyForUpdate(customerKey)
+        ?: throw ErrorException(ErrorCode.SUBSCRIPTION_NOT_FOUND)
+    }
+
+    @Transactional
     fun updateNextBillingDate(subscription: Subscription, nextDate: LocalDate) {
         subscription.updateNextBillingDate(nextDate)
         subscriptionRepository.save(subscription)
@@ -92,6 +98,8 @@ class SubscriptionService(
     fun getActiveSubscriptionsByBillingDate(billingDate: LocalDate): List<Subscription> {
         return subscriptionRepository.findByNextBillingDateAndActive(billingDate, true)
     }
+
+
 
     fun isPremium(user: User): Boolean {
         val subscription = subscriptionRepository.findByUser(user)
