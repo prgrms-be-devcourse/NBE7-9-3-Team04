@@ -32,11 +32,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 
-/*
-TODO
- Verification Builder 제거
- JwtTest 전환 후 getter 제거
- */
+
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @Transactional
@@ -65,12 +61,12 @@ class UserControllerTest(
 
             //이메일 인증 완료 상태를 DB에 저장
             verificationCodeRepository.save(
-                VerificationCode.builder()
-                    .email(email)
-                    .code("ABC123")
-                    .verified(true)
-                    .expiresAt(LocalDateTime.now().plusMinutes(5))
-                    .build()
+                VerificationCode(
+                    email=email,
+                    code = "ABC123",
+                    verified = true,
+                    expiresAt = LocalDateTime.now().plusMinutes(5)
+                )
             )
 
             val request = UserSignupRequest(
@@ -152,12 +148,12 @@ class UserControllerTest(
             //TODO 빌더 제거
             //인증코드는 있지만 verified=false 인 상태
             verificationCodeRepository.save(
-                VerificationCode.builder()
-                    .email(email)
-                    .code("XYZ999")
-                    .verified(false)
-                    .expiresAt(LocalDateTime.now().plusMinutes(5))
-                    .build()
+                VerificationCode(
+                    email=email,
+                    code = "XYZ999",
+                    verified = false,
+                    expiresAt = LocalDateTime.now().plusMinutes(5)
+                )
             )
 
             val request = UserSignupRequest(
