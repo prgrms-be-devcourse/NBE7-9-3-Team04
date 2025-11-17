@@ -59,6 +59,12 @@ class AiReviewControllerTest(
 
     private lateinit var testUser: User
 
+
+    private fun <T> anyNonNull(): T {
+        Mockito.any<T>()
+        return null as T
+    }
+
     @BeforeEach
     fun setUp() {
         testUser = userRepository.save(
@@ -77,15 +83,19 @@ class AiReviewControllerTest(
     }
 
     private fun createPremiumSubscription(user: User): Subscription {
-        var subscription = Subscription.builder()
-            .user(user)
-            .subscriptionType(SubscriptionType.BASIC)
-            .isActive(false)
-            .subscriptionName("BASIC")
-            .price(0L)
-            .questionLimit(5)
-            .startDate(LocalDateTime.now())
-            .build()
+        var subscription = Subscription(
+            subscriptionType = SubscriptionType.BASIC,
+            active = false,
+            startDate = LocalDateTime.now(),
+            endDate = null,
+            nextBillingDate = null,
+            questionLimit = 5,
+            subscriptionName = "BASIC",
+            price = 0L,
+            billingKey = null,
+            customerKey = "",
+            user = user
+        )
 
         subscription.activatePremium("test-billing-key-123")
 
@@ -123,7 +133,7 @@ class AiReviewControllerTest(
             )
 
 
-            Mockito.`when`(aiQuestionService.getAiReviewContent(Mockito.any(AiReviewbackRequest::class.java)))
+            Mockito.`when`(aiQuestionService.getAiReviewContent(anyNonNull()))
                 .thenReturn("AI가 생성한 첨삭 내용입니다.")
 
             // when
@@ -169,15 +179,19 @@ class AiReviewControllerTest(
         fun createAiReview_Fail_NotPremium() {
             // given
             val basic = subscriptionRepository.save(
-                Subscription.builder()
-                    .user(testUser)
-                    .subscriptionType(SubscriptionType.BASIC)
-                    .isActive(false)
-                    .subscriptionName("BASIC")
-                    .price(0L)
-                    .questionLimit(5)
-                    .startDate(LocalDateTime.now())
-                    .build()
+                Subscription(
+                    subscriptionType = SubscriptionType.BASIC,
+                    active = false,
+                    startDate = LocalDateTime.now(),
+                    endDate = null,
+                    nextBillingDate = null,
+                    questionLimit = 5,
+                    subscriptionName = "BASIC",
+                    price = 0L,
+                    billingKey = null,
+                    customerKey = "",
+                    user = testUser
+                )
             )
             testUser.subscription = basic
             userRepository.saveAndFlush(testUser)
@@ -188,6 +202,9 @@ class AiReviewControllerTest(
                     .content("테스트 이력서 내용입니다.")
                     .build()
             )
+
+            Mockito.`when`(aiQuestionService.getAiReviewContent(anyNonNull()))
+                .thenReturn("AI가 생성한 첨삭 내용입니다.")
 
             // when
             val resultActions = mockMvc.perform(
