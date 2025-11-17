@@ -50,7 +50,7 @@ class Rq(
     }
 
     fun getCookieValue(name: String): String? {
-        if (request.getCookies() == null) return null
+        if (request.cookies == null) return null
 
         val cookies = request.cookies ?: return null
 
