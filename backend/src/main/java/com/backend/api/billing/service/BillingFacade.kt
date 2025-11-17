@@ -22,7 +22,6 @@ class BillingFacade(
         val billingKey = tossBillingClient.issueBillingKey(authKey, customerKey)
 
         val subscription = billingService.activatePremium(customerKey, billingKey)
-        autoPayment(subscription)
 
         return BillingResponse(
             billingKey = billingKey,

@@ -19,7 +19,7 @@ class PaymentFacade(
     private val log = LoggerFactory.getLogger(PaymentFacade::class.java)
 
 
-    suspend fun confirmPayment(request: PaymentRequest): PaymentResponse {
+    fun confirmPayment(request: PaymentRequest): PaymentResponse {
         val user = rq.getUser()
         val response = tossPaymentClient.confirmPayment(request)
 

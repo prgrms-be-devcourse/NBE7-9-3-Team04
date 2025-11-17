@@ -3,27 +3,21 @@ package com.backend.api.payment.service
 import com.backend.api.payment.dto.response.PaymentConfirmResponse
 import com.backend.api.payment.dto.response.PaymentResponse
 import com.backend.api.payment.dto.response.PaymentResponse.Companion.from
-import com.backend.api.subscription.service.SubscriptionService
 import com.backend.domain.payment.entity.Payment
 import com.backend.domain.payment.entity.PaymentStatus
 import com.backend.domain.payment.repository.PaymentRepository
 import com.backend.domain.user.entity.User
-import com.backend.global.Rq.Rq
 import com.backend.global.exception.ErrorCode
 import com.backend.global.exception.ErrorException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.reactive.function.client.WebClient
 import java.time.LocalDateTime
 
 @Service
 class PaymentService(
-    private val paymentRepository: PaymentRepository,
-    private val subscriptionService: SubscriptionService,
-    private val webClient: WebClient,
-    private val rq: Rq
+    private val paymentRepository: PaymentRepository
 ) {
-    suspend fun createPayment(response: PaymentConfirmResponse, user: User): Payment {
+    fun createPayment(response: PaymentConfirmResponse, user: User): Payment {
 
         val payment = Payment(
             orderId = response.orderId,

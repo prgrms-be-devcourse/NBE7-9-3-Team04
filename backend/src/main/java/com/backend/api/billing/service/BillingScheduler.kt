@@ -15,7 +15,7 @@ class BillingScheduler(
 
     private val log = LoggerFactory.getLogger(BillingScheduler::class.java)
     //00시에 자동으로 결제 진행
-    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 52 3 * * *", zone = "Asia/Seoul")
     fun runAutoBillingTask() {
         log.info("[스케줄러 시작] 자동 결제 작업 시작 - {}", LocalDate.now())
 
@@ -40,4 +40,3 @@ class BillingScheduler(
         log.info("[스케줄러 완료] 자동 결제 작업 종료 - 총 {}건 처리", subscriptions.size)
     }
 }
-
