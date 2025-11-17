@@ -41,7 +41,7 @@ class AdminQuestionControllerTest(
     private val mockMvc: MockMvc,
     private val objectMapper: ObjectMapper,
     private val questionRepository: QuestionRepository,
-    private val userRepository: UserRepository,
+    override var userRepository: UserRepository,
 ) : JwtTest() {
 
     @MockBean

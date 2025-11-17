@@ -34,7 +34,7 @@ class QnaControllerTest(
     private val mockMvc: MockMvc,
     private val objectMapper: ObjectMapper,
     private val qnaRepository: QnaRepository,
-    private val userRepository: UserRepository
+    override var userRepository: UserRepository
 ) : JwtTest() {
 
     @MockBean

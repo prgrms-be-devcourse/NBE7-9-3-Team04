@@ -48,7 +48,7 @@ class AiReviewControllerTest(
     private val reviewRepository: ReviewRepository,
     private val resumeRepository: ResumeRepository,
     private val subscriptionRepository: SubscriptionRepository,
-    private val userRepository: UserRepository
+    override var userRepository: UserRepository
 ) : JwtTest() {
 
     @MockBean

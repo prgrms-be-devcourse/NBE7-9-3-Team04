@@ -42,7 +42,7 @@ import java.time.LocalDateTime
 class UserControllerTest(
     private val mockMvc: MockMvc,
     private val objectMapper: ObjectMapper,
-    private val userRepository: UserRepository,
+    override var userRepository: UserRepository,
     private val jwtTokenProvider: JwtTokenProvider,
     private val verificationCodeRepository: VerificationCodeRepository,
     private val refreshRedisRepository: RefreshRedisRepository
