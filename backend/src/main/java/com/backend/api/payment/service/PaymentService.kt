@@ -55,4 +55,9 @@ class PaymentService(
     fun savePayment(payment: Payment):Payment {
         return paymentRepository.save(payment)
     }
+
+    //중복 결제 검사
+    @Transactional(readOnly = true)
+    fun findByOrderIdOrNull(orderId: String): Payment? =
+        paymentRepository.findByOrderId(orderId)
 }
