@@ -8,13 +8,13 @@ import java.time.LocalDateTime
 data class AnswerMypageResponse(
 
     @field:Schema(description = "면접 답변 ID", example = "1")
-    val id: Long?,
+    val id: Long,
 
     @field:Schema(description = "작성일", example = "2025-10-13T11:00:00")
-    val createDate: LocalDateTime?,
+    val createDate: LocalDateTime,
 
     @field:Schema(description = "수정일", example = "2025-10-13T12:00:00")
-    val modifyDate: LocalDateTime?,
+    val modifyDate: LocalDateTime,
 
     @field:Schema(description = "면접 답변 내용", example = "이것은 면접 답변입니다.")
     val content: String,

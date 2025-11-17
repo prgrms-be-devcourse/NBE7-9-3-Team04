@@ -98,7 +98,7 @@ class AnswerService(
         return AnswerPageResponse.from(answersPage, answers)
     }
 
-    fun findMyAnswer(questionId: Long): AnswerReadResponse? {
+    fun findMyAnswer(questionId: Long): AnswerReadResponse {
         // 질문 존재 여부 확인
         questionService.findByIdOrThrow(questionId)
 
