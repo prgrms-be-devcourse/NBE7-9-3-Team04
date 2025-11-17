@@ -3,6 +3,7 @@ package com.backend.api.post.controller
 import com.backend.api.post.dto.request.PostAddRequest
 import com.backend.api.post.dto.request.PostUpdateRequest
 import com.backend.domain.answer.repository.AnswerRepository
+import com.backend.domain.feedback.repository.FeedbackRepository
 import com.backend.domain.post.entity.PinStatus
 import com.backend.domain.post.entity.Post
 import com.backend.domain.post.entity.PostCategoryType
@@ -56,7 +57,8 @@ class PostControllerTest(
     private val qnaRepository: QnaRepository,
     private val rankingRepository: RankingRepository,
     private val userQuestionRepository: UserQuestionRepository,
-    private val resumeRepository: ResumeRepository
+    private val resumeRepository: ResumeRepository,
+    private val feedbackRepository: FeedbackRepository
 ) {
     @MockBean
     private lateinit var rq: Rq
@@ -75,6 +77,7 @@ class PostControllerTest(
 
         rankingRepository.deleteAll()
         resumeRepository.deleteAll()
+        feedbackRepository.deleteAll()
         answerRepository.deleteAll()
         qnaRepository.deleteAll()
 
