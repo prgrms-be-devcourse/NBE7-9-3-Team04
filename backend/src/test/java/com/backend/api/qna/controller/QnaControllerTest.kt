@@ -46,25 +46,25 @@ class QnaControllerTest(
     @BeforeEach
     fun setUp() {
         testUser = userRepository.save(
-            User.builder()
-                .name("테스터")
-                .email("test@qna.com")
-                .nickname("tester")
-                .github("https://github.com/tester")
-                .password("1234")
-                .role(Role.USER)
-                .build()
+            User(
+                name = "테스터",
+                email = "test@qna.com",
+                nickname = "tester",
+                github = "https://github.com/tester",
+                password = "1234",
+                role = Role.USER
+            )
         )
 
         Mockito.`when`(rq.getUser()).thenReturn(testUser)
 
         savedQna = qnaRepository.save(
-            Qna.builder()
-                .title("기존 제목")
-                .content("기존 내용")
-                .author(testUser)
-                .categoryType(QnaCategoryType.ACCOUNT)
-                .build()
+            Qna(
+                title = "기존 제목",
+                content = "기본 내용",
+                author = testUser,
+                categoryType = QnaCategoryType.ACCOUNT
+            )
         )
     }
 

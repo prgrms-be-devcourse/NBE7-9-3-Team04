@@ -1,6 +1,5 @@
 package com.backend.domain.answer.entity
 
-import com.backend.domain.feedback.entity.Feedback
 import com.backend.domain.question.entity.Question
 import com.backend.domain.user.entity.User
 import com.backend.global.entity.BaseEntity
@@ -24,9 +23,6 @@ class Answer(
     @JoinColumn(nullable = false)
     val question: Question
 ) : BaseEntity() {
-
-    @OneToOne(mappedBy = "answer", cascade = [CascadeType.REMOVE])
-    var feedback: Feedback? = null
 
     fun update(content: String?, isPublic: Boolean?) {
         if (content != null && !content.isBlank()) {

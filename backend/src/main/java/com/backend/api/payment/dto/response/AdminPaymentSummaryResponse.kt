@@ -2,7 +2,6 @@ package com.backend.api.payment.dto.response
 
 import io.swagger.v3.oas.annotations.media.Schema
 
-@JvmRecord
 data class AdminPaymentSummaryResponse(
     @field:Schema(description = "총 결제 건수", example = "5")
     val totalPayments: Long,

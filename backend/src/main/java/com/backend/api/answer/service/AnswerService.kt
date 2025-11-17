@@ -11,6 +11,7 @@ import com.backend.api.question.service.QuestionService
 import com.backend.api.user.service.UserService
 import com.backend.domain.answer.entity.Answer
 import com.backend.domain.answer.repository.AnswerRepository
+import com.backend.domain.feedback.repository.FeedbackRepository
 import com.backend.domain.user.entity.Role
 import com.backend.domain.user.entity.User
 import com.backend.global.Rq.Rq
@@ -29,7 +30,8 @@ class AnswerService(
     private val questionService: QuestionService,
     private val rq: Rq,
     private val userService: UserService,
-    private val feedbackPublisher: FeedbackPublisher
+    private val feedbackPublisher: FeedbackPublisher,
+    private val feedbackRepository: FeedbackRepository
 ) {
 
     fun findByIdOrThrow(id: Long): Answer {
@@ -91,7 +93,8 @@ class AnswerService(
 
         val answers = answersPage.content
             .map { answer: Answer ->
-                val score = if (answer.feedback != null) answer.feedback!!.aiScore else 0
+                val feedback = feedbackRepository.findByAnswerId(answer.id)
+                val score = feedback?.aiScore ?: 0
                 AnswerReadWithScoreResponse.from(answer, score)
             }
 

@@ -4,7 +4,6 @@ import com.backend.domain.user.entity.User
 import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.data.domain.Page
 
-@JvmRecord
 data class UserPageResponse<T>(
     @field:Schema(description = "유저 응답DTO 리스트")
      val users: List<T>,
@@ -22,7 +21,6 @@ data class UserPageResponse<T>(
     val pageSize: Int
 ) {
     companion object {
-        @JvmStatic
         fun <T> from(page: Page<User>, users: List<T>): UserPageResponse<T> {
             return UserPageResponse(
                 users,

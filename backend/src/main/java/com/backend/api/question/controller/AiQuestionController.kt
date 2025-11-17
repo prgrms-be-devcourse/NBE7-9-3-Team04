@@ -15,7 +15,6 @@ import java.util.*
 
 @RestController
 @RequestMapping("/api/v1/ai/questions")
-@RequiredArgsConstructor
 @Tag(name = "AI Questions", description = "AI 관련 질문 관리 API")
 class AiQuestionController(
     private val aiQuestionService: AiQuestionService,

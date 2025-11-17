@@ -4,7 +4,7 @@ import com.backend.domain.ranking.entity.Ranking
 import com.backend.domain.ranking.entity.Tier
 import io.swagger.v3.oas.annotations.media.Schema
 
-@JvmRecord
+
 data class RankingResponse(
 
     @field:Schema(description = "사용자 ID", example = "12")
@@ -38,7 +38,6 @@ data class RankingResponse(
     val questionCount: Int
 ) {
     companion object {
-        @JvmStatic
         fun from(ranking: Ranking,
                  rankValue: Int,
                  solvedCount: Int,

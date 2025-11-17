@@ -4,7 +4,6 @@ import com.backend.domain.answer.entity.Answer
 import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.data.domain.Page
 
-@JvmRecord
 data class AnswerPageResponse<T>(
 
     @field:Schema(description = "답변 응답DTO 리스트")
@@ -24,7 +23,6 @@ data class AnswerPageResponse<T>(
 
 ) {
     companion object {
-        @JvmStatic
         fun <T> from(page: Page<Answer>, answers: List<T>) = AnswerPageResponse(
             answers = answers,
             currentPage = page.number + 1,

@@ -8,11 +8,8 @@ import com.backend.global.exception.ErrorException
 import jakarta.persistence.*
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
-import lombok.AccessLevel
-import lombok.NoArgsConstructor
 import java.time.LocalDateTime
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 class Post(
 

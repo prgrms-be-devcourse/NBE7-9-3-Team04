@@ -45,25 +45,25 @@ class AdminQnaControllerTest(
     @BeforeEach
     fun setUp() {
         adminUser = userRepository.save(
-            User.builder()
-                .name("관리자")
-                .email("admin@test.com")
-                .nickname("admin")
-                .github("https://github.com/admin")
-                .password("1234")
-                .role(Role.ADMIN)
-                .build()
+            User(
+                name = "관리자",
+                email = "admin@test.com",
+                nickname = "admin",
+                github = "https://github.com/admin",
+                password = "1234",
+                role = Role.ADMIN
+            )
         )
 
         Mockito.`when`(rq.getUser()).thenReturn(adminUser)
 
         savedQna = qnaRepository.save(
-            Qna.builder()
-                .title("Qna 제목")
-                .content("Qna 내용")
-                .author(adminUser)
-                .categoryType(QnaCategoryType.SYSTEM)
-                .build()
+            Qna(
+                title = "Qna 제목",
+                content = "Qna 내용",
+                author = adminUser,
+                categoryType = QnaCategoryType.SYSTEM
+            )
         )
     }
 

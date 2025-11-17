@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
 
-@JvmRecord
 data class AnswerCreateRequest(
 
     @field:NotBlank(message = "답변 내용을 입력해주세요.")

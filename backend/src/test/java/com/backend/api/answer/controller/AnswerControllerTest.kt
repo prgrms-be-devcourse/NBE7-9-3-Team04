@@ -114,20 +114,6 @@ class AnswerControllerTest(
         )
 
         feedbackList = feedbacks.map { feedbackRepository.save(it) }
-
-        answers[0].feedback = feedbackList[0]
-        answers[1].feedback = feedbackList[1]
-        answers[2].feedback = feedbackList[2]
-        answers[3].feedback = feedbackList[3]
-        answers[4].feedback = feedbackList[4]
-        answers[5].feedback = feedbackList[5]
-        answers[6].feedback = feedbackList[6]
-        answers[7].feedback = feedbackList[7]
-        answers[8].feedback = feedbackList[8]
-        answers[9].feedback = feedbackList[9]
-        answers[10].feedback = feedbackList[10]
-        answers[11].feedback = feedbackList[11]
-        answers[12].feedback = feedbackList[12]
     }
 
     @Nested

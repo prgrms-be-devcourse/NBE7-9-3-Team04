@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
 
-@JvmRecord
 data class CommentRequest(
 
     @field:NotBlank(message = "댓글 내용을 입력해주세요.")

@@ -10,7 +10,6 @@ import jakarta.validation.constraints.Size
 import java.time.LocalDateTime
 
 //게시글 수정
-@JvmRecord
 data class PostUpdateRequest(
     @field:NotBlank(message = "제목은 필수입니다.")
     @field:Size(min = 2, max = 255, message = "제목은 2자 이상 255자 이하로 입력해주세요.")

@@ -142,8 +142,7 @@ class FeedbackService(
         return FeedbackReadResponse.from(feedback)
     }
 
-    fun getFeedback(id: Long): Feedback {
+    fun getFeedbackOrNull(id: Long): Feedback? {
         return feedbackRepository.findByIdOrNull(id)
-            ?: throw ErrorException(ErrorCode.FEEDBACK_NOT_FOUND)
     }
 }

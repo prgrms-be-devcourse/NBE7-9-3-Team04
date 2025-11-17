@@ -96,7 +96,7 @@ class MyPageControllerTest(
 //                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("로그인된 사용자가 없습니다."))
 //                .andDo(MockMvcResultHandlers.print())
 //        }
-//    }
+    }
 
     @Nested
     @DisplayName("개인정보 비밀번호 API")

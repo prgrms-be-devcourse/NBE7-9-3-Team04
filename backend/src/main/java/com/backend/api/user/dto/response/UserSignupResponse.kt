@@ -6,7 +6,6 @@ import com.backend.domain.subscription.entity.SubscriptionType
 import com.backend.domain.user.entity.User
 import io.swagger.v3.oas.annotations.media.Schema
 
-@JvmRecord
 data class UserSignupResponse(
     @field:Schema(description = "사용자 ID", example = "1")
      val id: Long,

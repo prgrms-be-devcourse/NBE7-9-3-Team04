@@ -4,7 +4,6 @@ import com.backend.domain.user.entity.User
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
 
-@JvmRecord
 data class UserLoginResponse(
     @field:Schema(description = "사용자 ID", example = "1")
     val id: Long,
@@ -36,10 +35,9 @@ data class UserLoginResponse(
     @field:Schema(description = "수정일", example = "2025-10-13T10:20:00")
     val modifyDate: LocalDateTime,
 
-    @JvmField @field:Schema(description = "accessToken", example = "accessToken")
+    @field:Schema(description = "accessToken", example = "accessToken")
     val accessToken: String?,
-
-    @JvmField @field:Schema(description = "refreshToken", example = "refreshToken")
+    @field:Schema(description = "refreshToken", example = "refreshToken")
     val refreshToken: String?
 
 
@@ -62,7 +60,6 @@ data class UserLoginResponse(
             )
         }
 
-        @JvmStatic
         fun from(user: User): UserLoginResponse {
             return UserLoginResponse(
                 user.id,

@@ -4,7 +4,6 @@ import com.backend.domain.answer.entity.Answer
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
 
-@JvmRecord
 data class AnswerMypageResponse(
 
     @field:Schema(description = "면접 답변 ID", example = "1")
@@ -36,7 +35,6 @@ data class AnswerMypageResponse(
 
 ) {
     companion object {
-        @JvmStatic
         fun from(answer: Answer) = AnswerMypageResponse(
             id = answer.id,
             createDate = answer.createDate,

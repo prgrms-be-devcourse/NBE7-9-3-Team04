@@ -4,7 +4,6 @@ import com.backend.domain.answer.entity.Answer
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
 
-@JvmRecord
 data class AnswerCreateResponse(
 
     @field:Schema(description = "면접 답변 ID", example = "1")
@@ -33,7 +32,6 @@ data class AnswerCreateResponse(
 
 ) {
     companion object {
-        @JvmStatic
         fun from(answer: Answer) = AnswerCreateResponse(
             id = answer.id,
             createDate = answer.createDate,

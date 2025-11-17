@@ -3,13 +3,11 @@ package com.backend.api.review.dto.request
 import com.backend.api.question.dto.request.MessagesRequest
 import com.backend.domain.resume.entity.Resume
 
-@JvmRecord
 data class AiReviewbackRequest(
     val model: String,
     val messages: List<MessagesRequest>
 ) {
     companion object {
-        @JvmStatic
         fun of(resume: Resume): AiReviewbackRequest {
             val systemContent = """
                 # 요청 사항:
