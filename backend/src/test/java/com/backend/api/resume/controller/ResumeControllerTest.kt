@@ -54,7 +54,6 @@ class ResumeControllerTest(
     internal inner class t1 {
         @Test
         @DisplayName("정상 작동")
-        @Throws(Exception::class)
         fun success() {
             // given
             resumeRepository.deleteAll()
@@ -93,7 +92,6 @@ class ResumeControllerTest(
 
         @Test
         @DisplayName("로그인 안 된 상태에서 요청할 때")
-        @Throws(Exception::class)
         fun fail1() {
             // given
             SecurityContextHolder.clearContext()
@@ -125,7 +123,6 @@ class ResumeControllerTest(
 
         @Test
         @DisplayName("이미 이력서가 존재할 때")
-        @Throws(Exception::class)
         fun fail2() {
             // given
             val request = ResumeCreateRequest(
@@ -166,7 +163,6 @@ class ResumeControllerTest(
     internal inner class t2 {
         @Test
         @DisplayName("정상 작동")
-        @Throws(Exception::class)
         fun success() {
             //given
             val request = ResumeUpdateRequest(
@@ -204,7 +200,6 @@ class ResumeControllerTest(
 
         @Test
         @DisplayName("이력서가 존재하지 않을 때")
-        @Throws(Exception::class)
         fun fail1() {
             resumeRepository.deleteAll()
             //given
@@ -239,7 +234,6 @@ class ResumeControllerTest(
     internal inner class t3 {
         @Test
         @DisplayName("정상 작동")
-        @Throws(Exception::class)
         fun success() {
             //given
 
@@ -263,7 +257,6 @@ class ResumeControllerTest(
 
         @Test
         @DisplayName("이력서가 존재하지 않을 때")
-        @Throws(Exception::class)
         fun fail1() {
             // given
             val resumeId = 999L
@@ -285,7 +278,6 @@ class ResumeControllerTest(
 
         @Test
         @DisplayName("작성자 불일치")
-        @Throws(Exception::class)
         fun fail2() {
             // given
             val resumeId = 1L
@@ -307,7 +299,6 @@ class ResumeControllerTest(
 
         @Test
         @DisplayName("유저가 존재하지 않을 때")
-        @Throws(Exception::class)
         fun fail4() {
             // given
             val resumeId = 1L
@@ -334,7 +325,6 @@ class ResumeControllerTest(
     internal inner class t4 {
         @Test
         @DisplayName("정상 작동")
-        @Throws(Exception::class)
         fun success() {
             //given
 
@@ -364,7 +354,6 @@ class ResumeControllerTest(
 
         @Test
         @DisplayName("유저가 존재하지 않을 때")
-        @Throws(Exception::class)
         fun fail1() {
             // given
             userRepository.deleteAll()

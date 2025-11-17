@@ -57,7 +57,6 @@ class FeedbackControllerTest(
     internal inner class t1 {
         @Test
         @DisplayName("정상 작동")
-        @Throws(Exception::class)
         fun success() {
             //given
             val question = questionRepository.findById(1L).get()
@@ -85,7 +84,6 @@ class FeedbackControllerTest(
 
         @Test
         @DisplayName("피드백이 존재하지 않을 때")
-        @Throws(Exception::class)
         fun fail1() {
             // given
             val question = questionRepository.findById(1L).get()

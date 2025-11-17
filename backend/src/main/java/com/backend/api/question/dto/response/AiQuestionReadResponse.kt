@@ -8,8 +8,7 @@ import java.util.*
 data class AiQuestionReadResponse(
     val groupId: UUID,
     val title: String,
-    @field:JsonFormat(pattern = "yyyy-MM-dd HH:mm") @param:JsonFormat(
-        pattern = "yyyy-MM-dd HH:mm"
-    ) val date: LocalDateTime,
-    @JvmField val count: Long
+    @field:JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    val date: LocalDateTime,
+    val count: Long
 ) 

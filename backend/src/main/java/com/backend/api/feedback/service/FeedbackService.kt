@@ -56,7 +56,7 @@ class FeedbackService(
             aiFeedback.score,
             answer
         )
-        feedbackRepository.save<Feedback?>(feedback)
+        feedbackRepository.save(feedback)
 
         val baseScore = question.score
         val ratio = feedback.aiScore / 100.0

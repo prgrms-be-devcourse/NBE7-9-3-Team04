@@ -7,10 +7,8 @@ import io.swagger.v3.oas.annotations.media.Schema
 @Schema(description = "AI 응답 값")
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class ChatGptResponse(
-    @field:JsonProperty("choices") @field:Schema(
-        description = "전체 값"
-    ) @param:Schema(description = "전체 값") @param:JsonProperty(
-        "choices"
-    ) val choiceResponses: MutableList<ChoiceResponse>
+    @field:JsonProperty("choices")
+    @field:Schema(description = "전체 값")
+    val choiceResponses: List<ChoiceResponse>
 )
 

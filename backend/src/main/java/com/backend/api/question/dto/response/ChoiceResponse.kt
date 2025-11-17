@@ -7,9 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 @Schema(description = "AI 응답 값 서브 내용")
 @JsonIgnoreProperties(ignoreUnknown = true)
 data class ChoiceResponse(
-    @field:JsonProperty("message") @field:Schema(
-        description = "메시지 응답"
-    ) @param:Schema(description = "메시지 응답") @param:JsonProperty(
-        "message"
-    ) val message: MessageResponse
+    @field:JsonProperty("message")
+    @field:Schema(description = "메시지 응답")
+    val message: MessageResponse
 )

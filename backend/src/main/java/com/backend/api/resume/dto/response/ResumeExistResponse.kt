@@ -7,7 +7,7 @@ data class ResumeExistResponse(
     @field:Schema(
         description = "이력서 존재 여부",
         example = "true"
-    ) @param:Schema(description = "이력서 존재 여부", example = "true") val hasResume: Boolean
+    ) val hasResume: Boolean
 ) {
     companion object {
         fun from(hasResume: Boolean): ResumeExistResponse {
