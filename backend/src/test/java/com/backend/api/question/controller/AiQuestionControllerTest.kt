@@ -53,7 +53,7 @@ class AiQuestionControllerTest(
             .categoryType(QuestionCategoryType.PORTFOLIO)
             .groupId(uuid)
             .build()
-        questionRepository.save<Question?>(question2)
+        questionRepository.save(question2)
 
         val question3 = builder()
             .title("기존 제목")
@@ -62,7 +62,7 @@ class AiQuestionControllerTest(
             .categoryType(QuestionCategoryType.PORTFOLIO)
             .groupId(uuid)
             .build()
-        questionRepository.save<Question?>(question3)
+        questionRepository.save(question3)
 
         val question4 = builder()
             .title("기존 제목")
@@ -71,7 +71,7 @@ class AiQuestionControllerTest(
             .categoryType(QuestionCategoryType.PORTFOLIO)
             .groupId(uuid)
             .build()
-        questionRepository.save<Question?>(question4)
+        questionRepository.save(question4)
 
         val question5 = builder()
             .title("기존 제목")
@@ -80,7 +80,7 @@ class AiQuestionControllerTest(
             .categoryType(QuestionCategoryType.PORTFOLIO)
             .groupId(uuid)
             .build()
-        questionRepository.save<Question?>(question5)
+        questionRepository.save(question5)
     }
 
     @Nested

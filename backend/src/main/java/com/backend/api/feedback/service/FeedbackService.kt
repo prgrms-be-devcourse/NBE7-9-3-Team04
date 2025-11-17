@@ -130,14 +130,14 @@ class FeedbackService(
             .build()
 
         // 프롬프트
-        return Prompt(List.of<Message?>(systemMessage, userMessage, assistantMessage), options)
+        return Prompt(List.of<Message>(systemMessage, userMessage, assistantMessage), options)
     }
 
 
     @Transactional(readOnly = true)
     fun readFeedback(questionId: Long, user: User): FeedbackReadResponse {
         val response = answerService.findMyAnswer(questionId)
-        val feedback = getFeedbackByAnswerId(response!!.id!!)
+        val feedback = getFeedbackByAnswerId(response.id)
 
         return FeedbackReadResponse.from(feedback)
     }

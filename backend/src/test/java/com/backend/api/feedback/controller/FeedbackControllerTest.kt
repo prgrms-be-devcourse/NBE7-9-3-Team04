@@ -42,14 +42,14 @@ class FeedbackControllerTest(
             mockUser,
             question
         )
-        answerRepository.save<Answer?>(answer)
+        answerRepository.save(answer)
         val feedback = builder()
             .content("답변은 프로세스와 스레드의 기본 개념과 차이를 명확하게 설명하였으며, 메모리 공간과 자원 공유 방식, 문맥 전환 속도, 동기화 필요성 등 핵심 요소를 잘 포함하고 있습니다. 특히 스레드 안전성 문제를 언급하여 실무에서 고려해야 할 중요한 부분도 짚었다는 점에서 긍정적입니다. 다만, 프로세스의 자원뿐만 아니라, 별도의 주소 공간을 갖는다는 점과 각 프로세스가 독립적으로 실행되어 서로 간섭하지 않는다는 점, 그리고 스레드는 같은 주소 공간 내에서 실행되어 자원 공유가 가능함을 보다 명확히 구분해 주었다면 더욱 완벽했을 것입니다. 또한, 스레드 생성과 문맥 전환의 비용 비교에 대해 조금 더 구체적인 설명이 추가되면 좋겠습니다. 전체적으로 답변은 기술적으로 정확하고 면접관이 기대하는 수준에 부합합니다.")
             .aiScore(90)
             .answer(answer)
             .build()
 
-        feedbackRepository.save<Feedback?>(feedback)
+        feedbackRepository.save(feedback)
     }
 
     @Nested
