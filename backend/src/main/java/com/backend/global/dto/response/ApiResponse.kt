@@ -14,11 +14,13 @@ data class ApiResponse<T>(
             return ApiResponse(HttpStatus.OK, message, data)
         }
 
+        fun <T> ok(data: T?): ApiResponse<T> = ApiResponse(HttpStatus.OK, "요청이 성공적으로 처리되었습니다.", data)
+
         fun <T> created(message: String, data: T?): ApiResponse<T> = ApiResponse(HttpStatus.CREATED, message, data)
 
         fun <T> noContent(message: String): ApiResponse<T> = ApiResponse(HttpStatus.NO_CONTENT, message, null)
 
-        fun <T> fail(errorException: ErrorException): ApiResponse<T> {
+        fun fail(errorException: ErrorException): ApiResponse<*> {
             val errorCode = errorException.errorCode
             return ApiResponse(
                 errorCode.httpStatus,
@@ -27,10 +29,10 @@ data class ApiResponse<T>(
             )
         }
 
-        fun <T> fail(status: HttpStatus, message: String): ApiResponse<T> {
+        fun fail(status: HttpStatus, message: String?): ApiResponse<*> {
             return ApiResponse(
                 status,
-                message,
+                message ?: "메시지가 비어있습니다.",
                 null
             )
         }
