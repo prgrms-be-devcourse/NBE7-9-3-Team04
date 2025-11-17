@@ -40,6 +40,7 @@ dependencies {
     testImplementation("com.h2database:h2")
     runtimeOnly("com.mysql:mysql-connector-j")
     annotationProcessor("org.projectlombok:lombok")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13")
@@ -50,7 +51,7 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
     implementation("org.springframework.ai:spring-ai-starter-model-openai")
     implementation("org.springframework.ai:spring-ai-starter-model-vertex-ai-gemini")
-
+    implementation("com.mailgun:mailgun-java:1.0.1")
 
     implementation("org.springframework.boot:spring-boot-starter-webflux")
 
@@ -72,6 +73,7 @@ dependencies {
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+
 }
 extra["springAiVersion"] = "1.1.0-M1"
 
@@ -94,8 +96,16 @@ allOpen {
     annotation("jakarta.persistence.Embeddable")
 }
 
+kapt {
+    correctErrorTypes = true
+    includeCompileClasspath = false
+}
 
 tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+kapt {
+    correctErrorTypes = true
+    includeCompileClasspath = false
+}

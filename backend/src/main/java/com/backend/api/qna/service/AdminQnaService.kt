@@ -14,9 +14,9 @@ import jakarta.validation.Valid
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.data.repository.findByIdOrNull
 
 @Service
 @Transactional(readOnly = true)
@@ -31,7 +31,7 @@ class AdminQnaService(
     }
 
     @Transactional
-    fun registerAnswer(qnaId: Long, @Valid request: QnaAnswerRequest, user: User?): QnaResponse {
+    fun registerAnswer(qnaId: Long, @Valid request: QnaAnswerRequest, user: User): QnaResponse {
         adminUserService.validateAdminAuthority(user)
 
         val qna = findByIdOrThrow(qnaId)
@@ -45,14 +45,14 @@ class AdminQnaService(
     }
 
     @Transactional
-    fun deleteQna(qnaId: Long, user: User?) {
+    fun deleteQna(qnaId: Long, user: User) {
         adminUserService.validateAdminAuthority(user)
 
         val qna = findByIdOrThrow(qnaId)
         qnaRepository.delete(qna)
     }
 
-    fun getAllQna(page: Int, user: User?, categoryType: QnaCategoryType?): QnaPageResponse<QnaResponse> {
+    fun getAllQna(page: Int, user: User, categoryType: QnaCategoryType?): QnaPageResponse<QnaResponse> {
         adminUserService.validateAdminAuthority(user)
 
         val pageIndex = (page.takeIf { it > 0 } ?: 1) - 1
@@ -78,7 +78,7 @@ class AdminQnaService(
         return QnaPageResponse.from(qnaPage, qnaList)
     }
 
-    fun getQna(qnaId: Long, user: User?): QnaResponse {
+    fun getQna(qnaId: Long, user: User): QnaResponse {
         adminUserService.validateAdminAuthority(user)
 
         val qna = findByIdOrThrow(qnaId)

@@ -3,7 +3,10 @@ package com.backend.api.answer.controller
 import com.backend.api.global.JwtTest
 import com.backend.domain.answer.entity.Answer
 import com.backend.domain.answer.repository.AnswerRepository
+import com.backend.domain.feedback.entity.Feedback
+import com.backend.domain.feedback.repository.FeedbackRepository
 import com.backend.domain.question.entity.Question
+import com.backend.domain.question.entity.QuestionCategoryType
 import com.backend.domain.question.repository.QuestionRepository
 import com.backend.domain.user.entity.Role
 import com.backend.domain.user.entity.User
@@ -11,11 +14,11 @@ import com.jayway.jsonpath.JsonPath
 import org.assertj.core.api.Assertions.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.*
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.TestConstructor
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
@@ -27,53 +30,57 @@ import org.springframework.transaction.annotation.Transactional
 @AutoConfigureMockMvc(addFilters = false)
 @Transactional
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 class AnswerControllerTest(
-    @Autowired
-    val mvc: MockMvc,
-    @Autowired
-    val questionRepository: QuestionRepository,
-    @Autowired
-    val answerRepository: AnswerRepository
+    private val mvc: MockMvc,
+    private val questionRepository: QuestionRepository,
+    private val answerRepository: AnswerRepository,
+    private val feedbackRepository: FeedbackRepository
 ) : JwtTest() {
 
     private var questionId: Long = 0
     private var answerIdList: List<Long> = emptyList()
+    private var feedbackList: List<Feedback> = emptyList()
     private var userIdList: List<Long> = emptyList()
 
     @BeforeEach
     @Transactional
     fun setUp() {
-        val generalUser = User.builder()
-            .email("general@user.com")
-            .password("asdf1234!")
-            .name("홍길동")
-            .nickname("gildong")
-            .age(20)
-            .github("abc123")
-            .image(null)
-            .role(Role.USER)
-            .build()
 
-        val generalUser2 = User.builder()
-            .email("general2@user.com")
-            .password("asdf1234!")
-            .name("홍길똥")
-            .nickname("gilddong")
-            .age(25)
-            .github("abc1233")
-            .image(null)
-            .role(Role.USER)
-            .build()
+        val generalUser = User(
+            "general@user.com",
+            "asdf1234!",
+            "홍길동",
+            "gildong",
+            20,
+            "abc123",
+            null,
+            Role.USER
+        )
+
+        val generalUser2 = User(
+            "general2@user.com",
+            "asdf1234!",
+            "홍길똥",
+            "gilddong",
+            25,
+            "abc1233",
+            null,
+            Role.USER
+        )
 
         userRepository.save(generalUser)
         userRepository.save(generalUser2)
         userIdList = listOf(generalUser.id, generalUser2.id)
 
-        val question1 = Question.builder()
-            .title("첫 번째 질문 제목")
-            .content("첫 번째 질문 내용")
-            .author(mockUser)
-            .build()
+        val question1 = Question(
+            "첫 번째 질문 제목",
+            "첫 번째 질문 내용",
+            true,
+            0,
+            mockUser,
+            QuestionCategoryType.DATABASE
+        )
         questionRepository.save(question1)
         questionId = question1.id
 
@@ -94,6 +101,24 @@ class AnswerControllerTest(
         )
 
         answerIdList = answers.map { answerRepository.save(it).id }
+
+        val feedbacks = listOf(
+            Feedback("0", 0, answers[0]),
+            Feedback("1", 1, answers[1]),
+            Feedback("2", 2, answers[2]),
+            Feedback("3", 3, answers[3]),
+            Feedback("4", 4, answers[4]),
+            Feedback("5", 5, answers[5]),
+            Feedback("6", 6, answers[6]),
+            Feedback("7", 7, answers[7]),
+            Feedback("8", 8, answers[8]),
+            Feedback("9", 9, answers[9]),
+            Feedback("10", 10, answers[10]),
+            Feedback("11", 11, answers[11]),
+            Feedback("12", 12, answers[12])
+        )
+
+        feedbackList = feedbacks.map { feedbackRepository.save(it) }
     }
 
     @Nested

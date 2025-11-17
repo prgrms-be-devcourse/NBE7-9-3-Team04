@@ -35,7 +35,7 @@ class UserPenalty(
     val id: Long? = null
 
     fun isExpired(): Boolean {
-        val end = endAt   // Smart cast 가능
+        val end = endAt
         return !released && end != null && end.isBefore(LocalDateTime.now())
     }
 
@@ -43,9 +43,6 @@ class UserPenalty(
         released = true
     }
 
-    // -----------------------
-    // Kotlin Builder (Java 호환 100%)
-    // -----------------------
     companion object {
         @JvmStatic
         fun builder() = Builder()

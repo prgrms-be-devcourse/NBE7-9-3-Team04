@@ -104,6 +104,7 @@ enum class ErrorCode(
     // feedback
     FEEDBACK_NOT_FOUND(HttpStatus.NOT_FOUND, "피드백을 찾을 수 없습니다."),
     FETCH_FEEDBACK_FAILED(HttpStatus.BAD_REQUEST, "AI 피드백 조회에 실패했습니다."),
+    AI_SERVICE_ERROR(HttpStatus.SERVICE_UNAVAILABLE, "AI 서비스와의 통신 중 오류가 발생했습니다."),
 
     //ranking
     RANKING_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 존재하는 랭킹입니다."),

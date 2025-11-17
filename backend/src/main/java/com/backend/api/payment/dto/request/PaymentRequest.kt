@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
 
 //클라이언트 → 백엔드 → 토스 API
-@JvmRecord
 data class PaymentRequest(
     @field:Schema(
         description = "결제 키 값",

@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@JvmRecord
 data class SubscriptionResponse(
     @field:Schema(description = "구독 ID", example = "1")
     val id: Long,
@@ -42,7 +41,6 @@ data class SubscriptionResponse(
 
 ) {
     companion object {
-        @JvmStatic
         fun from(subscription: Subscription): SubscriptionResponse {
             return SubscriptionResponse(
                 subscription.id,

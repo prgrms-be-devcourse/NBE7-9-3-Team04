@@ -2,7 +2,6 @@ package com.backend.api.payment.dto.request
 
 import io.swagger.v3.oas.annotations.media.Schema
 
-@JvmRecord
 data class AutoPaymentRequest(
     @field:Schema(description = "구매자 ID", example = "aENcQAtPdYbTjGhtQnNVj")
     val customerKey: String,

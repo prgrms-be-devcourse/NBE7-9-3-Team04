@@ -3,7 +3,6 @@ package com.backend.api.answer.dto.request
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.Size
 
-@JvmRecord
 data class AnswerUpdateRequest(
 
     @field:Size(min = 1, max = 1000, message = "답변 내용은 1자 이상 1000자 이하여야 합니다.")

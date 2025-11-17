@@ -3,7 +3,6 @@ package com.backend.api.billing.dto.request
 import io.swagger.v3.oas.annotations.media.Schema
 
 
-@JvmRecord
 data class BillingRequest(
 
     @field:Schema(description = "구매자 ID", example = "aENcQAtPdYbTjGhtQnNVj")

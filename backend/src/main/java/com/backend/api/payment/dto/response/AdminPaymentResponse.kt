@@ -2,11 +2,8 @@ package com.backend.api.payment.dto.response
 
 import com.backend.domain.payment.entity.Payment
 import io.swagger.v3.oas.annotations.media.Schema
-import lombok.Builder
 import java.time.format.DateTimeFormatter
 
-@Builder
-@JvmRecord
 data class AdminPaymentResponse(
     @field:Schema(description = "토스에 전달되는 주문 ID", example = "order_20251015_001")
     val orderId: String,

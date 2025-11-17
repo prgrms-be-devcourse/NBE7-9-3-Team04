@@ -1,7 +1,6 @@
 package com.backend.domain.user.repository
 
 import com.backend.domain.user.entity.RefreshToken
-import lombok.RequiredArgsConstructor
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Repository
 import java.util.concurrent.TimeUnit

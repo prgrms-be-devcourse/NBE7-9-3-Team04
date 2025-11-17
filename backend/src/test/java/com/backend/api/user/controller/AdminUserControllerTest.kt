@@ -1,7 +1,6 @@
 package com.backend.api.user.controller
 
 import com.backend.api.user.dto.request.AdminUserStatusUpdateRequest
-import com.backend.api.user.service.EmailService
 import com.backend.domain.user.entity.AccountStatus
 import com.backend.domain.user.entity.Role
 import com.backend.domain.user.entity.User
@@ -40,9 +39,6 @@ class AdminUserControllerTest(
 ) {
     @MockBean
     lateinit var rq: Rq
-
-    @MockBean
-    lateinit var emailService: EmailService
 
     lateinit var admin: User
     lateinit var user: User
@@ -96,7 +92,6 @@ class AdminUserControllerTest(
 
         @Test
         @DisplayName("실패 - 비로그인 상태")
-
         fun fail1() {
             Mockito.`when`(rq.getUser()).thenReturn(null)
 

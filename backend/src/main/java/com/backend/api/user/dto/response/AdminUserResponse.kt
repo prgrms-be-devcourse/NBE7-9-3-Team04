@@ -6,7 +6,6 @@ import com.backend.domain.user.entity.User
 import io.swagger.v3.oas.annotations.media.Schema
 
 @Schema(description = "관리자용 사용자 조회 응답 DTO")
-@JvmRecord
 data class AdminUserResponse(
     val id: Long,
     val email: String,
@@ -20,7 +19,6 @@ data class AdminUserResponse(
 ) {
 
     companion object {
-        @JvmStatic
         fun from(user: User): AdminUserResponse {
             return AdminUserResponse(
                 user.id,

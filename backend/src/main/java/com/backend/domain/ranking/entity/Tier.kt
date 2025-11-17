@@ -1,9 +1,5 @@
 package com.backend.domain.ranking.entity
 
-import lombok.AllArgsConstructor
-
-
-@AllArgsConstructor
 enum class Tier(
     val label: String,
     val minScore: Int
@@ -21,7 +17,6 @@ enum class Tier(
 
     companion object {
         //현재 score로 티어 계산
-        @JvmStatic
         fun fromScore(score: Int): Tier =
             entries
                 .filter { score >= it.minScore }

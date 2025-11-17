@@ -11,12 +11,12 @@ import com.backend.api.question.service.QuestionService
 import com.backend.api.user.service.UserService
 import com.backend.domain.answer.entity.Answer
 import com.backend.domain.answer.repository.AnswerRepository
+import com.backend.domain.feedback.repository.FeedbackRepository
 import com.backend.domain.user.entity.Role
 import com.backend.domain.user.entity.User
 import com.backend.global.Rq.Rq
 import com.backend.global.exception.ErrorCode
 import com.backend.global.exception.ErrorException
-import lombok.RequiredArgsConstructor
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -24,14 +24,14 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-@RequiredArgsConstructor
 @Transactional(readOnly = true)
 class AnswerService(
     private val answerRepository: AnswerRepository,
     private val questionService: QuestionService,
     private val rq: Rq,
     private val userService: UserService,
-    private val feedbackPublisher: FeedbackPublisher
+    private val feedbackPublisher: FeedbackPublisher,
+    private val feedbackRepository: FeedbackRepository
 ) {
 
     fun findByIdOrThrow(id: Long): Answer {
@@ -93,14 +93,15 @@ class AnswerService(
 
         val answers = answersPage.content
             .map { answer: Answer ->
-                val score = if (answer.feedback != null) answer.feedback!!.aiScore else 0
+                val feedback = feedbackRepository.findByAnswerId(answer.id)
+                val score = feedback?.aiScore ?: 0
                 AnswerReadWithScoreResponse.from(answer, score)
             }
 
         return AnswerPageResponse.from(answersPage, answers)
     }
 
-    fun findMyAnswer(questionId: Long): AnswerReadResponse? {
+    fun findMyAnswer(questionId: Long): AnswerReadResponse {
         // 질문 존재 여부 확인
         questionService.findByIdOrThrow(questionId)
 
