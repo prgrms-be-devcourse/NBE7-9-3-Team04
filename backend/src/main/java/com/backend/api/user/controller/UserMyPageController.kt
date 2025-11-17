@@ -13,7 +13,6 @@ import com.backend.api.question.dto.response.QuestionPageResponse
 import com.backend.api.question.dto.response.QuestionResponse
 import com.backend.api.question.service.QuestionService
 import com.backend.api.user.dto.response.UserMyPageResponse
-import com.backend.api.user.dto.response.UserMyPageResponse.SolvedProblem
 import com.backend.api.user.service.UserMyPageService
 import com.backend.domain.user.entity.User
 import com.backend.global.Rq.Rq
@@ -111,7 +110,7 @@ class UserMyPageController (
 
     @GetMapping
     @Operation(summary = "해결한 문제")
-    fun solvedProblemList(): ApiResponse<MutableList<SolvedProblem>> {
+    fun solvedProblemList(): ApiResponse<List<UserMyPageResponse.SolvedProblem>> {
         val userId = currentUser().id
         val solvedList = userMyPageService.getSolvedProblems(userId)
         return ApiResponse.ok(solvedList)
