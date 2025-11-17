@@ -9,7 +9,6 @@ import com.backend.global.dto.response.ApiResponse
 import com.fasterxml.jackson.core.JsonProcessingException
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
-import lombok.RequiredArgsConstructor
 import org.springframework.web.bind.annotation.*
 import java.util.*
 

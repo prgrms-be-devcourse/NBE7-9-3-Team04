@@ -2,7 +2,6 @@ package com.backend.api.payment.dto.response
 
 import com.backend.domain.payment.entity.Payment
 import io.swagger.v3.oas.annotations.media.Schema
-import lombok.Builder
 import java.time.format.DateTimeFormatter
 
 data class AdminPaymentResponse(

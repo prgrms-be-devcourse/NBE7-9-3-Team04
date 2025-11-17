@@ -1,8 +1,5 @@
 package com.backend.domain.ranking.entity
 
-import lombok.AllArgsConstructor
-
-
 enum class Tier(
     val label: String,
     val minScore: Int

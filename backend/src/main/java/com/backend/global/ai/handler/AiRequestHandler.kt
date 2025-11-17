@@ -2,7 +2,6 @@ package com.backend.global.ai.handler
 
 import com.backend.global.exception.ErrorCode
 import com.backend.global.exception.ErrorException
-import lombok.RequiredArgsConstructor
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.openai.OpenAiChatModel
 import org.springframework.beans.factory.annotation.Value
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
 
 @Component
-@RequiredArgsConstructor
 class AiRequestHandler(
     @Value("\${openai.url}")
     private val apiUrl: String,

@@ -3,10 +3,6 @@ package com.backend.domain.feedback.entity
 import com.backend.domain.answer.entity.Answer
 import com.backend.global.entity.BaseEntity
 import jakarta.persistence.*
-import lombok.AccessLevel
-import lombok.AllArgsConstructor
-import lombok.Builder
-import lombok.NoArgsConstructor
 
 @Entity
 class Feedback(
