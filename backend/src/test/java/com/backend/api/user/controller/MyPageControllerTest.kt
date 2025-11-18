@@ -1,7 +1,7 @@
 package com.backend.api.user.controller
 
 import com.backend.api.user.dto.response.UserMyPageResponse
-import com.backend.api.user.dto.request.MyPageRequest.UserModify
+import com.backend.api.user.dto.request.UserModifyRequest
 import com.backend.api.user.service.UserMyPageService
 import com.backend.domain.user.entity.Role
 import com.backend.domain.user.entity.User
@@ -152,7 +152,7 @@ class MyPageControllerTest(
             whenever(
                 userMyPageService.modifyUser(
                     eq(user.id),
-                    any<UserModify>()
+                    any<UserModifyRequest>()
                 )
             ).thenReturn(response)
 

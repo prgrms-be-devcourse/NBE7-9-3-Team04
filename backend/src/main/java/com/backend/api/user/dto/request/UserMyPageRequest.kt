@@ -23,14 +23,4 @@ data class MyPageRequest(
 
     @field:Schema(description = "이미지 주소", example = "image3")
     val image: String?
-) {
-    class UserModify(
-        val email: String?,
-        val password: String?,
-        val name: String?,
-        val nickname: String?,
-        val age: Int?,
-        val github: String?,
-        val image: String?
-    )
-}
+)

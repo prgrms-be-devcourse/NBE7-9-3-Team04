@@ -2,7 +2,6 @@ package com.backend.api.user.dto.response
 
 import com.backend.domain.user.entity.User
 import io.swagger.v3.oas.annotations.media.Schema
-import java.time.LocalDateTime
 
 data class UserMyPageResponse(
     @field:Schema(description = "유저 아이디", example = "5")
@@ -38,9 +37,4 @@ data class UserMyPageResponse(
                 image = user.image
             )
     }
-
-    class SolvedProblem(
-        val title: String,// 문제 제목
-        val modifyDate: LocalDateTime?// 수정일
-    )
 }

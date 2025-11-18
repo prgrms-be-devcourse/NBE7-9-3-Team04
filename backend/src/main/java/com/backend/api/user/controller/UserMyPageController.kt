@@ -12,7 +12,8 @@ import com.backend.api.post.service.PostService
 import com.backend.api.question.dto.response.QuestionPageResponse
 import com.backend.api.question.dto.response.QuestionResponse
 import com.backend.api.question.service.QuestionService
-import com.backend.api.user.dto.request.MyPageRequest
+import com.backend.api.user.dto.request.UserModifyRequest
+import com.backend.api.user.dto.response.SolvedProblemResponse
 import com.backend.api.user.dto.response.UserMyPageResponse
 import com.backend.api.user.service.UserMyPageService
 import com.backend.domain.user.entity.User
@@ -49,7 +50,7 @@ class UserMyPageController (
     @PutMapping("/me")
     @Operation(summary = "개인 정보 수정")
     fun updateUser(
-        @RequestBody modify: MyPageRequest.UserModify
+        @RequestBody modify: UserModifyRequest
     ): ApiResponse<UserMyPageResponse> {
         val userId = currentUser().id
         val response = userMyPageService.modifyUser(userId, modify)
@@ -111,7 +112,7 @@ class UserMyPageController (
 
     @GetMapping
     @Operation(summary = "해결한 문제")
-    fun solvedProblemList(): ApiResponse<List<UserMyPageResponse.SolvedProblem>> {
+    fun solvedProblemList(): ApiResponse<List<SolvedProblemResponse>> {
         val userId = currentUser().id
         val solvedList = userMyPageService.getSolvedProblems(userId)
         return ApiResponse.ok(solvedList)
