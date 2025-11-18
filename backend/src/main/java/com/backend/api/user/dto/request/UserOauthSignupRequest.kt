@@ -34,7 +34,7 @@ data class UserOauthSignupRequest(
     @field:Schema(description = "사용자 프로필 이미지 URL", example = "https://example.com/profile.jpg")
     val image: String?,
 
-    @field:NotBlank(message = "OAuthID는 필수입니다.")
-    @field:Schema(description = "SNS 로그인 ID")
+    @field:NotBlank(message = "oauthId는 필수입니다.")
+    @field:Schema(description = "OAuth 인증 시 가져오는 SNS의 유저 식별용 고유 숫자 ID")
     val oauthId: String
 )
