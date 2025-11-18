@@ -8,6 +8,8 @@ spring:
     uris: http://localhost:9200 # Elastic 노드 주소
     # username: elastic # 보안 해제 시 불필요
     # password: changeme # 보안 해제 시 불필요
+    socket-timeout: 30s
+    connection-timeout: 10s
 
   data:
     elasticsearch:
