@@ -26,12 +26,6 @@ data class UserMyPageResponse(
     @field:Schema(description = "이미지 주소", example = "image3")
     val image: String?
 ) {
-
-    class SolvedProblem(
-        val title: String,// 문제 제목
-        val modifyDate: LocalDateTime?// 수정일
-    )
-
     companion object {
         fun fromEntity(user: User): UserMyPageResponse =
             UserMyPageResponse(
@@ -44,4 +38,9 @@ data class UserMyPageResponse(
                 image = user.image
             )
     }
+
+    class SolvedProblem(
+        val title: String,// 문제 제목
+        val modifyDate: LocalDateTime?// 수정일
+    )
 }
