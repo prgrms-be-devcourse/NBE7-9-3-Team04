@@ -64,7 +64,7 @@ class User(
         role = Role.USER,
         accountStatus = AccountStatus.ACTIVE,
         aiQuestionUsedCount = 0,
-        subscription = null,
+        // subscription = null,
         oauthId =null
     )
 
