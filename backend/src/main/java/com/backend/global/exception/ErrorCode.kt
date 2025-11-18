@@ -113,7 +113,6 @@ enum class ErrorCode(
     RANKING_NOT_AVAILABLE(HttpStatus.NOT_FOUND, "랭킹 정보를 사용할 수 없습니다."),
 
     REDIS_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Redis 처리 중 오류가 발생했습니다."),
-    SLACK_WEBHOOK_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Slack 메시지 전송에 실패했습니다.")
     ;
 
 }
