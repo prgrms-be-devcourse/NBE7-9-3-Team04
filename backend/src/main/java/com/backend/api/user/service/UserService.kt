@@ -46,14 +46,7 @@ class UserService(
 ) {
 
     @Transactional
-    fun createUserAndDependencies(user: User): UserSignupResponse {
-        verificationCodeRepository.findByEmail(user.email)?.let {
-            verificationCodeRepository.delete(it)
-        }
-
-        userRepository.save(user)
-        userSearchRepository.save(UserDocument.from(user))
-
+    fun createDependencies(user: User): UserSignupResponse {
         val basicSubscription = Subscription(
             user = user,
             subscriptionType = SubscriptionType.BASIC,
@@ -102,8 +95,10 @@ class UserService(
             image = request.image,
             role = Role.USER
         )
-
-        return createUserAndDependencies(user)
+        userRepository.save(user)
+        userSearchRepository.save(UserDocument.from(user))
+        
+        return createDependencies(user)
     }
 
 
@@ -124,8 +119,10 @@ class UserService(
             role = Role.USER,
             oauthId = request.oauthId
         )
+        userRepository.save(user)
+        userSearchRepository.save(UserDocument.from(user))
 
-        return createUserAndDependencies(user)
+        return createDependencies(user)
     }
 
 
