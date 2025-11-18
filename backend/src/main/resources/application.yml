@@ -92,7 +92,7 @@ resilience4j:
         failureRateThreshold: 50
         permittedNumberOfCallsInHalfOpenState: 5
         waitDurationInOpenState: 10s
-    circuitbreakerAspectOrder: -4
+    circuitbreakerAspectOrder: -3
   retry:
     configs:
       aiRetry:
@@ -100,4 +100,14 @@ resilience4j:
         waitDuration: 2s
         enableExponentialBackoff: true
         exponential-backoff-multiplier: 2.0
-    retryAspectOrder: -3
+    retryAspectOrder: -4
+  ratelimiter:
+    configs:
+      rateLimiterAI:
+        limitForPeriod: 1
+        limitRefreshPeriod: 10s
+        timeoutDuration: 0
+    instances:
+      rateLimiterAI:
+        baseConfig: rateLimiterAI
+    ratelimiterAspectOrder: -2

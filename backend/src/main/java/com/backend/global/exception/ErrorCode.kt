@@ -29,7 +29,7 @@ enum class ErrorCode(
     INVALID_SUSPEND_PERIOD(HttpStatus.BAD_REQUEST, "유효한 정지 종료일을 입력해주세요."),
     INVALID_BAN_PERIOD(HttpStatus.BAD_REQUEST, "영구 정지 상태에서는 종료일을 지정할 수 없습니다."),
     INVALID_STATUS(HttpStatus.BAD_REQUEST, "유효하지 않은 상태 값입니다."),
-
+    RATE_LIMIT_EXCEEDED(HttpStatus.TOO_MANY_REQUESTS, "짧은 시간에 너무 많은 요청을 보냈습니다. 잠시 후 다시 시도해주세요."),
     //token
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 Refresh Token입니다."),
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "Refresh Token을 찾을 수 없습니다."),
