@@ -17,7 +17,7 @@ class DistributedLockManager(
     fun <T> withLock(
         key: String, //락 이름
         waitTime: Long = 5, //락 기다리는 시간
-        leaseTime: Long = 3, // 락 임대 시간. 이 시간 지나면 락을 해제한다.
+        leaseTime: Long = -1, // 락 임대 시간. 작업이 길어지면 자동으로 연장해준다.
         action: () -> T
     ): T {
         val lock = redissonClient.getLock(key)

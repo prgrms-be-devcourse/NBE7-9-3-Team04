@@ -32,48 +32,43 @@ class RankingService(
         private const val REDIS_PREFIX = "ranking_"
     }
 
-    @Transactional
-    fun createRanking(user: User): Ranking {
-        if (rankingRepository.existsByUser(user)) {
-            throw ErrorException(ErrorCode.RANKING_ALREADY_EXISTS)
-        }
-
-        val ranking = Ranking(
-            user = user,
-            totalScore = 0,
-            tier = Tier.UNRATED,
-            rankValue = 0
-        )
-
-        return rankingRepository.save(ranking)
-    }
-
     /*
     락 획득 -> 트랜잭션 시작 -> DB/Redis 업데이트 -> 트랜잭션 커밋 -> 락 해제
      */
-    @Transactional
     fun updateUserRanking(user: User) {
 
-        val totalScore = userQuestionService.getTotalUserQuestionScore(user)
+        val lockKey = "lock:ranking:user:${user.id}"
 
-        if (totalScore < 0) {
-            throw ErrorException(ErrorCode.INVALID_SCORE)
+        lockManager.withLock(lockKey){
+
+            transactionTemplate.execute {
+                val totalScore = userQuestionService.getTotalUserQuestionScore(user)
+                if (totalScore < 0) {
+                    throw ErrorException(ErrorCode.INVALID_SCORE)
+                }
+
+
+                val ranking = rankingRepository.findByUser(user)
+                    ?: Ranking(
+                        user = user,
+                        totalScore = 0,
+                        tier = Tier.UNRATED,
+                        rankValue = 0
+                    ).also { rankingRepository.save(it) }
+
+                // 점수 / 티어 업데이트
+                ranking.updateTotalScore(totalScore)
+                ranking.updateTier(fromScore(totalScore))
+
+                rankingRepository.save(ranking)
+
+                stringRedisTemplate.opsForZSet().add(
+                    REDIS_PREFIX,
+                    user.id.toString(),
+                    totalScore.toDouble()
+                )
+            }
         }
-
-        val ranking: Ranking = rankingRepository.findByUser(user)
-            ?: createRanking(user) // 존재하지 않으면 생성
-
-        // 점수 / 티어 업데이트
-        ranking.updateTotalScore(totalScore)
-        ranking.updateTier(fromScore(totalScore))
-
-        rankingRepository.save(ranking)
-
-        stringRedisTemplate.opsForZSet().add(
-            REDIS_PREFIX,
-            user.id.toString(),
-            totalScore.toDouble()
-        )
     }
 
     //마이페이지용
