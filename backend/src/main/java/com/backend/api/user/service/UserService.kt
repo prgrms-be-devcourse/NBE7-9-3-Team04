@@ -205,14 +205,14 @@ class UserService(
     }
 
     @Transactional(readOnly = true)
-    fun verifyUserInfo(userId: String, name: String, email: String): Boolean {
-        return userRepository.findByEmail(userId)
+    fun verifyUserInfo(name: String, email: String): Boolean {
+        return userRepository.findByEmail(email)
             ?.let { it.name == name && it.email == email } ?: false
     }
 
     @Transactional
-    fun updatePassword(userId: String, newPassword: String) {
-        val user: User = userRepository.findByEmail(userId)
+    fun updatePassword(email: String, newPassword: String) {
+        val user: User = userRepository.findByEmail(email)
             ?: throw ErrorException(ErrorCode.NOT_FOUND_USER)
 
         val encodedPassword = passwordEncoder.encode(newPassword)
