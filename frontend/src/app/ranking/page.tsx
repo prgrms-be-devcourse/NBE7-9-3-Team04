@@ -71,6 +71,14 @@ export default function RankingPage() {
     })
     .map((user, i) => ({ ...user, rankValue: i + 1 }));
 
+  const tierStartScore = Math.floor(myRanking.totalScore / 300) * 300;
+  const tierEndScore = tierStartScore + 300;
+
+  const progress =
+    ((myRanking.totalScore - tierStartScore) /
+      (tierEndScore - tierStartScore)) *
+    100;
+
   return (
     <div className="max-w-screen-xl mx-auto px-6 py-10">
       {/* 제목 */}
@@ -167,16 +175,8 @@ export default function RankingPage() {
                   className={`h-4 transition-all duration-500 ease-out ${
                     tierOf(myRanking.currentTier).gradient
                   } ${tierOf(myRanking.currentTier).shadow} relative`}
-                  style={{
-                    width: `${
-                      100 -
-                      (myRanking.scoreToNextTier /
-                        (myRanking.totalScore + myRanking.scoreToNextTier)) *
-                        100
-                    }%`,
-                  }}
+                  style={{ width: `${progress}%` }}
                 >
-                  {/* 반짝이는 효과 */}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></div>
                 </div>
               </div>

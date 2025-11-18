@@ -114,7 +114,6 @@ class AiReviewControllerTest(
 
 
         subscription = subscriptionRepository.save(subscription)
-        user.subscription = subscription
         userRepository.saveAndFlush(user)
 
         return subscription
@@ -214,8 +213,7 @@ class AiReviewControllerTest(
                     user = normalUser
                 )
             )
-            normalUser.subscription = basic
-            userRepository.saveAndFlush(normalUser)
+            userRepository.saveAndFlush(testUser)
 
             resumeRepository.save(
                 Resume(

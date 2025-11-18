@@ -4,6 +4,7 @@ import com.backend.api.question.service.AiQuestionService
 import com.backend.api.resume.service.ResumeService
 import com.backend.api.review.dto.request.AiReviewbackRequest
 import com.backend.api.review.dto.response.AiReviewResponse
+import com.backend.api.subscription.service.SubscriptionService
 import com.backend.domain.review.entity.Review
 import com.backend.domain.review.repository.ReviewRepository
 import com.backend.domain.user.entity.User
@@ -17,14 +18,15 @@ import org.springframework.transaction.annotation.Transactional
 class AiReviewService(
     private val reviewRepository: ReviewRepository,
     private val resumeService: ResumeService,
-    private val aiQuestionService: AiQuestionService
+    private val aiQuestionService: AiQuestionService,
+    private val subscriptionService: SubscriptionService
 ) {
 
     @Transactional
     fun createAiReview(user: User): AiReviewResponse {
 
-        if (!user.isPremium()) {
-            throw ErrorException(ErrorCode.AI_FEEDBACK_FOR_PREMIUM_ONLY)
+        if (!subscriptionService.isPremium(user)) {
+            ErrorException(ErrorCode.AI_FEEDBACK_FOR_PREMIUM_ONLY)
         }
 
         val resume = resumeService.getResumeByUser(user)

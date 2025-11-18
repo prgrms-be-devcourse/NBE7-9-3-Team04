@@ -1,6 +1,5 @@
 package com.backend.domain.user.entity
 
-import com.backend.domain.subscription.entity.Subscription
 import com.backend.global.entity.BaseEntity
 import jakarta.persistence.*
 
@@ -39,14 +38,14 @@ class User(
 
     @Column(nullable = false)
     var aiQuestionUsedCount: Int = 0, // AI 질문 사용 횟수
-
-    @OneToOne(
-        mappedBy = "user",
-        cascade = [CascadeType.ALL],
-        orphanRemoval = true,
-        fetch = FetchType.LAZY
-    )
-    var subscription: Subscription? = null
+//
+//    @OneToOne(
+//        mappedBy = "user",
+//        cascade = [CascadeType.ALL],
+//        orphanRemoval = true,
+//        fetch = FetchType.LAZY
+//    )
+//    var subscription: Subscription? = null
 
 ) : BaseEntity() {
 
@@ -61,12 +60,12 @@ class User(
         role = Role.USER,
         accountStatus = AccountStatus.ACTIVE,
         aiQuestionUsedCount = 0,
-        subscription = null
+        //subscription = null
     )
-
-    fun assignSubscription(subscription: Subscription) {
-        this.subscription = subscription
-    }
+//
+//    fun assignSubscription(subscription: Subscription) {
+//        this.subscription = subscription
+//    }
 
     fun updateUser(
         email: String, password: String, name: String,
@@ -96,11 +95,11 @@ class User(
                 this.accountStatus == AccountStatus.SUSPENDED
     }
 
-    fun isPremium(): Boolean = this.subscription?.isValid() == true
-
-
-    fun getAiQuestionLimit(): Int =
-        subscription?.questionLimit ?: 5 // 구독 정보가 없는 예외적인 경우, 기본값 5를 반환합니다.
+//    fun isPremium(): Boolean = this.subscription?.isValid() == true
+//
+//
+//    fun getAiQuestionLimit(): Int =
+//        subscription?.questionLimit ?: 5 // 구독 정보가 없는 예외적인 경우, 기본값 5를 반환합니다.
 
     fun incrementAiQuestionUsedCount() {
         this.aiQuestionUsedCount++

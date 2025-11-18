@@ -8,7 +8,7 @@ import java.time.LocalDate
 
 @Component
 class BillingScheduler(
-    private val billingService: BillingService,
+    private val billingFacade: BillingFacade,
     private val subscriptionService: SubscriptionService
 
 ) {
@@ -17,7 +17,7 @@ class BillingScheduler(
     //00시에 자동으로 결제 진행
     @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
     fun runAutoBillingTask() {
-        log.info("[스케줄러 시작] 자동 결제 작업 시작 - {}", LocalDate.now())
+        log.info("[스케줄러 시작] 자동 결제 작업 시작 - ${LocalDate.now()}")
 
         //오늘 결제일인 구독 목록 조회
         val subscriptions =
@@ -34,10 +34,9 @@ class BillingScheduler(
                 subscriptionService.saveSubscription(subscription)
                 return@forEach
             }
-            billingService.autoPayment(subscription)
+            billingFacade.autoPayment(subscription)
         }
 
-        log.info("[스케줄러 완료] 자동 결제 작업 종료 - 총 {}건 처리", subscriptions.size)
+        log.info("[스케줄러 완료] 자동 결제 작업 종료 - 총 ${subscriptions.size}건 처리", )
     }
 }
-

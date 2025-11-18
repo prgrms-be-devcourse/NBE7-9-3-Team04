@@ -67,6 +67,7 @@ dependencies {
     //redis
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     testImplementation("com.github.codemonstur:embedded-redis:1.4.3")
+    implementation("org.redisson:redisson-spring-boot-starter:3.52.0")
 
     //kotlin
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

@@ -96,12 +96,11 @@ class UserService(
             rankValue = 0
         )
 
-        user.assignSubscription(basicSubscription)
         rankingRepository.save(ranking)
 
 
         eventPublisher.publishEvent(UserSignupEvent(user))
-        return UserSignupResponse.from(user, ranking)
+        return UserSignupResponse.from(user, basicSubscription, ranking)
     }
 
     @Transactional
