@@ -1,6 +1,8 @@
 package com.backend.global.config
 
+import com.backend.global.security.CustomOAuth2UserService
 import com.backend.global.security.JwtAuthenticationFilter
+import com.backend.global.security.OAuth2JwtAuthenticationSuccessHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -16,7 +18,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @Configuration
 @EnableWebSecurity
 class SecurityConfig(
-    private val jwtAuthenticationFilter: JwtAuthenticationFilter
+    private val jwtAuthenticationFilter: JwtAuthenticationFilter,
+    private val customOAuth2UserService: CustomOAuth2UserService,
+    private val oAuth2SuccessHandler: OAuth2JwtAuthenticationSuccessHandler
 ) {
 
     @Bean
@@ -36,6 +40,7 @@ class SecurityConfig(
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .requestMatchers("/favicon.ico").permitAll()
                     .requestMatchers("/h2-console/**").permitAll()
+                    .requestMatchers("/login/oauth2/**").permitAll()
                     .requestMatchers(
                         "/swagger-ui/**",
                         "/swagger-ui.html",
@@ -60,6 +65,7 @@ class SecurityConfig(
                     .requestMatchers(
                         HttpMethod.POST,
                         "/api/v1/users/login",
+                        "/api/v1/users/oauth/signup",
                         "/api/v1/users/signup",
                         "/api/v1/users/refresh",
                         "/api/v1/users/sendEmail",
@@ -85,6 +91,11 @@ class SecurityConfig(
                 }
             }
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .oauth2Login { oauth2 ->
+                oauth2
+                    .userInfoEndpoint { it.userService(customOAuth2UserService) }
+                    .successHandler(oAuth2SuccessHandler) // JWT 발급 후 프론트로 전달
+            }
 
         return http.build()
     }

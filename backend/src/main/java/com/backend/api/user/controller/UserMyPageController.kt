@@ -15,6 +15,7 @@ import com.backend.api.question.service.QuestionService
 import com.backend.api.user.dto.response.UserMyPageResponse
 import com.backend.api.user.service.UserMyPageService
 import com.backend.domain.user.entity.User
+import com.backend.domain.user.repository.UserRepository
 import com.backend.global.Rq.Rq
 import com.backend.global.dto.response.ApiResponse
 import com.backend.global.exception.ErrorCode
@@ -26,13 +27,15 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("api/v1/users")
 @Tag(name = "Users", description = "마이페이지 관련 API")
-class UserMyPageController (
+class UserMyPageController(
     private val postService: PostService,
     private val userMyPageService: UserMyPageService,
     private val rq: Rq,
     private val commentService: CommentService,
     private val answerService: AnswerService,
-    private val questionService: QuestionService){
+    private val questionService: QuestionService,
+    private val userRepository: UserRepository
+){
 
     private fun currentUser(): User = rq.getUser()
 
@@ -135,16 +138,40 @@ class UserMyPageController (
     @PostMapping("/verifyPassword")
     @Operation(summary = "비밀번호 확인")
     fun verifyPassword(@RequestBody requestBody: Map<String, String>): ApiResponse<Boolean> {
+        val isTraditionalLoginUser = currentUser().oauthId == null
         val userId = currentUser().id
         val inputPassword = requestBody["password"]
         val isValid = userMyPageService.verifyPassword(userId, inputPassword)
 
-        if (!isValid) {
-            // 비밀번호 틀릴 경우 커스텀 예외 발생
+        if (!isTraditionalLoginUser) {
+            // 이메일 가입 유저가 아닐 경우 커스텀 예외 발생
+            throw ErrorException(ErrorCode.INVALID_AUTHENTICATION_SNS)
+        }
+        else if(!isValid) {
+            // 비밀번호가 틀릴 경우 커스텀 예외 발생
             throw ErrorException(ErrorCode.WRONG_PASSWORD)
         }
-
+        
         return ApiResponse.ok("비밀번호가 확인되었습니다.", true)
+    }
+
+    @PostMapping("/verifyOauthId")
+    @Operation(summary = "SNS 로그인 정보 확인")
+    fun verifyOauthId(@RequestBody requestBody: Map<String, String>): ApiResponse<Boolean> {
+        val isSNSLoginUser = currentUser().oauthId != null
+        val oauthId = requestBody["oauthId"] ?: throw ErrorException(ErrorCode.INVALID_OAUTHID)
+        val isValid = oauthId == currentUser().oauthId
+
+        if (!isSNSLoginUser) {
+            // 소셜 로그인 유저가 아닐 경우 커스텀 예외 발생
+            throw ErrorException(ErrorCode.INVALID_AUTHENTICATION_EMAIL)
+        }
+        else if(!isValid) {
+            // 현재 로그인한 유저와 SNS 인증 정보가 다를 경우 예외 발생
+            throw ErrorException(ErrorCode.FORBIDDEN_USER)
+        }
+
+        return ApiResponse.ok("SNS 인증이 확인되었습니다.", true)
     }
 
     @GetMapping("/{userId}/questions/{questionId}")

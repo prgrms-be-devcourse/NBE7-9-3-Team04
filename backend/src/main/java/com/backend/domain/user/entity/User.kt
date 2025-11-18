@@ -46,7 +46,10 @@ class User(
         orphanRemoval = true,
         fetch = FetchType.LAZY
     )
-    var subscription: Subscription? = null
+    var subscription: Subscription? = null,
+
+    @Column(unique = true)
+    var oauthId: String? = null
 
 ) : BaseEntity() {
 
@@ -61,7 +64,8 @@ class User(
         role = Role.USER,
         accountStatus = AccountStatus.ACTIVE,
         aiQuestionUsedCount = 0,
-        subscription = null
+        subscription = null,
+        oauthId =null
     )
 
     fun assignSubscription(subscription: Subscription) {

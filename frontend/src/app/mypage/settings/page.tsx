@@ -1,6 +1,5 @@
 "use client";
 
-import { routerServerGlobal } from "next/dist/server/lib/router-utils/router-server-context";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { fetchApi } from "@/lib/client";
@@ -14,6 +13,7 @@ export default function MySettingsPage() {
   const [passwordInput, setPasswordInput] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [canEdit, setCanEdit] = useState(false);
+  const [isSnsUser, setIsSnsUser] = useState(false);
   const [formData, setFormData] = useState<UserMyPageResponse>({
     userId: 0,
     email: "",
@@ -22,74 +22,116 @@ export default function MySettingsPage() {
     nickname: "",
     age: 0,
     github: "",
+    oauthId: null
   });
 
   useEffect(() => {
     setIsLoading(false);
   }, []);
 
-  const fetchUserInfo = async () => {
-    try {
-      const apiResponse = await fetchApi(`/api/v1/users/me`, {
-        method: "GET",
-      });
-      setFormData(apiResponse.data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleVerifyPassword = async () => {
-    if (passwordInput.trim().length === 0) {
-      setPasswordError("비밀번호를 입력해주세요.");
-      return;
-    }
-
     try {
+      const userInfo = await fetchApi(`/api/v1/users/me`, { method: "GET" });
+  
+      if (userInfo.data.oauthId !== null) {
+        toast.error("SNS 회원은 비밀번호 인증을 사용할 수 없습니다.");
+        return;
+      }
+  
+      if (passwordInput.trim().length === 0) {
+        setPasswordError("비밀번호를 입력해주세요.");
+        return;
+      }
+  
       const res = await fetchApi(`/api/v1/users/verifyPassword`, {
         method: "POST",
         body: JSON.stringify({ password: passwordInput }),
       });
-
+  
       if (res.data === true) {
-        // 비밀번호 일치
         setCanEdit(true);
         setShowPasswordModal(false);
         setPasswordError("");
         setPasswordInput("");
-        await fetchUserInfo();
+        setFormData(userInfo.data);
       }
     } catch {
       setPasswordError("비밀번호가 일치하지 않습니다. 다시 입력해주세요.");
       setCanEdit(false);
     }
   };
+  
 
-  //수정
+  const handleSNSLoginPopup = async (provider: string) => {
+    try {
+      const userInfo = await fetchApi(`/api/v1/users/me`, { method: "GET" });
+  
+      if(userInfo.data.oauthId === null){
+        toast.error("기존 회원은 SNS 인증을 사용할 수 없습니다.");
+        return;
+      }
+  
+      const width = 600;
+      const height = 700;
+      const left = window.screen.width / 2 - width / 2;
+      const top = window.screen.height / 2 - height / 2;
+  
+      const popup = window.open(
+        `http://localhost:8080/oauth2/authorization/${provider}?mode=profile`,
+        "SNS Login",
+        `width=${width},height=${height},top=${top},left=${left}`
+      );
+  
+      const receiveMessage = async (event: MessageEvent) => {
+        if (event.origin !== "http://localhost:3000") return;
+  
+        const { oauthId, email } = event.data || {};
+        if (!oauthId || !email) return;
+  
+        const res = await fetchApi(`/api/v1/users/verifyOauthId`, {
+          method: "POST",
+          body: JSON.stringify({ oauthId: oauthId }),
+        });
+  
+        if (res.data === true) {
+          setCanEdit(true);
+          setIsSnsUser(true);
+          setShowPasswordModal(false);
+          setPasswordError("");
+          setPasswordInput("");
+          setFormData({
+            ...userInfo.data,
+            email: email,   // 🔥 SNS에서 받은 email을 강제로 반영
+          });
+          toast.success("SNS 인증이 확인되었습니다.");
+        } else {
+          toast.error("현재 로그인된 계정과 SNS 계정이 일치하지 않습니다.");
+        }
+  
+        window.removeEventListener("message", receiveMessage);
+        popup?.close();
+      };
+  
+      window.addEventListener("message", receiveMessage);
+    } catch (err) {
+      console.error(err);
+      toast.error("사용자 정보를 가져오는 중 오류가 발생했습니다.");
+    }
+  };
+  
   const handleSave = async () => {
     try {
-
       const res = await fetchApi(`/api/v1/users/me`, {
         method: "PUT",
         body: JSON.stringify(formData),
       });
       toast.success(res.message || "개인정보가 수정되었습니다.");
       window.dispatchEvent(new Event("profileUpdated"));
-      
     } catch (err: any) {
       console.error(err);
       toast.error(err.message || "정보 수정 중 오류가 발생했습니다.");
     }
   };
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh] text-gray-500">
-        로딩 중...
-      </div>
-    );
-  }
 
   if (isLoading) {
     return (
@@ -123,6 +165,21 @@ export default function MySettingsPage() {
             {passwordError && (
               <p className="text-sm text-red-500 mb-3">{passwordError}</p>
             )}
+
+            {/* SNS 가입 유저 안내 및 소셜 로그인 버튼 */}
+            <p className="text-sm text-gray-600 mb-2 mt-2">
+              SNS 로그인 유저는 SNS 계정으로 인증해주세요.
+            </p>
+            <div className="flex justify-center mb-4">
+              <button
+                type="button"
+                onClick={() => handleSNSLoginPopup("github")}
+                className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 hover:cursor-pointer"
+              >
+                GitHub로 인증하기
+              </button>
+            </div>
+
             <div className="flex justify-end gap-2">
               <button
                 className="px-3 py-1 rounded-md hover:bg-gray-100"
@@ -162,26 +219,30 @@ export default function MySettingsPage() {
               <label className="block text-sm font-medium mb-1">이메일</label>
               <input
                 type="email"
-                className="w-full border border-gray-300 rounded-md p-2"
+                className={`w-full border rounded-md p-2
+                  ${isSnsUser ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed" : "border-gray-300"}`}
                 value={formData.email}
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
+                disabled={isSnsUser}
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium mb-1">비밀번호</label>
-              <input
-                type="password"
-                className="w-full border border-gray-300 rounded-md p-2"
-                placeholder="새 비밀번호 입력 (선택)"
-                value={formData.password || ""}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-              />
-            </div>
+            {!isSnsUser && (
+              <div>
+                <label className="block text-sm font-medium mb-1">비밀번호</label>
+                <input
+                  type="password"
+                  className="w-full border border-gray-300 rounded-md p-2"
+                  placeholder="새 비밀번호 입력 (선택)"
+                  value={formData.password || ""}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                />
+              </div>
+            )}
 
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -222,9 +283,7 @@ export default function MySettingsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">
-                GitHub URL
-              </label>
+              <label className="block text-sm font-medium mb-1">GitHub URL</label>
               <input
                 type="url"
                 className="w-full border border-gray-300 rounded-md p-2"
@@ -240,18 +299,14 @@ export default function MySettingsPage() {
               <button
                 type="submit"
                 className="flex-1 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
-                onClick={() => router.replace("/mypage")}
               >
-                
                 저장
-                
               </button>
               <button
                 type="button"
                 onClick={() => {
                   setCanEdit(false);
                   setShowPasswordModal(true);
-                  
                 }}
                 className="flex-1 border border-gray-300 py-2 rounded-md hover:bg-gray-100"
               >

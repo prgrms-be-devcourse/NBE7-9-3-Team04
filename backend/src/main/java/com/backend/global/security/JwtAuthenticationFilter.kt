@@ -15,6 +15,7 @@ class JwtAuthenticationFilter(
 
     private val excludeUri = listOf(
         "/api/v1/users/signup",
+        "/api/v1/users/oauth/signup",
         "/api/v1/users/login",
         "/api/v1/users/sendEmail",
         "/api/v1/users/verifyCode",

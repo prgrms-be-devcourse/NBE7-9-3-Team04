@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param
 
 interface UserRepository : JpaRepository<User, Long> {
     fun findByEmail(email: String): User?
+    fun findByOauthId(oauthId: String): User?
     fun existsByRole(role: Role): Boolean
 
     //관리자 제외 조회용 메서드 추가

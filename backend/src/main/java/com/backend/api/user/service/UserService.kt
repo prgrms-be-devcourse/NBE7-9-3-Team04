@@ -1,6 +1,7 @@
 package com.backend.api.user.service
 
 import com.backend.api.user.dto.request.UserLoginRequest
+import com.backend.api.user.dto.request.UserOauthSignupRequest
 import com.backend.api.user.dto.request.UserSignupRequest
 import com.backend.api.user.dto.response.TokenResponse
 import com.backend.api.user.dto.response.UserLoginResponse
@@ -41,41 +42,16 @@ class UserService(
     private val rankingRepository: RankingRepository,
     private val userSearchRepository: UserSearchRepository,
     private val refreshRedisService: RefreshRedisService,
-    private val eventPublisher: ApplicationEventPublisher
+    private val eventPublisher: ApplicationEventPublisher,
 ) {
 
     @Transactional
-    fun signUp(request: UserSignupRequest): UserSignupResponse {
-        //이메일 중복 검사
-
-        if (userRepository.findByEmail(request.email) != null) {
-            throw ErrorException(ErrorCode.DUPLICATE_EMAIL)
-        }
-
-        // 이메일 인증 여부 확인
-        if (!emailService.isVerified(request.email)) {
-            throw ErrorException(ErrorCode.EMAIL_NOT_VERIFIED)
-        }
-
-        // 사용자 생성
-        val encodedPassword = passwordEncoder.encode(request.password)
-        val user= User(
-            email = request.email,
-            password = encodedPassword,
-            name = request.name,
-            nickname = request.nickname,
-            age = request.age,
-            github = request.github,
-            image = request.image,
-            role = Role.USER
-        )
-
-        verificationCodeRepository.findByEmail(request.email)?.let {
+    fun createUserAndDependencies(user: User): UserSignupResponse {
+        verificationCodeRepository.findByEmail(user.email)?.let {
             verificationCodeRepository.delete(it)
         }
 
         userRepository.save(user)
-
         userSearchRepository.save(UserDocument.from(user))
 
         val basicSubscription = Subscription(
@@ -84,14 +60,13 @@ class UserService(
             subscriptionName = "BASIC",
             active = false,
             price = 0L,
-            questionLimit = 5, // 무료 사용자는 질문 제한 5회
+            questionLimit = 5,
             startDate = LocalDateTime.now(),
-            endDate = null, // BASIC은 실질적 만료 개념 X
+            endDate = null,
             nextBillingDate = null,
             billingKey = null,
-            customerKey = UUID.randomUUID().toString() // Toss에서 사용할 유저별 key
+            customerKey = UUID.randomUUID().toString()
         )
-
         subscriptionRepository.save(basicSubscription)
 
         val ranking = Ranking(
@@ -100,19 +75,68 @@ class UserService(
             tier = Tier.UNRATED,
             rankValue = 0
         )
-
-        user.assignSubscription(basicSubscription)
         rankingRepository.save(ranking)
 
+        user.assignSubscription(basicSubscription)
 
         eventPublisher.publishEvent(UserSignupEvent(user))
+
         return UserSignupResponse.from(user, ranking)
     }
+
+    @Transactional
+    fun signUp(request: UserSignupRequest): UserSignupResponse {
+        if (userRepository.findByEmail(request.email) != null) {
+            throw ErrorException(ErrorCode.DUPLICATE_EMAIL)
+        }
+
+        if (!emailService.isVerified(request.email)) {
+            throw ErrorException(ErrorCode.EMAIL_NOT_VERIFIED)
+        }
+
+        val user = User(
+            email = request.email,
+            password = passwordEncoder.encode(request.password),
+            name = request.name,
+            nickname = request.nickname,
+            age = request.age,
+            github = request.github,
+            image = request.image,
+            role = Role.USER
+        )
+
+        return createUserAndDependencies(user)
+    }
+
+
+    @Transactional
+    fun oauthSignUp(request: UserOauthSignupRequest): UserSignupResponse {
+        if (userRepository.findByEmail(request.email) != null) {
+            throw ErrorException(ErrorCode.DUPLICATE_EMAIL)
+        }
+
+        val user = User(
+            email = request.email,
+            password = passwordEncoder.encode("GitHubUser"),
+            name = request.name,
+            nickname = request.nickname,
+            age = request.age,
+            github = request.github,
+            image = request.image,
+            role = Role.USER,
+            oauthId = request.oauthId
+        )
+
+        return createUserAndDependencies(user)
+    }
+
 
     @Transactional
     fun login(request: UserLoginRequest): UserLoginResponse {
         val user: User = userRepository.findByEmail(request.email)
             ?: throw ErrorException(ErrorCode.NOT_FOUND_EMAIL)
+
+        if(user.oauthId != null) throw ErrorException(ErrorCode.INVALID_AUTHENTICATION_SNS)
 
         if (!user.validateLoginAvaliable()) {
 
@@ -137,6 +161,11 @@ class UserService(
         )
 
         return UserLoginResponse.from(user, accessToken, refreshToken)
+    }
+
+    @Transactional
+    fun findUserByOauthId(oauthId: String): User? {
+        return userRepository.findByOauthId(oauthId)
     }
 
     @Transactional

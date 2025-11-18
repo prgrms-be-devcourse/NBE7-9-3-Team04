@@ -38,8 +38,9 @@ data class UserLoginResponse(
     @field:Schema(description = "accessToken", example = "accessToken")
     val accessToken: String?,
     @field:Schema(description = "refreshToken", example = "refreshToken")
-    val refreshToken: String?
+    val refreshToken: String?,
 
+    val oauthId: String?,
 
 ) {
     companion object {
@@ -56,7 +57,8 @@ data class UserLoginResponse(
                 user.createDate,
                 user.modifyDate,
                 accessToken,
-                refreshToken
+                refreshToken,
+                user.oauthId
             )
         }
 
@@ -73,7 +75,8 @@ data class UserLoginResponse(
                 user.createDate,
                 user.modifyDate,
                 null,
-                null
+                null,
+                user.oauthId
             )
         }
     }

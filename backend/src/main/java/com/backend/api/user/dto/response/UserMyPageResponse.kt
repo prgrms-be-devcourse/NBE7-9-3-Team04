@@ -3,15 +3,17 @@ package com.backend.api.user.dto.response
 import com.backend.domain.user.entity.User
 import java.time.LocalDateTime
 
-class UserMyPageResponse(val userId: Long,
+data class UserMyPageResponse(val userId: Long,
         val email: String,
         val name: String,
         val nickname: String,
         val age: Int,
         val github: String?,
-        val image: String?) {
+        val image: String?,
+        val oauthId: String?
+) {
 
-    class UserModify(val email: String?,
+    data class UserModify(val email: String?,
             val password: String?,
             val name: String?,
             val nickname: String?,
@@ -19,7 +21,7 @@ class UserMyPageResponse(val userId: Long,
             val github: String?,
             val image: String?)
 
-    class SolvedProblem (
+    data class SolvedProblem (
         val title: String,// 문제 제목
         val modifyDate: LocalDateTime?// 수정일
     )
@@ -33,7 +35,8 @@ class UserMyPageResponse(val userId: Long,
                 nickname = user.nickname,
                 age = user.age,
                 github = user.github,
-                image = user.image
+                image = user.image,
+                oauthId = user.oauthId
             )
     }
 }
