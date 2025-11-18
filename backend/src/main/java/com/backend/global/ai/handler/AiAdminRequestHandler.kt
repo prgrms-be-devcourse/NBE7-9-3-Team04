@@ -18,10 +18,10 @@ class AiAdminRequestHandler(
 ) {
 
     fun getCosts(query: String): String {
-        val getUrl = "$adminApiUrl$query"
+        val fullUrl = "$adminApiUrl$query"
 
         return restClient.get()
-            .uri(adminApiUrl)
+            .uri(fullUrl)
             .header("Authorization", "Bearer $adminApiKey")
             .retrieve()
             .body(String::class.java)
