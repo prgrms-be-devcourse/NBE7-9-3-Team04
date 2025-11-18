@@ -7,10 +7,9 @@ import com.backend.config.TestRedisConfig
 import com.backend.domain.user.entity.RefreshToken
 import com.backend.domain.user.entity.Role
 import com.backend.domain.user.entity.User
-import com.backend.domain.user.entity.VerificationCode
 import com.backend.domain.user.repository.RefreshRedisRepository
 import com.backend.domain.user.repository.UserRepository
-import com.backend.domain.user.repository.VerificationCodeRepository
+import com.backend.domain.user.repository.VerificationCodeRedisRepository
 import com.backend.global.security.JwtTokenProvider
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.Cookie
@@ -29,8 +28,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
-
 
 
 @SpringBootTest
@@ -44,7 +41,7 @@ class UserControllerTest(
     private val objectMapper: ObjectMapper,
     override var userRepository: UserRepository,
     private val jwtTokenProvider: JwtTokenProvider,
-    private val verificationCodeRepository: VerificationCodeRepository,
+    private val verificationRedisRepo: VerificationCodeRedisRepository,
     private val refreshRedisRepository: RefreshRedisRepository
 ) : JwtTest() {
 
@@ -58,16 +55,6 @@ class UserControllerTest(
         fun success() {
             // given
             val email = "signup1@naver.com"
-
-            //이메일 인증 완료 상태를 DB에 저장
-            verificationCodeRepository.save(
-                VerificationCode(
-                    email=email,
-                    code = "ABC123",
-                    verified = true,
-                    expiresAt = LocalDateTime.now().plusMinutes(5)
-                )
-            )
 
             val request = UserSignupRequest(
                 email,
@@ -145,15 +132,7 @@ class UserControllerTest(
         fun fail_notVerifiedEmail() {
             val email = "signup3@naver.com"
 
-            //인증코드는 있지만 verified=false 인 상태
-            verificationCodeRepository.save(
-                VerificationCode(
-                    email=email,
-                    code = "XYZ999",
-                    verified = false,
-                    expiresAt = LocalDateTime.now().plusMinutes(5)
-                )
-            )
+            verificationRedisRepo.save(email, "XYZ123", 300)
 
             val request = UserSignupRequest(
                 email,

@@ -124,6 +124,14 @@ export default function LoginPage() {
                     회원가입
                   </Link>
                 </div>
+                  <div>
+                      <Link
+                          href="/auth/findpw"
+                          className="text-blue-600 hover:underline"
+                      >
+                          비밀번호 찾기
+                      </Link>
+                  </div>
               </div>
             </form>
           </div>
