@@ -26,8 +26,8 @@ data class UserMyPageResponse(
     val image: String?
 ) {
     companion object {
-        fun fromEntity(user: User): UserMyPageResponse =
-            UserMyPageResponse(
+        fun fromEntity(user: User): UserMyPageResponse {
+            return UserMyPageResponse(
                 userId = user.id,
                 email = user.email,
                 name = user.name,
@@ -36,5 +36,6 @@ data class UserMyPageResponse(
                 github = user.github,
                 image = user.image
             )
+        }
     }
 }
