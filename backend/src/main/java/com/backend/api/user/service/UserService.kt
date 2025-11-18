@@ -88,7 +88,7 @@ class UserService(
             throw ErrorException(ErrorCode.DUPLICATE_EMAIL)
         }
 
-        if (!emailService.isVerified(request.email)) {
+        if (verificationRedisRepo.findCode(request.email) != null) {
             throw ErrorException(ErrorCode.EMAIL_NOT_VERIFIED)
         }
 
