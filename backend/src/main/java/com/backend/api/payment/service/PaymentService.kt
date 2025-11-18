@@ -17,6 +17,8 @@ import java.time.LocalDateTime
 class PaymentService(
     private val paymentRepository: PaymentRepository
 ) {
+
+    @Transactional
     fun createPayment(response: PaymentConfirmResponse, user: User): Payment {
 
         val payment = Payment(
