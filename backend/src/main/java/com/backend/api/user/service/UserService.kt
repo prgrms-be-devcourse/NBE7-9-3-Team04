@@ -17,7 +17,7 @@ import com.backend.domain.user.entity.Role
 import com.backend.domain.user.entity.User
 import com.backend.domain.user.entity.search.UserDocument
 import com.backend.domain.user.repository.UserRepository
-import com.backend.domain.user.repository.VerificationCodeRepository
+import com.backend.domain.user.repository.VerificationCodeRedisRepository
 import com.backend.domain.user.repository.search.UserSearchRepository
 import com.backend.global.exception.ErrorCode
 import com.backend.global.exception.ErrorException
@@ -37,7 +37,7 @@ class UserService(
     private val jwtTokenProvider: JwtTokenProvider,
     private val subscriptionRepository: SubscriptionRepository,
     private val emailService: EmailService,
-    private val verificationCodeRepository: VerificationCodeRepository,
+    private val verificationRedisRepo: VerificationCodeRedisRepository,
     private val rankingRepository: RankingRepository,
     private val userSearchRepository: UserSearchRepository,
     private val refreshRedisService: RefreshRedisService,
@@ -52,8 +52,7 @@ class UserService(
             throw ErrorException(ErrorCode.DUPLICATE_EMAIL)
         }
 
-        // 이메일 인증 여부 확인
-        if (!emailService.isVerified(request.email)) {
+        if (verificationRedisRepo.findCode(request.email) != null) {
             throw ErrorException(ErrorCode.EMAIL_NOT_VERIFIED)
         }
 
@@ -69,10 +68,6 @@ class UserService(
             image = request.image,
             role = Role.USER
         )
-
-        verificationCodeRepository.findByEmail(request.email)?.let {
-            verificationCodeRepository.delete(it)
-        }
 
         userRepository.save(user)
 

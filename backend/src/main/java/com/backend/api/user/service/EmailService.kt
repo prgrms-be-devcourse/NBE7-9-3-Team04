@@ -2,8 +2,7 @@ package com.backend.api.user.service
 
 import com.backend.domain.user.entity.AccountStatus
 import com.backend.domain.user.entity.User
-import com.backend.domain.user.entity.VerificationCode
-import com.backend.domain.user.repository.VerificationCodeRepository
+import com.backend.domain.user.repository.VerificationCodeRedisRepository
 import com.backend.domain.userPenalty.entity.UserPenalty
 import com.backend.global.exception.ErrorCode
 import com.backend.global.exception.ErrorException
@@ -16,12 +15,11 @@ import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import java.security.SecureRandom
-import java.time.LocalDateTime
 import java.util.*
 
 @Service
 class EmailService(
-    private val verificationCodeRepository: VerificationCodeRepository,
+    private val verificationRedisRepo: VerificationCodeRedisRepository,
 
     @Value("\${mailgun.api-key}")
     private val mailgunApiKey: String,
@@ -77,20 +75,10 @@ class EmailService(
     // 인증코드 생성 및 발송
     @Transactional
     fun createAndSendVerificationCode(email: String) {
-        verificationCodeRepository.findByEmail(email)?.let {
-            verificationCodeRepository.delete(it)
-        }
 
         val code = generateVerificationCode()
 
-        val verification = VerificationCode(
-            email = email,
-            code = code,
-            expiresAt = LocalDateTime.now().plusMinutes(5),
-            verified = false
-        )
-
-        verificationCodeRepository.save(verification)
+        verificationRedisRepo.save(email, code, ttlSeconds = 300)
 
         val content = """
             안녕하세요. Dev-Station 입니다.
@@ -117,24 +105,19 @@ class EmailService(
 
     // 인증코드 검증
     fun verifyCode(email: String, code: String) {
-        val verification = verificationCodeRepository.findByEmail(email)
-            ?: throw ErrorException(ErrorCode.INVALID_VERIFICATION_CODE)
+        val saved = verificationRedisRepo.findCode(email)
+            ?: throw ErrorException(ErrorCode.EXPIRED_VERIFICATION_CODE)
 
-        if (verification.isExpired())
-            throw ErrorException(ErrorCode.EXPIRED_VERIFICATION_CODE)
-
-        if (verification.code != code)
+        if (saved != code)
             throw ErrorException(ErrorCode.INVALID_VERIFICATION_CODE)
 
-        verification.markAsVerified()
-        verificationCodeRepository.save(verification)
+        // 인증 성공 시 Redis에서 제거
+        verificationRedisRepo.delete(email)
 
         log.info("[이메일 인증] 인증 성공: {}", email)
     }
 
-    fun isVerified(email: String): Boolean =
-        verificationCodeRepository.findByEmail(email)?.verified ?: false
-
+    fun isVerified(email: String): Boolean = false
 
     // 회원 가입 환영 메일
     fun sendWelcomeMail(user: User) {
