@@ -22,21 +22,13 @@ class UserSearchService(
         val pageNum = if (page < 1) 1 else page
         val pageable: Pageable = PageRequest.of(pageNum - 1, size)
 
+        // multiMatch + PhrasePrefix ONLY
         val query: NativeQuery = NativeQueryBuilder()
             .withQuery { q ->
-                q.bool { b ->
-                    b.should { s ->
-                        s.multiMatch { mm ->
-                            mm.fields("name", "nickname")
-                                .query(keyword)
-                                .type(PhrasePrefix)
-                        }
-                    }.should { s ->
-                        s.queryString { qs ->
-                            qs.fields("name", "nickname")
-                                .query("*${escape(keyword)}*")
-                        }
-                    }
+                q.multiMatch { mm ->
+                    mm.fields("name", "nickname")
+                        .query(keyword)
+                        .type(PhrasePrefix)   // 부분 검색 / 자동완성 효과
                 }
             }
             .withPageable(pageable)
@@ -45,34 +37,8 @@ class UserSearchService(
         val hits: SearchHits<UserDocument> =
             operations.search(query, UserDocument::class.java)
 
-        val content: List<UserDocument> = hits.searchHits.map(SearchHit<UserDocument>::getContent)
+        val content = hits.searchHits.map(SearchHit<UserDocument>::getContent)
 
         return PageImpl(content, pageable, hits.totalHits)
-    }
-
-    private fun escape(input: String): String {
-        return input
-            .replace("\\", "\\\\")
-            .replace("+", "\\+")
-            .replace("-", "\\-")
-            .replace("=", "\\=")
-            .replace("&&", "\\&&")
-            .replace("||", "\\||")
-            .replace(">", "\\>")
-            .replace("<", "\\<")
-            .replace("!", "\\!")
-            .replace("(", "\\(")
-            .replace(")", "\\)")
-            .replace("{", "\\{")
-            .replace("}", "\\}")
-            .replace("[", "\\[")
-            .replace("]", "\\]")
-            .replace("^", "\\^")
-            .replace("\"", "\\\"")
-            .replace("~", "\\~")
-            .replace("*", "\\*")
-            .replace("?", "\\?")
-            .replace(":", "\\:")
-            .replace("/", "\\/")
     }
 }

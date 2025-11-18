@@ -1,5 +1,6 @@
 package com.backend.api.search.service
 
+import com.backend.api.post.service.PostSearchService
 import com.backend.api.search.dto.SearchPageResponse
 import com.backend.api.search.dto.SearchResultDto
 import com.backend.api.user.service.UserSearchService
@@ -9,8 +10,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class GlobalSearchService(
-    private val userSearchService: UserSearchService
-    // private val postSearchService: PostSearchService
+    private val userSearchService: UserSearchService,
+    private val postSearchService: PostSearchService
     // private val questionSearchService: QuestionSearchService
 ) {
 
@@ -29,6 +30,23 @@ class GlobalSearchService(
 
         return SearchPageResponse.from(users, content)
     }
+
+    // Post 검색 (Elasticsearch 기반)
+    fun searchPost(keyword: String, page: Int, size: Int): SearchPageResponse<SearchResultDto> {
+        val posts = postSearchService.search(keyword, page, size)
+
+        val content = posts.content.map { p ->
+            SearchResultDto(
+                type = "post",
+                id = p.id,
+                title = p.title,
+                snippet = p.introduction
+            )
+        }
+
+        return SearchPageResponse.from(posts, content)
+    }
+
 
     // 통합 검색 (현재는 User만)
     fun searchAll(keyword: String, page: Int, size: Int): SearchPageResponse<SearchResultDto> {
