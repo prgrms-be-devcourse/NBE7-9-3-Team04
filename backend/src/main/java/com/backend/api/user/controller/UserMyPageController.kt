@@ -12,6 +12,7 @@ import com.backend.api.post.service.PostService
 import com.backend.api.question.dto.response.QuestionPageResponse
 import com.backend.api.question.dto.response.QuestionResponse
 import com.backend.api.question.service.QuestionService
+import com.backend.api.user.dto.request.MyPageRequest
 import com.backend.api.user.dto.response.UserMyPageResponse
 import com.backend.api.user.service.UserMyPageService
 import com.backend.domain.user.entity.User
@@ -51,7 +52,7 @@ class UserMyPageController(
     @PutMapping("/me")
     @Operation(summary = "개인 정보 수정")
     fun updateUser(
-        @RequestBody modify: UserMyPageResponse.UserModify
+        @RequestBody modify: MyPageRequest.UserModify
     ): ApiResponse<UserMyPageResponse> {
         val userId = currentUser().id
         val response = userMyPageService.modifyUser(userId, modify)

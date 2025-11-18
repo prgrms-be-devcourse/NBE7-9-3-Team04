@@ -110,28 +110,20 @@ class UserController(
         return ApiResponse.ok("현재 로그인된 사용자 정보입니다.", UserLoginResponse.from(user))
     }
 
-    @PostMapping("/findId")
-    @Operation(summary = "아이디 찾기", description = "사용자 아이디를 찾습니다.")
-    fun findUserId(@RequestParam name: String, @RequestParam email: String): ApiResponse<String> {
-        val userId = userService.findUserIdByNameAndEmail(name, email)
-        return ApiResponse.ok("아이디를 찾았습니다.", userId)
-    }
-
     @PostMapping("/findPassword")
     @Operation(summary = "비밀번호 찾기", description = "비밀번호를 재설정합니다.")
     fun findPassword(
-        @RequestParam userId: String,
         @RequestParam name: String,
         @RequestParam email: String
     ): ApiResponse<Void> {
-        val isValid = userService.verifyUserInfo(userId, name, email)
+        val isValid = userService.verifyUserInfo(name, email)
 
         if (!isValid) {
             throw ErrorException(ErrorCode.NOT_FOUND_USER)
         }
 
-        val newPassword = RandomStringUtils.randomAlphanumeric(10)
-        userService.updatePassword(userId, newPassword)
+        val newPassword = RandomStringUtils.secure().nextAlphanumeric(10)
+        userService.updatePassword(email, newPassword)
         emailService.sendNewPassword(email, newPassword)
 
         return ApiResponse.ok("새 비밀번호가 이메일로 전송되었습니다.", null)

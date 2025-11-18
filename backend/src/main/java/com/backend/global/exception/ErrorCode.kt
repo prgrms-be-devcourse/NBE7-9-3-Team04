@@ -93,7 +93,9 @@ enum class ErrorCode(
     PAYMENT_LOAD_FAILED(HttpStatus.BAD_REQUEST, "결제 조회를 실패했습니다."),
     PAYMENT_CANCEL_FAILED(HttpStatus.BAD_REQUEST, "결제 취소를 실패했습니다."),
     PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "결제 내역을 찾을 수 없습니다."),
+    PAYMENT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "결제 처리 중 오류가 발생했습니다."),
     AUTO_PAYMENT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "자동 결제 처리 중 오류가 발생했습니다."),
+    ALREADY_PAID(HttpStatus.BAD_REQUEST, "이미 결제가 완료된 주문입니다."),
 
     //billing
     SUBSCRIPTION_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 고객의 구독 정보를 찾을 수 없습니다."),
@@ -117,6 +119,7 @@ enum class ErrorCode(
     RANKING_NOT_AVAILABLE(HttpStatus.NOT_FOUND, "랭킹 정보를 사용할 수 없습니다."),
 
     REDIS_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Redis 처리 중 오류가 발생했습니다."),
+    LOCK_ACQUIRE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "Redis 락 획득에 실패했습니다.")
     ;
 
 }

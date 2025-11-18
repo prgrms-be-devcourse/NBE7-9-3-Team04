@@ -1,7 +1,7 @@
 package com.backend.api.user.controller
 
 import com.backend.api.user.dto.response.UserMyPageResponse
-import com.backend.api.user.dto.response.UserMyPageResponse.UserModify
+import com.backend.api.user.dto.request.MyPageRequest.UserModify
 import com.backend.api.user.service.UserMyPageService
 import com.backend.domain.user.entity.Role
 import com.backend.domain.user.entity.User
@@ -10,8 +10,6 @@ import com.backend.global.Rq.Rq
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.transaction.Transactional
 import org.junit.jupiter.api.*
-import org.mockito.ArgumentMatchers
-import org.mockito.Mock
 import org.mockito.Mockito
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -82,19 +80,17 @@ class MyPageControllerTest(
                 .andDo(MockMvcResultHandlers.print())
         }
 
-        //비로그인 상태 오류 401 에러
-//        @Test
-//        @DisplayName("비로그인 상태")
-//        fun fail1() {
-//            //Mockito.`when`(rq.getUser()).thenReturn(null)
-//            userRepository.deleteAll()
-//
-//            mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/me"))
-//                .andExpect(MockMvcResultMatchers.status().isUnauthorized)
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("UNAUTHORIZED"))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("로그인된 사용자가 없습니다."))
-//                .andDo(MockMvcResultHandlers.print())
-//        }
+        @Test
+        @DisplayName("비로그인 상태")
+        fun fail1() {
+            Mockito.`when`(rq.getUser()).thenThrow(com.backend.api.user.controller.testsupport.UnauthenticatedException())
+
+            mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/me"))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("UNAUTHORIZED"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("로그인된 사용자가 없습니다."))
+                .andDo(MockMvcResultHandlers.print())
+        }
     }
 
     @Nested
@@ -151,13 +147,14 @@ class MyPageControllerTest(
                 "github" to "newGithub",
                 "image" to "newImage"
             )
-
             val response = UserMyPageResponse.fromEntity(user)
 
-            whenever(userMyPageService.modifyUser(
-                eq(user.id),
-                any<UserModify>()
-            )).thenReturn(response)
+            whenever(
+                userMyPageService.modifyUser(
+                    eq(user.id),
+                    any<UserModify>()
+                )
+            ).thenReturn(response)
 
             mockMvc.perform(
                 MockMvcRequestBuilders.put("/api/v1/users/me")

@@ -19,12 +19,16 @@ import com.backend.domain.qna.repository.QnaRepository
 import com.backend.domain.question.entity.Question
 import com.backend.domain.question.entity.QuestionCategoryType
 import com.backend.domain.question.repository.QuestionRepository
+import com.backend.domain.ranking.entity.Ranking
+import com.backend.domain.ranking.entity.Tier
+import com.backend.domain.ranking.repository.RankingRepository
 import com.backend.domain.resume.repository.ResumeRepository
+import com.backend.domain.subscription.entity.Subscription
+import com.backend.domain.subscription.entity.SubscriptionType
+import com.backend.domain.subscription.repository.SubscriptionRepository
 import com.backend.domain.user.entity.Role
 import com.backend.domain.user.entity.User
-import com.backend.domain.user.entity.VerificationCode
 import com.backend.domain.user.repository.UserRepository
-import com.backend.domain.user.repository.VerificationCodeRepository
 import lombok.RequiredArgsConstructor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.ApplicationArguments
@@ -48,11 +52,12 @@ class BaseInitData(
     private val qnaRepository: QnaRepository,
     private val answerService: AnswerService,
     private val passwordEncoder: PasswordEncoder,
-    private val verificationCodeRepository: VerificationCodeRepository,
     private val userService: UserService,
     private val resumeService: ResumeService,
     private val adminQuestionService: AdminQuestionService,
-    private val resumeRepository: ResumeRepository
+    private val resumeRepository: ResumeRepository,
+    private val subscriptionRepository: SubscriptionRepository,
+    private val rankingRepository: RankingRepository
 ) {
 
     @Autowired
@@ -86,18 +91,9 @@ class BaseInitData(
         for (i in emails.indices) {
             val email = emails[i]
 
-            // 1️⃣ 이메일 인증 코드 더미 데이터 생성
-            val verification = VerificationCode(
-                email = email,
-                code = "INITOK$i", // 임의의 더미 코드
-                expiresAt = LocalDateTime.now().plusHours(1),
-                verified = true // ✅ 인증 완료 상태로 저장
-            )
-            verificationCodeRepository.save(verification)
-
             val user = User(
                 email,
-                "abc12345",
+                passwordEncoder.encode("abc12345"),
                 "홍길동" + (i + 1),
                 "user" + (i + 1),
                 20 + (i % 5),
@@ -107,6 +103,31 @@ class BaseInitData(
             )
 
             userRepository.save(user)
+
+            val subscription = Subscription(
+                subscriptionType = SubscriptionType.BASIC,
+                active = false,
+                startDate = LocalDateTime.now(),
+                endDate = null,
+                nextBillingDate = null,
+                questionLimit = 5,
+                subscriptionName = "BASIC",
+                price = 0L,
+                billingKey = null,
+                customerKey = "",
+                user = user
+            )
+
+            subscriptionRepository.save(subscription)
+
+            val ranking = Ranking(
+                totalScore = 0,
+                tier = Tier.UNRATED,
+                rankValue = 0,
+                user = user
+            )
+
+            rankingRepository.save(ranking)
         }
     }
 

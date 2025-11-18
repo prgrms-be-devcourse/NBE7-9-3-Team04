@@ -1,8 +1,7 @@
 package com.backend.api.question.controller
 
 import com.backend.api.global.JwtTest
-
-import com.backend.domain.question.entity.Question.Companion.builder
+import com.backend.domain.question.entity.Question
 import com.backend.domain.question.entity.QuestionCategoryType
 import com.backend.domain.question.repository.QuestionRepository
 import org.junit.jupiter.api.BeforeEach
@@ -37,13 +36,15 @@ class AiQuestionControllerTest(
     fun setUp() {
         val uuid = UUID.randomUUID()
         repeat(5) { index ->
-            val question = builder()
-                .title("기존 제목")
-                .content("기존 내용${index + 1}")
-                .author(mockUser)
-                .categoryType(QuestionCategoryType.PORTFOLIO)
-                .groupId(uuid)
-                .build()
+            val question =  Question(
+                "기존 제목",
+                "기존 내용${index + 1}",
+                true,
+                0,
+                mockUser,
+                QuestionCategoryType.PORTFOLIO,
+                groupId = uuid
+            )
 
             val saved = questionRepository.save(question)
 

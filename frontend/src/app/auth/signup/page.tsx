@@ -1,9 +1,7 @@
 "use client";
 
-
-import {useEffect, useState} from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { fetchApi } from "@/lib/client";
 import { UserSignupRequest } from "@/types/user";
@@ -11,6 +9,7 @@ import { toast } from "sonner";
 
 export default function SignupPage() {
   const router = useRouter();
+
   const [isLoading, setIsLoading] = useState(false);
   const [isSendingCode, setIsSendingCode] = useState(false);
   const [isCodeSent, setIsCodeSent] = useState(false);
@@ -18,6 +17,10 @@ export default function SignupPage() {
   const [verificationCode, setVerificationCode] = useState("");
   const [verificationError, setVerificationError] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  // ⏱️ 5분 타이머 (초 단위)
+  const [timer, setTimer] = useState(0);
+
   const [formData, setFormData] = useState<UserSignupRequest>({
     email: "",
     password: "",
@@ -27,6 +30,7 @@ export default function SignupPage() {
     github: "",
   });
 
+  // 입력 핸들러
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
@@ -36,7 +40,29 @@ export default function SignupPage() {
     }));
   };
 
-  // ✅ 이메일 인증코드 전송
+  // 타이머 포맷 MM:SS
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60)
+      .toString()
+      .padStart(2, "0");
+    const s = Math.floor(seconds % 60)
+      .toString()
+      .padStart(2, "0");
+    return `${m}:${s}`;
+  };
+
+  // 타이머 useEffect
+  useEffect(() => {
+    if (timer <= 0) return;
+
+    const interval = setInterval(() => {
+      setTimer((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timer]);
+
+  // 이메일 인증코드 전송
   const handleSendVerificationCode = async () => {
     if (!formData.email) {
       toast.error("이메일을 입력해주세요.");
@@ -44,12 +70,17 @@ export default function SignupPage() {
     }
 
     setIsSendingCode(true);
+
     try {
       const res = await fetchApi(`/api/v1/users/sendEmail?email=${formData.email}`, {
         method: "POST",
       });
+
       toast.success(res.message || "인증 코드가 이메일로 전송되었습니다.");
       setIsCodeSent(true);
+
+      setTimer(300); // ⏱️ 5분 타이머 시작
+
     } catch (err: any) {
       toast.error(err.message || "이메일 전송에 실패했습니다.");
     } finally {
@@ -57,7 +88,7 @@ export default function SignupPage() {
     }
   };
 
-  // ✅ 인증코드 검증
+  // 인증코드 검증
   const handleVerifyCode = async () => {
     if (!verificationCode) {
       toast.error("인증 코드를 입력해주세요.");
@@ -69,14 +100,19 @@ export default function SignupPage() {
         `/api/v1/users/verifyCode?email=${formData.email}&code=${verificationCode}`,
         { method: "POST" }
       );
+
       toast.success(res.message || "이메일 인증이 완료되었습니다.");
       setIsEmailVerified(true);
+
+      // 인증 성공 시 타이머 종료
+      setTimer(0);
+
     } catch (err: any) {
       toast.error(err.message || "인증 코드가 올바르지 않습니다.");
     }
   };
 
-  // ✅ 입력값 검증
+  // 입력값 검증
   const validate = (): boolean => {
     if (!isEmailVerified) {
       toast.error("이메일 인증을 완료해주세요.");
@@ -97,7 +133,7 @@ export default function SignupPage() {
     return true;
   };
 
-  // ✅ 회원가입 요청
+  // 회원가입 요청
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validate()) return;
@@ -114,7 +150,7 @@ export default function SignupPage() {
         toast.success(apiResponse.message);
         router.replace("/auth");
       } else {
-        toast.success(apiResponse.message);
+        toast.error(apiResponse.message);
       }
     } catch (err: any) {
       toast.error(err.message);
@@ -160,15 +196,19 @@ export default function SignupPage() {
                 <button
                   type="button"
                   onClick={handleSendVerificationCode}
-                  disabled={isSendingCode || isEmailVerified}
+                  disabled={isSendingCode || isEmailVerified || timer > 0}
                   className={`px-5 py-3 text-sm font-semibold rounded-lg text-white transition whitespace-nowrap ${
                     isEmailVerified
                       ? "bg-green-600 cursor-not-allowed"
+                      : timer > 0
+                      ? "bg-gray-400 cursor-not-allowed"
                       : "bg-blue-600 hover:bg-blue-700"
                   }`}
                 >
                   {isEmailVerified
                     ? "인증완료"
+                    : timer > 0
+                    ? formatTime(timer)
                     : isSendingCode
                     ? "전송 중..."
                     : "인증코드 전송"}
@@ -279,7 +319,7 @@ export default function SignupPage() {
   );
 }
 
-// ✅ 내부 Input 컴포넌트
+// 내부 Input 컴포넌트
 function Input({
   label,
   name,

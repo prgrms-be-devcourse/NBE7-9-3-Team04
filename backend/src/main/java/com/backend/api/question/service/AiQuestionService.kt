@@ -5,6 +5,7 @@ import com.backend.api.question.dto.request.AiQuestionRequest
 import com.backend.api.question.dto.response.*
 import com.backend.api.resume.service.ResumeService
 import com.backend.api.review.dto.request.AiReviewbackRequest
+import com.backend.api.subscription.service.SubscriptionService
 import com.backend.api.user.service.UserService
 import com.backend.domain.question.entity.Question
 import com.backend.domain.question.entity.QuestionCategoryType
@@ -25,8 +26,8 @@ class AiQuestionService(
     private val userService: UserService,
     private val resumeService: ResumeService,
     private val objectMapper: ObjectMapper,
-    private val aiRequestHandler: AiRequestHandler
-
+    private val aiRequestHandler: AiRequestHandler,
+    private val subscriptionService: SubscriptionService
 ) {
 
     fun createAiQuestion(userId: Long): AIQuestionCreateResponse {
@@ -35,7 +36,7 @@ class AiQuestionService(
         validateQuestionLimit(user)
 
         val resume = resumeService.getResumeByUser(user)
-        val request = AiQuestionRequest.of(resume.skill, resume.portfolioUrl, user.getAiQuestionLimit())
+        val request = AiQuestionRequest.of(resume.skill, resume.portfolioUrl, subscriptionService.getAiQuestionLimit(user))
 
         val connectionAi = aiRequestHandler.connectionAi(request)
 
@@ -56,7 +57,7 @@ class AiQuestionService(
 
     // AI 질문 생성 횟수 제한 검증
     fun validateQuestionLimit(user: User) {
-        val availableCount = user.getAiQuestionLimit()
+        val availableCount = subscriptionService.getAiQuestionLimit(user)
         val usedCount = user.aiQuestionUsedCount
 
         if (usedCount >= availableCount) {

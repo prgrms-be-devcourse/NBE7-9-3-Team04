@@ -39,36 +39,4 @@ class Resume(
         this.portfolioUrl = request.portfolioUrl
     }
 
-    companion object {
-        @JvmStatic
-        fun builder() = Builder()
-    }
-
-    class Builder{
-        private var content: String = ""
-        private var skill: String = ""
-        private var activity: String = ""
-        private var certification: String = ""
-        private var career: String = ""
-        private var portfolioUrl: String = ""
-        private lateinit var user: User
-
-        fun content(content: String) = apply { this.content = content }
-        fun skill(skill: String) = apply { this.skill = skill }
-        fun activity(activity: String) = apply { this.activity = activity }
-        fun certification(certification: String) = apply { this.certification = certification }
-        fun career(career: String) = apply { this.career = career }
-        fun portfolioUrl(portfolioUrl: String) = apply { this.portfolioUrl = portfolioUrl }
-        fun user(user: User) = apply { this.user = user }
-
-        fun build() = Resume(
-            content = content,
-            skill = skill,
-            activity = activity,
-            certification = certification,
-            career = career,
-            portfolioUrl = portfolioUrl,
-            user = user
-        )
-    }
 }
