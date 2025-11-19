@@ -1,7 +1,9 @@
 plugins {
     java
+    jacoco
     id("org.springframework.boot") version "3.5.6"
     id("io.spring.dependency-management") version "1.1.7"
+    id("org.sonarqube") version "5.1.0.4882"
     kotlin("jvm") version "1.9.25"
     kotlin("plugin.spring") version "1.9.25"
     kotlin("plugin.jpa") version "1.9.25"
@@ -110,4 +112,35 @@ tasks.withType<Test> {
 kapt {
     correctErrorTypes = true
     includeCompileClasspath = false
+}
+
+jacoco {
+    toolVersion = "0.8.10"
+}
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+
+    reports {
+        xml.required.set(true)   // SonarQube가 필요로 함
+        html.required.set(true)  // 사람이 보기 쉬운 리포트
+    }
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "backend_project")
+        property("sonar.projectName", "Backend Kotlin Project")
+        property("sonar.projectVersion", "1.0")
+
+        property("sonar.host.url", "http://localhost:9000")
+        property("sonar.token", System.getenv("SONAR_TOKEN") ?: "")
+
+        property("sonar.sources", "src/main/java,src/main/resources")
+        property("sonar.tests", "src/test/java,src/test/resources")
+
+        property("sonar.java.coveragePlugin", "jacoco")
+        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml")
+
+        property("sonar.verbose", "true")
+    }
 }

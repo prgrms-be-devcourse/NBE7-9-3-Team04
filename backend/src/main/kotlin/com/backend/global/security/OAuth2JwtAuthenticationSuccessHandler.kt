@@ -1,8 +1,7 @@
 package com.backend.global.security
 
-import com.backend.api.user.service.RefreshRedisService
 import com.backend.api.user.service.UserService
-import jakarta.servlet.http.Cookie
+import com.backend.global.Rq.Rq
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.core.Authentication
@@ -14,7 +13,7 @@ import org.springframework.stereotype.Component
 class OAuth2JwtAuthenticationSuccessHandler(
     private val jwtTokenProvider: JwtTokenProvider,
     private val userService: UserService,
-    private val refreshRedisService: RefreshRedisService
+    private val rq: Rq
 ) : AuthenticationSuccessHandler {
 
     override fun onAuthenticationSuccess(
@@ -25,41 +24,17 @@ class OAuth2JwtAuthenticationSuccessHandler(
         val oAuth2User = authentication.principal as DefaultOAuth2User
         val attributes = oAuth2User.attributes
         val oauthId = attributes["id"].toString()
-        // 1. 기존 회원 조회
+
         val user = userService.findUserByOauthId(oauthId)
-
         if (user != null) {
-            val email = attributes["email"] as String? ?: ""
+            // 기존 회원이면 로그인
+            val loginResponse = userService.login(oauthId = oauthId)
+            val email = loginResponse.email
 
-            // 기존 회원이면 JWT 발급
-            val accessToken = jwtTokenProvider.generateAccessToken(user.id, user.email, user.role)
-            val refreshToken = jwtTokenProvider.generateRefreshToken(user.id, user.email, user.role)
-
-            // Refresh Token Redis 저장
-            refreshRedisService.saveRefreshToken(
-                user.id,
-                refreshToken,
-                jwtTokenProvider.getRefreshTokenExpireTime()
-            )
-
-            // 쿠키에 JWT 저장
-            response.addCookie(
-                createCookie(
-                    "accessToken",
-                    accessToken,
-                    jwtTokenProvider.getAccessTokenExpireTime()
-                )
-            )
-            response.addCookie(
-                createCookie(
-                    "refreshToken",
-                    refreshToken,
-                    jwtTokenProvider.getRefreshTokenExpireTime()
-                )
-            )
-
+            rq.setCookie("accessToken", loginResponse.accessToken, (jwtTokenProvider.getAccessTokenExpireTime()).toInt())
+            rq.setCookie("refreshToken", loginResponse.refreshToken, (jwtTokenProvider.getRefreshTokenExpireTime()).toInt())
             // 프론트로 리다이렉트
-            response.sendRedirect("http://localhost:3000/auth/oauth?token=$accessToken&email=$email&oauthId=$oauthId")
+            response.sendRedirect("http://localhost:3000/auth/oauth?email=$email&oauthId=$oauthId")
         } else {
             // 신규 회원이면 프론트 회원가입 페이지로 리다이렉트
             val email = attributes["email"] as String? ?: ""
@@ -79,11 +54,4 @@ class OAuth2JwtAuthenticationSuccessHandler(
             )
         }
     }
-
-    private fun createCookie(name: String, value: String, maxAge: Long) =
-        Cookie(name, value).apply {
-            path = "/"
-            isHttpOnly = true
-            this.maxAge = maxAge.toInt()
-        }
 }
