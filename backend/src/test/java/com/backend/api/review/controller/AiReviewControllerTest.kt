@@ -58,6 +58,7 @@ class AiReviewControllerTest(
     private lateinit var rq: Rq
 
     private lateinit var testUser: User
+    private lateinit var normalUser: User
 
 
     private fun <T> anyNonNull(): T {
@@ -79,8 +80,19 @@ class AiReviewControllerTest(
                 role = Role.USER
             )
         )
+        normalUser = userRepository.save(
+            User(
+                email = "basic@test.com",
+                password = "normal",
+                name = "일반 유저",
+                nickname = "normalUser",
+                age = 25,
+                github = "https://github.com/normalUser",
+                image = "default.png",
+                role = Role.USER
+            )
+        )
 
-        Mockito.`when`(rq.getUser()).thenReturn(testUser)
     }
 
     private fun createPremiumSubscription(user: User): Subscription {
@@ -102,19 +114,18 @@ class AiReviewControllerTest(
 
 
         subscription = subscriptionRepository.save(subscription)
-        user.subscription = subscription
         userRepository.saveAndFlush(user)
 
         return subscription
     }
 
     private fun createAndSaveReview(content: String): Review {
-        return reviewRepository.save(
-            Review.builder()
-                .AiReviewContent(content)
-                .user(testUser)
-                .build()
+        val review = Review(
+            AiReviewContent = content,
+            user = testUser,
+            resume = null
         )
+        return reviewRepository.save(review)
     }
 
     @Nested
@@ -124,6 +135,7 @@ class AiReviewControllerTest(
         @DisplayName("성공 - 프리미엄 등급의 사용자가 AI 첨삭을 생성합니다.")
         fun createAiReview_Success() {
             // given
+            Mockito.`when`(rq.getUser()).thenReturn(testUser)
             createPremiumSubscription(testUser)
 
             val resume = resumeRepository.save(
@@ -184,6 +196,8 @@ class AiReviewControllerTest(
         @DisplayName("실패 - 일반 등급의 사용자는 AI 첨삭을 생성할 수 없습니다.")
         fun createAiReview_Fail_NotPremium() {
             // given
+            Mockito.`when`(rq.getUser()).thenReturn(normalUser)
+
             val basic = subscriptionRepository.save(
                 Subscription(
                     subscriptionType = SubscriptionType.BASIC,
@@ -196,15 +210,14 @@ class AiReviewControllerTest(
                     price = 0L,
                     billingKey = null,
                     customerKey = "",
-                    user = testUser
+                    user = normalUser
                 )
             )
-            testUser.subscription = basic
             userRepository.saveAndFlush(testUser)
 
             resumeRepository.save(
                 Resume(
-                    user = testUser,
+                    user = normalUser,
                     content = "테스트 이력서 내용입니다.",
                     skill = "",
                     activity = "",
@@ -240,6 +253,8 @@ class AiReviewControllerTest(
         @DisplayName("성공 - 자신의 AI 첨삭을 조회합니다.")
         fun getReviewById_Success() {
             // given
+            Mockito.`when`(rq.getUser()).thenReturn(testUser)
+
             createPremiumSubscription(testUser)
             val savedReview = createAndSaveReview("AI 첨삭 내용입니다.")
             val reviewId = savedReview.id
@@ -267,6 +282,8 @@ class AiReviewControllerTest(
         @DisplayName("성공 - 로그인한 사용자의 모든 AI 첨삭 목록을 조회합니다.")
         fun getMyReviews_Success() {
             // given
+            Mockito.`when`(rq.getUser()).thenReturn(testUser)
+
             createPremiumSubscription(testUser)
 
             createAndSaveReview("첫 번째 첨삭")

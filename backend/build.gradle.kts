@@ -34,6 +34,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     testImplementation("org.springframework.security:spring-security-test")
     compileOnly("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
@@ -67,6 +68,7 @@ dependencies {
     //redis
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     testImplementation("com.github.codemonstur:embedded-redis:1.4.3")
+    implementation("org.redisson:redisson-spring-boot-starter:3.52.0")
 
     //kotlin
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

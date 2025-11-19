@@ -46,6 +46,24 @@ spring:
       host: localhost
       port: 6379
 
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-name: GitHub
+            authorization-grant-type: authorization_code
+            redirect-uri: http://localhost:8080/login/oauth2/code/github
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
+            scope:
+              - read:user
+              - user:email
+        provider:
+          github:
+            user-info-uri: https://api.github.com/user
+
+
 mailgun:
   api-key: ${MAILGUN_API_KEY}
   domain: ${MAILGUN_DOMAIN}

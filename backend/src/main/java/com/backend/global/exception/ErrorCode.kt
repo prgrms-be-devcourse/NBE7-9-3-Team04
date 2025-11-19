@@ -29,7 +29,14 @@ enum class ErrorCode(
     INVALID_SUSPEND_PERIOD(HttpStatus.BAD_REQUEST, "유효한 정지 종료일을 입력해주세요."),
     INVALID_BAN_PERIOD(HttpStatus.BAD_REQUEST, "영구 정지 상태에서는 종료일을 지정할 수 없습니다."),
     INVALID_STATUS(HttpStatus.BAD_REQUEST, "유효하지 않은 상태 값입니다."),
+
     RATE_LIMIT_EXCEEDED(HttpStatus.TOO_MANY_REQUESTS, "짧은 시간에 너무 많은 요청을 보냈습니다. 잠시 후 다시 시도해주세요."),
+
+    INVALID_AUTHENTICATION_SNS(HttpStatus.BAD_REQUEST, "SNS 가입 유저는 기존 방식의 인증이 불가합니다."),
+    INVALID_AUTHENTICATION_EMAIL(HttpStatus.BAD_REQUEST, "이메일 가입 유저는 SNS 방식의 인증이 불가합니다."),
+    INVALID_OAUTHID(HttpStatus.BAD_REQUEST, "OAuth 인증 ID는 null일 수 없습니다."),
+    FORBIDDEN_USER(HttpStatus.FORBIDDEN, "권한이 없는 유저입니다."),
+
     //token
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 Refresh Token입니다."),
     REFRESH_TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "Refresh Token을 찾을 수 없습니다."),
@@ -89,7 +96,9 @@ enum class ErrorCode(
     PAYMENT_LOAD_FAILED(HttpStatus.BAD_REQUEST, "결제 조회를 실패했습니다."),
     PAYMENT_CANCEL_FAILED(HttpStatus.BAD_REQUEST, "결제 취소를 실패했습니다."),
     PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "결제 내역을 찾을 수 없습니다."),
+    PAYMENT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "결제 처리 중 오류가 발생했습니다."),
     AUTO_PAYMENT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "자동 결제 처리 중 오류가 발생했습니다."),
+    ALREADY_PAID(HttpStatus.BAD_REQUEST, "이미 결제가 완료된 주문입니다."),
 
     //billing
     SUBSCRIPTION_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 고객의 구독 정보를 찾을 수 없습니다."),
@@ -113,6 +122,7 @@ enum class ErrorCode(
     RANKING_NOT_AVAILABLE(HttpStatus.NOT_FOUND, "랭킹 정보를 사용할 수 없습니다."),
 
     REDIS_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Redis 처리 중 오류가 발생했습니다."),
+    LOCK_ACQUIRE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "Redis 락 획득에 실패했습니다.")
     ;
 
 }

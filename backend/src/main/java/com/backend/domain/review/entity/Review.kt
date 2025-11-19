@@ -21,25 +21,4 @@ class Review(
     var user: User?
 
 ) : BaseEntity() {
-
-    class Builder {
-        private lateinit var AiReviewContent: String // non-null
-        private var resume: Resume? = null
-        private var user: User? = null
-
-        fun AiReviewContent(content: String) = apply { this.AiReviewContent = content }
-        fun resume(resume: Resume?) = apply { this.resume = resume }
-        fun user(user: User?) = apply { this.user = user }
-
-        fun build(): Review = Review(
-            AiReviewContent = AiReviewContent,
-            resume = resume,
-            user = user
-        )
-    }
-
-    companion object {
-        @JvmStatic
-        fun builder(): Builder = Builder()
-    }
 }
