@@ -70,12 +70,12 @@ class OAuth2JwtAuthenticationSuccessHandler(
 
             response.sendRedirect(
                 "http://localhost:3000/auth/oauth/signup" +
-                        "&email=$email" +
+                        "?email=$email" +
                         "&name=$name" +
                         "&nickname=$nickname" +
                         "&githubUrl=$githubUrl" +
                         "&avatarUrl=$avatarUrl" +
-                        "?oauthId=$oauthId"
+                        "&oauthId=$oauthId"
             )
         }
     }
