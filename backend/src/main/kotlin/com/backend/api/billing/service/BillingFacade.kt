@@ -14,9 +14,6 @@ class BillingFacade(
     private val billingService: BillingService,
 ) {
 
-    private val log = org.slf4j.LoggerFactory.getLogger(BillingFacade::class.java)
-
-
     fun issueBillingKey(request: BillingRequest): BillingResponse {
         val authKey = request.authKey ?: throw ErrorException(ErrorCode.INVALID_AUTH_KEY)
         val customerKey = request.customerKey ?: throw ErrorException(ErrorCode.INVALID_CUSTOMER_KEY)
