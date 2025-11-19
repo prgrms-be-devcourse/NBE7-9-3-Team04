@@ -29,6 +29,9 @@ enum class ErrorCode(
     INVALID_SUSPEND_PERIOD(HttpStatus.BAD_REQUEST, "유효한 정지 종료일을 입력해주세요."),
     INVALID_BAN_PERIOD(HttpStatus.BAD_REQUEST, "영구 정지 상태에서는 종료일을 지정할 수 없습니다."),
     INVALID_STATUS(HttpStatus.BAD_REQUEST, "유효하지 않은 상태 값입니다."),
+
+    RATE_LIMIT_EXCEEDED(HttpStatus.TOO_MANY_REQUESTS, "짧은 시간에 너무 많은 요청을 보냈습니다. 잠시 후 다시 시도해주세요."),
+
     INVALID_AUTHENTICATION_SNS(HttpStatus.BAD_REQUEST, "SNS 가입 유저는 기존 방식의 인증이 불가합니다."),
     INVALID_AUTHENTICATION_EMAIL(HttpStatus.BAD_REQUEST, "이메일 가입 유저는 SNS 방식의 인증이 불가합니다."),
     INVALID_OAUTHID(HttpStatus.BAD_REQUEST, "OAuth 인증 ID는 null일 수 없습니다."),
