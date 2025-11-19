@@ -30,7 +30,7 @@ export default function NewFeedbackPage() {
       });
     }, 300);
     return () => clearInterval(interval);
-  }, []);
+  }, [isPremium]);
 
   // ✅ 프리미엄 여부 확인 함수
   const checkPremiumStatus = async () => {
