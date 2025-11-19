@@ -12,7 +12,8 @@ import com.backend.api.post.service.PostService
 import com.backend.api.question.dto.response.QuestionPageResponse
 import com.backend.api.question.dto.response.QuestionResponse
 import com.backend.api.question.service.QuestionService
-import com.backend.api.user.dto.request.UserMyPageRequest
+import com.backend.api.user.dto.request.UserModifyRequest
+import com.backend.api.user.dto.response.SolvedProblemResponse
 import com.backend.api.user.dto.response.UserMyPageResponse
 import com.backend.api.user.service.UserMyPageService
 import com.backend.domain.user.entity.User

@@ -1,6 +1,7 @@
 package com.backend.api.user.service
 
-import com.backend.api.user.dto.request.UserMyPageRequest
+import com.backend.api.user.dto.request.UserModifyRequest
+import com.backend.api.user.dto.response.SolvedProblemResponse
 import com.backend.api.user.dto.response.UserMyPageResponse
 import com.backend.domain.user.repository.UserRepository
 import com.backend.domain.userQuestion.entity.UserQuestion
