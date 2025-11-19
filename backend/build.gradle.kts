@@ -133,7 +133,7 @@ sonarqube {
         property("sonar.projectVersion", "1.0")
 
         property("sonar.host.url", "http://localhost:9000")
-        property("sonar.token", "sqa_db876518eccd13a01176ef55bc48f9c10a827128")
+        property("sonar.token", System.getenv("SONAR_TOKEN") ?: "")
 
         property("sonar.sources", "src/main/java,src/main/resources")
         property("sonar.tests", "src/test/java,src/test/resources")
