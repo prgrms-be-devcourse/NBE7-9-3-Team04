@@ -32,7 +32,7 @@ Toss Payments를 통한 구독 서비스를 통해 프리미엄 서비스를 이
 ## 🧑‍💻 개발 기간 & 팀원
 
 ### **개발 기간**
-> 2025.10.10 (금) 09:00 ~ 2025.10.27 (월) 18:00
+> 2025.11.14 (금) 09:00 ~ 2025.11.20 (목) 18:00
 
 ### **팀원**
 | <a href="https://github.com/kimeunkyoungg"><img src="https://github.com/kimeunkyoungg.png" width="100"/></a> | <a href="https://github.com/seopgyu"><img src="https://github.com/seopgyu.png" width="100"/></a> | <a href="https://github.com/myoungjinseo"><img src="https://github.com/myoungjinseo.png" width="100"/></a> | <a href="https://github.com/Labtory-82"><img src="https://github.com/Labtory-82.png" width="100"/></a> | <a href="https://github.com/ascal34"><img src="https://github.com/ascal34.png" width="100"/></a> | <a href="https://github.com/larama-C"><img src="https://github.com/larama-C.png" width="100"/></a> |
@@ -45,21 +45,29 @@ Toss Payments를 통한 구독 서비스를 통해 프리미엄 서비스를 이
 
 ## 🧩 핵심 기능
 
-**1. 회원 관리 시스템 (JWT 인증 기반)**
+**1. 회원 관리 시스템 (JWT 인증 / Redis 기반)**
 
-**2. 게시판 및 커뮤니티 기능**
+**2. OAuth 2.0 인증 기반 소셜 로그인**
 
-**3. AI 면접 지원 시스템 (OpenAI API 기반)**
+**3. 게시판 및 커뮤니티 기능**
 
-**4. 랭킹 시스템**
+**4. AI 면접 지원 시스템 (OpenAI API 기반)**
 
-**5. QnA 게시판**
+**5. 랭킹 시스템(Redis 기반)**
 
-**6. 결제 및 구독 서비스 (Toss Payments 연동)**
+**6. QnA 게시판**
 
-**7. 마이페이지**
+**7. 결제 및 구독 서비스 (Toss Payments 연동)**'
 
-**8. 관리자 페이지**
+**8. Elasticsearch 기반 검색 기능**
+
+**8. 마이페이지**
+
+**9. 관리자 페이지**
+
+**9.  Slack WebHook을 통한 OpenAI API 토큰 사용 비용 모니터링**
+
+**10.  Discord WebHook을 통한 서버 ERROR 로그 및 GitHub 저장소 이벤트를 실시간 알림**
 
 ---
 
@@ -74,18 +82,31 @@ DB_USER=your_db_user
 DB_PASSWORD=your_db_password
 
 # Email
-EMAIL_ID=your_email@gmail.com
-EMAIL_PW=your_email_app_password
+MAILGUN_API_KEY=your_mailgun_api_key
+MAILGUN_DOMAIN=your_mailgun_domain
+MAILGUN_FROM=your_mailgun_sender
 
 # OpenAI
 OPENAI_API_KEY=your_openai_api_key
 OPENAI_API_URL=https://api.openai.com/v1/chat/completions
+
+# OpenAI ADMIN (OpenAI 사용량 조회 API)
+OPENAI_ADMIN_API_KEY=your_openai_admin_key
+OPENAI_ADMIN_API_URL=https://api.openai.com/v1/organization/costs
 
 # Payment
 PAYMENT_SECRET_KEY=your_payment_secret_key
 
 # JWT
 SECRET_PATTERN=your_secret_pattern
+
+# GitHub OAuth
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+
+# Slack / Discord Webhook
+SLACK_WEBHOOK_URL=your_slack_webhook_url
+DISCORD_WEBHOOK_URL=your_discord_webhook_url
 ```
 
 **FRONTEND (.env)**
@@ -112,7 +133,7 @@ NEXT_PUBLIC_TOSS_CLIENT_KEY = your_payment_secret_key
 ---
 
 ## ☁️ 시스템 아키텍처
-<img width="690" height="575" alt="Image" src="https://github.com/user-attachments/assets/713206f2-fa0f-41ed-ab22-9df0228fa620" />
+<img width="690" height="575" alt="Image" src="https://github.com/user-attachments/assets/713206f2-fa0f-41ed-ab22-9df0228fa620"  />
 
 ---
 
@@ -127,7 +148,7 @@ NEXT_PUBLIC_TOSS_CLIENT_KEY = your_payment_secret_key
 
 **Backend**
 
-![Java](https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=openjdk&logoColor=white)
+![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
 ![Spring Security](https://img.shields.io/badge/Spring%20Security-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white)
 ![Spring Data JPA](https://img.shields.io/badge/Spring%20Data%20JPA-007396?style=for-the-badge&logo=hibernate&logoColor=white)
@@ -136,10 +157,23 @@ NEXT_PUBLIC_TOSS_CLIENT_KEY = your_payment_secret_key
 ![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 ![H2 Database](https://img.shields.io/badge/H2%20Database-003B57?style=for-the-badge&logo=h2&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![OpenAI API](https://img.shields.io/badge/OpenAI%20API-412991?style=for-the-badge&logo=openai&logoColor=white)
 ![Toss Payments](https://img.shields.io/badge/Toss%20Payments-0064FF?style=for-the-badge&logo=toss&logoColor=white)
-![Gmail SMTP](https://img.shields.io/badge/Gmail%20SMTP-EA4335?style=for-the-badge&logo=gmail&logoColor=white)
+![Mailgun](https://img.shields.io/badge/Mailgun-F06B66?style=for-the-badge&logo=mailgun&logoColor=white)
+
+**Test & Monitoring**
+![JMeter](https://img.shields.io/badge/Apache%20JMeter-D22128?style=for-the-badge&logo=apachejmeter&logoColor=white)
+![InfluxDB](https://img.shields.io/badge/InfluxDB-22ADF6?style=for-the-badge&logo=influxdb&logoColor=white)
+![Grafana](https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white)
+
+**Search**
+![Elasticsearch](https://img.shields.io/badge/Elasticsearch-005571?style=for-the-badge&logo=elasticsearch&logoColor=white)
+
+**Webhook**
+![Slack](https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white)
+![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)
 
 ---
 
