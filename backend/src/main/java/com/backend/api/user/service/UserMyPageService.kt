@@ -1,6 +1,6 @@
 package com.backend.api.user.service
 
-import com.backend.api.user.dto.request.MyPageRequest
+import com.backend.api.user.dto.request.UserMyPageRequest
 import com.backend.api.user.dto.response.UserMyPageResponse
 import com.backend.domain.user.repository.UserRepository
 import com.backend.domain.userQuestion.entity.UserQuestion
@@ -19,7 +19,7 @@ class UserMyPageService(private val userRepository: UserRepository,
         private val rq: Rq,
         private val userQuestionRepository: UserQuestionRepository) {
 
-    fun modifyUser(userId: Long, modify: MyPageRequest.UserModify): UserMyPageResponse {
+    fun modifyUser(userId: Long, modify: UserMyPageRequest.UserModify): UserMyPageResponse {
         val user = userRepository.findById(userId)
             .orElseThrow{ IllegalArgumentException("유저를 찾을 수 없습니다.") }
 
