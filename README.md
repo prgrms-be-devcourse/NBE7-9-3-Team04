@@ -57,7 +57,7 @@ Toss Payments를 통한 구독 서비스를 통해 프리미엄 서비스를 이
 
 **6. QnA 게시판**
 
-**7. 결제 및 구독 서비스 (Toss Payments 연동)**'
+**7. 결제 및 구독 서비스 (Toss Payments 연동)**
 
 **8. Elasticsearch 기반 검색 기능**
 
