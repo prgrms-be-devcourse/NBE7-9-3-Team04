@@ -22,21 +22,5 @@ class Feedback(
         this.aiScore = score
         this.content = content
     }
-    companion object {
-        @JvmStatic
-        fun builder() = Builder()
-    }
-
-    class Builder {
-        private var content: String = ""
-        private var aiScore: Int = 0
-        private lateinit var answer: Answer
-
-        fun content(content: String) = apply { this.content = content }
-        fun aiScore(aiScore: Int) = apply { this.aiScore = aiScore }
-        fun answer(answer: Answer) = apply { this.answer = answer }
-
-        fun build() = Feedback(content, aiScore, answer)
-    }
 
 }

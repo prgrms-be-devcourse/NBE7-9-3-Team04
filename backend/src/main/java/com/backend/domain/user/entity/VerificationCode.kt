@@ -28,31 +28,4 @@ class VerificationCode(
     fun markAsVerified() {
         verified = true
     }
-
-    // ---------- Kotlin Builder ----------
-    companion object {
-        @JvmStatic
-        fun builder() = Builder()
-    }
-
-    class Builder {
-        private var email: String = ""
-        private var code: String = ""
-        private var expiresAt: LocalDateTime = LocalDateTime.now()
-        private var verified: Boolean = false
-
-        fun email(email: String) = apply { this.email = email }
-        fun code(code: String) = apply { this.code = code }
-        fun expiresAt(expiresAt: LocalDateTime) = apply { this.expiresAt = expiresAt }
-        fun verified(verified: Boolean) = apply { this.verified = verified }
-
-        fun build(): VerificationCode {
-            return VerificationCode(
-                email = email,
-                code = code,
-                expiresAt = expiresAt,
-                verified = verified
-            )
-        }
-    }
 }

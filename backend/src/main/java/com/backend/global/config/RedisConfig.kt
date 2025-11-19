@@ -1,5 +1,7 @@
 package com.backend.global.config
 
+import org.redisson.Redisson
+import org.redisson.api.RedissonClient
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -41,4 +43,13 @@ class RedisConfig(
 
             connectionFactory = redisConnectionFactory()
         }
+
+    @Bean
+    fun redissonClient(): RedissonClient {
+        val config = org.redisson.config.Config()
+
+        config.useSingleServer().address = "redis://$host:$port"
+
+        return Redisson.create(config)
+    }
 }

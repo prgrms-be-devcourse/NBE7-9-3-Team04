@@ -2,6 +2,7 @@ package com.backend.api.payment.controller
 
 import com.backend.api.payment.dto.request.PaymentRequest
 import com.backend.api.payment.dto.response.PaymentResponse
+import com.backend.api.payment.service.PaymentFacade
 import com.backend.api.payment.service.PaymentService
 import com.backend.global.dto.response.ApiResponse
 import io.swagger.v3.oas.annotations.Operation
@@ -12,7 +13,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/v1/payments")
 @Tag(name = "Payments", description = "결제 관련 API")
 class PaymentController(
-    private val paymentService: PaymentService
+    private val paymentService: PaymentService,
+    private val paymentFacade: PaymentFacade
 ) {
 
     //결제 승인
@@ -21,22 +23,22 @@ class PaymentController(
     fun confirm(
         @RequestBody request: PaymentRequest
     ): ApiResponse<PaymentResponse> {
-        val response = paymentService.confirmPayment(request)
+        val response = paymentFacade.confirmPayment(request)
         return ApiResponse.created("결제가 승인되었습니다.", response)
     }
 
     @GetMapping("/key/{paymentKey}")
     @Operation(summary = "paymentKey로 결제 조회")
-    fun geyPaymentByKey(
+    fun getPaymentByKey(
         @PathVariable paymentKey: String
     ): ApiResponse<PaymentResponse> {
-        val response = paymentService.geyPaymentByKey(paymentKey)
+        val response = paymentService.getPaymentByKey(paymentKey)
         return ApiResponse.ok("결제 정보를 조회합니다", response)
     }
 
     @GetMapping("/order/{orderId}")
     @Operation(summary = "orderId로 결제 조회")
-    fun geyPaymentByOrderId(
+    fun getPaymentByOrderId(
         @PathVariable orderId: String
     ): ApiResponse<PaymentResponse> {
         val response = paymentService.getPaymentByOrderId(orderId)

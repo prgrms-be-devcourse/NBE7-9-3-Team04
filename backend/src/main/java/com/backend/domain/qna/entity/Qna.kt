@@ -29,36 +29,6 @@ class Qna(
     var isAnswered: Boolean = false
 
 ) : BaseEntity() {
-
-    companion object {
-        @JvmStatic
-        fun builder() = Builder()
-    }
-
-    // 임시 Builder
-    class Builder {
-        private var title: String = ""
-        private var content: String = ""
-        private var author: User = User()
-        private var categoryType: QnaCategoryType? = null
-
-        fun title(title: String) = apply { this.title = title }
-        fun content(content: String) = apply { this.content = content }
-        fun author(author: User) = apply { this.author = author }
-        fun categoryType(categoryType: QnaCategoryType?) = apply { this.categoryType = categoryType }
-
-        fun build(): Qna {
-            val nonNullAuthor = requireNotNull(author) { "Author must not be null" }
-
-            return Qna(
-                title = title,
-                content = content,
-                author = nonNullAuthor,
-                categoryType = categoryType
-            )
-        }
-    }
-
     // 수정 기능
     fun updateQna(
         title: String,

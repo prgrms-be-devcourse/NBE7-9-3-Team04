@@ -2,7 +2,6 @@ package com.backend.api.global
 
 import com.backend.domain.user.entity.Role
 import com.backend.domain.user.entity.User
-import com.backend.domain.user.entity.User.Companion.builder
 import com.backend.domain.user.repository.UserRepository
 import com.backend.global.security.CustomUserDetails
 import org.junit.jupiter.api.BeforeEach
@@ -32,16 +31,15 @@ abstract class JwtTest {
     @BeforeEach
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     fun setJWT() {
-        val user = builder()
-            .email("test@naver.com")
-            .age(27)
-            .github("https://github.com/test")
-            .name("test")
-            .password(passwordEncoder.encode("test1234"))
-            .image(null)
-            .role(Role.USER)
-            .nickname("testnick")
-            .build()
+        val user = User(
+            email = "test@naver.com",
+            password = passwordEncoder.encode("test1234"),
+            name = "test",
+            nickname = "testnick",
+            age = 27,
+            github = "https://github.com/test",
+            role = Role.USER
+        )
 
 
         mockUser = userRepository.save(user)
@@ -51,6 +49,6 @@ abstract class JwtTest {
         val auth: Authentication = UsernamePasswordAuthenticationToken(
             userDetails, null, userDetails.authorities
         )
-        SecurityContextHolder.getContext().setAuthentication(auth)
+        SecurityContextHolder.getContext().authentication = auth
     }
 }

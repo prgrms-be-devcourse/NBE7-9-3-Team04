@@ -65,40 +65,4 @@ open class Question(
     fun changeCategory(categoryType: QuestionCategoryType) {
         this.categoryType = categoryType
     }
-
-    // Builder
-    class Builder {
-        private var title: String = ""
-        private var content: String = ""
-        private var author: User = User()
-        private var categoryType: QuestionCategoryType = QuestionCategoryType.DATABASE
-        private var isApproved: Boolean = false
-        private var score: Int = 0
-        private var groupId: UUID? = null
-
-        fun title(title: String) = apply { this.title = title }
-        fun content(content: String) = apply { this.content = content }
-        fun author(author: User) = apply { this.author = author }
-        fun categoryType(categoryType: QuestionCategoryType) = apply { this.categoryType = categoryType }
-        fun isApproved(isApproved: Boolean) = apply { this.isApproved = isApproved }
-        fun score(score: Int) = apply { this.score = score }
-        fun groupId(groupId: UUID) = apply { this.groupId = groupId }
-
-        fun build(): Question {
-            return Question(
-                title = title,
-                content = content,
-                isApproved = isApproved,
-                score = score,
-                author = author,
-                categoryType = categoryType,
-                groupId = groupId
-            )
-        }
-    }
-
-    companion object {
-        @JvmStatic
-        fun builder() = Builder()
-    }
 }

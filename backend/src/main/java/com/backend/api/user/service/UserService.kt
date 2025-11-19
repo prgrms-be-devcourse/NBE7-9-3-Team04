@@ -18,7 +18,7 @@ import com.backend.domain.user.entity.Role
 import com.backend.domain.user.entity.User
 import com.backend.domain.user.entity.search.UserDocument
 import com.backend.domain.user.repository.UserRepository
-import com.backend.domain.user.repository.VerificationCodeRepository
+import com.backend.domain.user.repository.VerificationCodeRedisRepository
 import com.backend.domain.user.repository.search.UserSearchRepository
 import com.backend.global.exception.ErrorCode
 import com.backend.global.exception.ErrorException
@@ -38,7 +38,7 @@ class UserService(
     private val jwtTokenProvider: JwtTokenProvider,
     private val subscriptionRepository: SubscriptionRepository,
     private val emailService: EmailService,
-    private val verificationCodeRepository: VerificationCodeRepository,
+    private val verificationRedisRepo: VerificationCodeRedisRepository,
     private val rankingRepository: RankingRepository,
     private val userSearchRepository: UserSearchRepository,
     private val refreshRedisService: RefreshRedisService,
@@ -46,14 +46,7 @@ class UserService(
 ) {
 
     @Transactional
-    fun createUserAndDependencies(user: User): UserSignupResponse {
-        verificationCodeRepository.findByEmail(user.email)?.let {
-            verificationCodeRepository.delete(it)
-        }
-
-        userRepository.save(user)
-        userSearchRepository.save(UserDocument.from(user))
-
+    fun createDependencies(user: User): UserSignupResponse {
         val basicSubscription = Subscription(
             user = user,
             subscriptionType = SubscriptionType.BASIC,
@@ -75,13 +68,11 @@ class UserService(
             tier = Tier.UNRATED,
             rankValue = 0
         )
+        
         rankingRepository.save(ranking)
 
-        user.assignSubscription(basicSubscription)
-
         eventPublisher.publishEvent(UserSignupEvent(user))
-
-        return UserSignupResponse.from(user, ranking)
+        return UserSignupResponse.from(user, basicSubscription, ranking)
     }
 
     @Transactional
@@ -90,7 +81,7 @@ class UserService(
             throw ErrorException(ErrorCode.DUPLICATE_EMAIL)
         }
 
-        if (!emailService.isVerified(request.email)) {
+        if (verificationRedisRepo.findCode(request.email) != null) {
             throw ErrorException(ErrorCode.EMAIL_NOT_VERIFIED)
         }
 
@@ -104,8 +95,10 @@ class UserService(
             image = request.image,
             role = Role.USER
         )
-
-        return createUserAndDependencies(user)
+        userRepository.save(user)
+        userSearchRepository.save(UserDocument.from(user))
+        
+        return createDependencies(user)
     }
 
 
@@ -126,8 +119,10 @@ class UserService(
             role = Role.USER,
             oauthId = request.oauthId
         )
+        userRepository.save(user)
+        userSearchRepository.save(UserDocument.from(user))
 
-        return createUserAndDependencies(user)
+        return createDependencies(user)
     }
 
 
@@ -239,14 +234,14 @@ class UserService(
     }
 
     @Transactional(readOnly = true)
-    fun verifyUserInfo(userId: String, name: String, email: String): Boolean {
-        return userRepository.findByEmail(userId)
+    fun verifyUserInfo(name: String, email: String): Boolean {
+        return userRepository.findByEmail(email)
             ?.let { it.name == name && it.email == email } ?: false
     }
 
     @Transactional
-    fun updatePassword(userId: String, newPassword: String) {
-        val user: User = userRepository.findByEmail(userId)
+    fun updatePassword(email: String, newPassword: String) {
+        val user: User = userRepository.findByEmail(email)
             ?: throw ErrorException(ErrorCode.NOT_FOUND_USER)
 
         val encodedPassword = passwordEncoder.encode(newPassword)

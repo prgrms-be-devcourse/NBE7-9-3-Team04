@@ -51,24 +51,26 @@ class QuestionControllerTest(
     @BeforeEach
     fun setUp() {
         testUser = userRepository.save(
-            User.builder()
-                .name("TestUser")
-                .email("test@test.com")
-                .github("https://github.com/tester")
-                .password("1234")
-                .nickname("tester")
-                .role(Role.USER)
-                .build()
+            User(
+                email = "test@test.com",
+                password = "1234",
+                name = "TestUser",
+                nickname = "tester",
+                age = 25,
+                github = "https://github.com/tester",
+                image = null,
+                role = Role.USER
+            )
         )
 
         Mockito.`when`(rq.getUser()).thenReturn(testUser)
 
-        val question = Question.builder()
-            .title("기존 제목")
-            .content("기존 내용")
-            .author(testUser)
-            .categoryType(QuestionCategoryType.ALGORITHM)
-            .build()
+        val question = Question(
+                title = "기존 제목",
+                content = "기존 내용",
+                author = testUser,
+                categoryType = QuestionCategoryType.ALGORITHM
+            )
 
         savedQuestion = questionRepository.save(question)
     }
@@ -296,22 +298,22 @@ class QuestionControllerTest(
         @DisplayName("질문 목록 조회 성공 - 승인된 질문만 반환")
         fun success() {
             val approvedQuestion = questionRepository.save(
-                Question.builder()
-                    .title("승인된 질문")
-                    .content("승인된 질문 내용")
-                    .author(testUser)
-                    .categoryType(QuestionCategoryType.NETWORK)
-                    .build()
+                Question(
+                    title = "승인된 질문",
+                    content = "승인된 질문 내용",
+                    author = testUser,
+                    categoryType = QuestionCategoryType.NETWORK
+                )
             )
             approvedQuestion.updateApproved(true)
 
             val unapprovedQuestion = questionRepository.save(
-                Question.builder()
-                    .title("미승인 질문")
-                    .content("미승인 질문 내용")
-                    .author(testUser)
-                    .categoryType(QuestionCategoryType.NETWORK)
-                    .build()
+                Question(
+                    title = "미승인 질문",
+                    content = "미승인 질문 내용",
+                    author = testUser,
+                    categoryType = QuestionCategoryType.NETWORK
+                )
             )
             unapprovedQuestion.updateApproved(false)
 
@@ -345,22 +347,22 @@ class QuestionControllerTest(
         @DisplayName("카테고리별 질문 조회 성공")
         fun success2() {
             val osQuestion = questionRepository.save(
-                Question.builder()
-                    .title("운영체제 관련 질문")
-                    .content("프로세스와 스레드의 차이를 설명해주세요.")
-                    .author(testUser)
-                    .categoryType(QuestionCategoryType.OS)
-                    .build()
+                Question(
+                    title = "운영체제 관련 질문",
+                    content = "프로세스와 스레드의 차이를 설명해주세요.",
+                    author = testUser,
+                    categoryType = QuestionCategoryType.OS
+                )
             )
             osQuestion.updateApproved(true)
 
             val dbQuestion = questionRepository.save(
-                Question.builder()
-                    .title("DB 관련 질문")
-                    .content("인덱스가 언제 비효율적인가요?")
-                    .author(testUser)
-                    .categoryType(QuestionCategoryType.DATABASE)
-                    .build()
+                Question(
+                    title = "DB 관련 질문",
+                    content = "인덱스가 언제 비효율적인가요?",
+                    author = testUser,
+                    categoryType = QuestionCategoryType.DATABASE
+                )
             )
             dbQuestion.updateApproved(true)
 
@@ -411,11 +413,12 @@ class QuestionControllerTest(
         @DisplayName("질문 단건 조회 성공")
         fun success() {
             val question = questionRepository.save(
-                Question.builder()
-                    .title("상세 질문")
-                    .content("상세 질문 내용")
-                    .author(testUser)
-                    .build()
+                Question(
+                    title = "상세 질문",
+                    content = "상세 질문 내용",
+                    author = testUser,
+                    categoryType = QuestionCategoryType.DATABASE
+                )
             )
             question.updateApproved(true)
 
@@ -470,11 +473,12 @@ class QuestionControllerTest(
         @DisplayName("질문 상세 조회 실패 - 승인되지 않은 질문 접근")
         fun fail2() {
             val question = questionRepository.save(
-                Question.builder()
-                    .title("미승인 질문")
-                    .content("미승인 질문 내용")
-                    .author(testUser)
-                    .build()
+                Question(
+                    title = "미승인 질문",
+                    content = "미승인 질문 내용",
+                    author = testUser,
+                    categoryType = QuestionCategoryType.DATABASE
+                )
             )
             question.updateApproved(false)
 

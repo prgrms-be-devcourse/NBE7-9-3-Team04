@@ -2,6 +2,7 @@ package com.backend.api.user.dto.response
 
 import com.backend.domain.ranking.entity.Ranking
 import com.backend.domain.ranking.entity.Tier
+import com.backend.domain.subscription.entity.Subscription
 import com.backend.domain.subscription.entity.SubscriptionType
 import com.backend.domain.user.entity.User
 import io.swagger.v3.oas.annotations.media.Schema
@@ -27,13 +28,13 @@ data class UserSignupResponse(
 
 ) {
     companion object {
-        fun from(user: User, ranking: Ranking): UserSignupResponse {
+        fun from(user: User, subscription: Subscription, ranking: Ranking): UserSignupResponse {
             return UserSignupResponse(
                 user.id,
                 user.email,
                 user.name,
                 user.nickname,
-                user.subscription!!.subscriptionType,
+                subscription.subscriptionType,
                 ranking.tier
             )
         }

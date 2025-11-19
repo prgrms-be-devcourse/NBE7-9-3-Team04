@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { fetchApi } from "@/lib/client";
 import path from "path";
+import { toast } from "sonner";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -52,7 +53,7 @@ export default function Navbar() {
       const apiResponse = await fetchApi("/api/v1/users/logout", {
         method: "DELETE",
       });
-      alert(apiResponse.message || "로그아웃 성공");
+      toast.success(apiResponse.message || "로그아웃 성공");
     } catch (_) {}
     setIsLoggedIn(false);
     setIsAdmin(false);
