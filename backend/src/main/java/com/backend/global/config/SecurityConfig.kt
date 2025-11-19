@@ -69,7 +69,8 @@ class SecurityConfig(
                         "/api/v1/users/signup",
                         "/api/v1/users/refresh",
                         "/api/v1/users/sendEmail",
-                        "/api/v1/users/verifyCode"
+                        "/api/v1/users/verifyCode",
+                        "/api/v1/users/findPassword"
                     ).permitAll()
                     .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
