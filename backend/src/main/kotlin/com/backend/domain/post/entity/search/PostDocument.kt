@@ -1,5 +1,6 @@
 package com.backend.domain.post.entity.search
 
+import com.backend.domain.post.entity.Post
 import com.backend.domain.post.entity.PostCategoryType
 import org.springframework.data.annotation.Id
 import org.springframework.data.elasticsearch.annotations.Document
@@ -21,6 +22,12 @@ data class PostDocument(
     @Field(type = FieldType.Text, analyzer = "nori_analyzer", searchAnalyzer = "nori_analyzer")
     val content: String,
 
+    @Field(type = FieldType.Date)
+    val deadline: String,
+
+    @Field(type = FieldType.Text)
+    val recruitCount: Int,
+
     @Field(type = FieldType.Keyword)
     val postCategoryType: PostCategoryType,
 
@@ -31,5 +38,22 @@ data class PostDocument(
     val createdDate: String,
 
     @Field(type = FieldType.Date)
-    val updatedDate: String
-)
+    val modifyDate: String
+) {
+    companion object {
+        fun from(post: Post): PostDocument {
+            return PostDocument(
+                id = post.id.toString(),
+                title = post.title,
+                introduction = post.introduction,
+                content = post.content,
+                deadline = post.deadline.toString(),
+                recruitCount = post.recruitCount,
+                postCategoryType = post.postCategoryType,
+                authorNickname = post.users.nickname,
+                createdDate = post.createDate.toString(),
+                modifyDate = post.modifyDate.toString()
+            )
+        }
+    }
+}

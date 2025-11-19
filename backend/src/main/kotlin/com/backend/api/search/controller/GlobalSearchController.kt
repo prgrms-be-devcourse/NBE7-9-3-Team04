@@ -1,8 +1,7 @@
 package com.backend.api.search.controller
 
 import com.backend.api.question.service.QuestionSearchService
-import com.backend.api.search.dto.SearchPageResponse
-import com.backend.api.search.dto.SearchResultDto
+import com.backend.api.search.dto.*
 import com.backend.api.search.service.GlobalSearchMySQLService
 import com.backend.api.search.service.GlobalSearchService
 import com.backend.global.dto.response.ApiResponse
@@ -21,12 +20,13 @@ class GlobalSearchController(
 
     // ES 기반 통합 검색 (현재는 User만 지원)
     @GetMapping("/users/es")
-    fun searchByES(
+    fun searchUsersByES(
         @RequestParam keyword: String,
         @RequestParam(defaultValue = "1") page: Int,
         @RequestParam(defaultValue = "20") size: Int
-    ): ApiResponse<SearchPageResponse<SearchResultDto>> {
-        return ApiResponse.ok(globalSearchService.searchUser(keyword, page, size))
+    ): ApiResponse<SearchPageResponse<SearchResponse<UserSearchDto>>> {
+        val result = globalSearchService.searchUser(keyword, page, size)
+        return ApiResponse.ok(result)
     }
 
     // MySQL 기반 통합 검색 (성능 비교용)
@@ -41,12 +41,13 @@ class GlobalSearchController(
 
      // Post 검색
      @GetMapping("/posts/es")
-     fun searchPostByES(
+     fun searchPostsByES(
          @RequestParam keyword: String,
          @RequestParam(defaultValue = "1") page: Int,
          @RequestParam(defaultValue = "20") size: Int
-     ): ApiResponse<SearchPageResponse<SearchResultDto>> {
-         return ApiResponse.ok(globalSearchService.searchPost(keyword, page, size))
+     ): ApiResponse<SearchPageResponse<SearchResponse<PostSearchDto>>> {
+         val result = globalSearchService.searchPost(keyword, page, size)
+         return ApiResponse.ok(result)
      }
 
     // CS Question 검색 (추후 활성화)

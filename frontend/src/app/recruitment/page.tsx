@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { fetchApi } from "@/lib/client";
 import Link from "next/link";
 import CategoryTab from "@/components/categoryTab";
@@ -20,6 +20,8 @@ export default function RecruitmentPage() {
   const postsPerPage = 9;
   const categories = ["전체", "프로젝트", "스터디"];
 
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
   const fetchPinnedPosts = async () => {
     try {
       const res = await fetchApi(`/api/v1/posts/pinned`);
@@ -30,8 +32,8 @@ export default function RecruitmentPage() {
             p.categoryType === "PROJECT"
               ? "프로젝트"
               : p.categoryType === "STUDY"
-              ? "스터디"
-              : p.categoryType,
+                ? "스터디"
+                : p.categoryType,
           createDate: p.createDate?.split("T")[0],
           modifyDate: p.modifyDate?.split("T")[0],
           deadline: p.deadline?.split("T")[0],
@@ -51,8 +53,8 @@ export default function RecruitmentPage() {
         selectedCategory === "전체"
           ? ""
           : selectedCategory === "프로젝트"
-          ? "PROJECT"
-          : "STUDY";
+            ? "PROJECT"
+            : "STUDY";
 
       const res = (await fetchApi(
         `/api/v1/posts?page=${page}&size=${postsPerPage}&category=${categoryQuery}`
@@ -99,12 +101,25 @@ export default function RecruitmentPage() {
       };
 
       if (res.status === "OK") {
-        const formatted = res.data.content.map((p: any) => ({
-          ...p,
-          createDate: p.createdAt?.split("T")[0],
-          modifyDate: p.updatedAt?.split("T")[0],
-          deadline: p.deadline?.split("T")[0],
-        }));
+        const formatted = res.data.content.map((p: any) => {
+          const d = p.data;  // ⚠ 여기서 반드시 실제 ES 데이터를 꺼냄
+
+          return {
+            postId: Number(d.id ?? 0),  // ⚠ 항상 숫자, undefined 방지
+            title: d.title,
+            introduction: d.introduction,
+            content: d.content,
+            deadline: d.deadline?.split("T")[0],
+            createDate: d.createdDate?.split("T")[0],
+            modifyDate: d.modifyDate?.split("T")[0],
+            status: d.status ?? "ING",
+            pinStatus: d.pinStatus ?? "NOT_PINNED",
+            recruitCount: d.recruitCount ?? 0,
+            nickName: d.authorNickname,
+            categoryType: d.postCategoryType,
+            isMine: false
+          };
+        });
 
         setPosts(formatted);
         setCurrentPage(res.data.currentPage);
@@ -186,7 +201,7 @@ export default function RecruitmentPage() {
               style={{ transform: `translateX(-${currentSlide * 100}%)` }}
             >
               {pinnedPosts.map((post) => (
-                <div key={post.postId ?? post.id} className="min-w-full flex-shrink-0">
+                <div key={`post-${post.postId}`} className="min-w-full flex-shrink-0">
                   <div className="flex justify-between p-8 border border-blue-500 bg-blue-100 rounded-lg min-h-[160px]">
                     <div className="flex-1 pr-4 flex flex-col justify-between">
                       <div>
@@ -215,7 +230,8 @@ export default function RecruitmentPage() {
                         ⏰ 마감: {post.deadline}
                       </div>
                       <Link
-                        href={`/recruitment/${post.postId ?? post.id}`}
+                        href={`/recruitment/${post.postId}`}
+                        onClick={() => inputRef.current?.blur()}
                         className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 text-sm"
                       >
                         자세히 보기
@@ -231,9 +247,8 @@ export default function RecruitmentPage() {
                 <button
                   key={`slide-${i}`}
                   onClick={() => setCurrentSlide(i)}
-                  className={`h-2 rounded-full transition-all ${
-                    i === currentSlide ? "w-8 bg-blue-600" : "w-2 bg-gray-300 hover:bg-gray-400"
-                  }`}
+                  className={`h-2 rounded-full transition-all ${i === currentSlide ? "w-8 bg-blue-600" : "w-2 bg-gray-300 hover:bg-gray-400"
+                    }`}
                 />
               ))}
             </div>
@@ -244,9 +259,17 @@ export default function RecruitmentPage() {
       {/* 검색 입력창 */}
       <div className="mb-6">
         <input
+          ref={inputRef}
           type="text"
           value={searchKeyword}
           onChange={(e) => setSearchKeyword(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              inputRef.current?.blur(); // 🔥 강제 blur
+              if (searchKeyword.trim() === "") fetchPosts(1);
+              else fetchSearchPosts(searchKeyword, 1);
+            }
+          }}
           placeholder="검색어를 입력하세요 (제목 / 소개 / 내용 검색)"
           className="w-full border p-3 rounded-lg"
         />
@@ -273,26 +296,24 @@ export default function RecruitmentPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {posts.map((post) => (
             <div
-              key={post.postId ?? post.id}
+              key={`post-${post.postId}`}
               className="bg-white border border-gray-300 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="flex justify-between mb-2 text-sm">
                 <div className="flex gap-1.5">
                   <span
-                    className={`px-2 py-[2px] rounded-full text-[10px] font-medium ${
-                      post.categoryType === "PROJECT"
-                        ? "bg-indigo-100 text-indigo-700"
-                        : "bg-green-100 text-green-700"
-                    }`}
+                    className={`px-2 py-[2px] rounded-full text-[10px] font-medium ${post.categoryType === "PROJECT"
+                      ? "bg-indigo-100 text-indigo-700"
+                      : "bg-green-100 text-green-700"
+                      }`}
                   >
                     {post.categoryType === "PROJECT" ? "프로젝트" : "스터디"}
                   </span>
                   <span
-                    className={`px-2 py-[2px] rounded-full text-[10px] font-medium ${
-                      post.status === "ING"
-                        ? "bg-red-100 text-red-700"
-                        : "bg-gray-100 text-gray-500"
-                    }`}
+                    className={`px-2 py-[2px] rounded-full text-[10px] font-medium ${post.status === "ING"
+                      ? "bg-red-100 text-red-700"
+                      : "bg-gray-100 text-gray-500"
+                      }`}
                   >
                     {post.status === "ING" ? "모집중" : "마감"}
                   </span>
@@ -315,7 +336,8 @@ export default function RecruitmentPage() {
               </div>
 
               <Link
-                href={`/recruitment/${post.postId ?? post.id}`}
+                href={`/recruitment/${post.postId}`}
+                onClick={() => inputRef.current?.blur()}
                 className="block text-center border border-gray-300 rounded py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
               >
                 자세히 보기
@@ -330,9 +352,8 @@ export default function RecruitmentPage() {
         <button
           onClick={() => handlePageChange(1)}
           disabled={currentPage === 1}
-          className={`px-3 py-1 rounded bg-gray-200 ${
-            currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-300"
-          }`}
+          className={`px-3 py-1 rounded bg-gray-200 ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-300"
+            }`}
         >
           처음
         </button>
@@ -340,9 +361,8 @@ export default function RecruitmentPage() {
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className={`px-3 py-1 rounded bg-gray-200 ${
-            currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-300"
-          }`}
+          className={`px-3 py-1 rounded bg-gray-200 ${currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-300"
+            }`}
         >
           &lt;
         </button>
@@ -351,9 +371,8 @@ export default function RecruitmentPage() {
           <button
             key={page}
             onClick={() => handlePageChange(page)}
-            className={`px-3 py-1 rounded ${
-              currentPage === page ? "bg-blue-600 text-white" : "bg-gray-200 hover:bg-gray-300"
-            }`}
+            className={`px-3 py-1 rounded ${currentPage === page ? "bg-blue-600 text-white" : "bg-gray-200 hover:bg-gray-300"
+              }`}
           >
             {page}
           </button>
@@ -362,9 +381,8 @@ export default function RecruitmentPage() {
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className={`px-3 py-1 rounded bg-gray-200 ${
-            currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-300"
-          }`}
+          className={`px-3 py-1 rounded bg-gray-200 ${currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-300"
+            }`}
         >
           &gt;
         </button>
@@ -372,9 +390,8 @@ export default function RecruitmentPage() {
         <button
           onClick={() => handlePageChange(totalPages)}
           disabled={currentPage === totalPages}
-          className={`px-3 py-1 rounded bg-gray-200 ${
-            currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-300"
-          }`}
+          className={`px-3 py-1 rounded bg-gray-200 ${currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-300"
+            }`}
         >
           마지막
         </button>

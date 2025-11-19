@@ -86,21 +86,18 @@ class ElasticsearchConfig(
                         "postCategoryType" to mapOf("type" to "keyword"),
                         "authorNickname" to mapOf("type" to "keyword"),
                         "recruitCount" to mapOf("type" to "integer"),
-
-                        // 날짜 format 완전 지원 버전
                         "deadline" to mapOf(
                             "type" to "date",
                             "format" to "strict_date_optional_time||yyyy-MM-dd'T'HH:mm:ss.SSS||yyyy-MM-dd'T'HH:mm:ss"
                         ),
-                        "createdAt" to mapOf(
+                        "createdDate" to mapOf(
                             "type" to "date",
                             "format" to "strict_date_optional_time||yyyy-MM-dd'T'HH:mm:ss.SSS||yyyy-MM-dd'T'HH:mm:ss"
                         ),
-                        "updatedAt" to mapOf(
+                        "modifyDate" to mapOf(
                             "type" to "date",
                             "format" to "strict_date_optional_time||yyyy-MM-dd'T'HH:mm:ss.SSS||yyyy-MM-dd'T'HH:mm:ss"
                         ),
-
                         "status" to mapOf("type" to "keyword"),
                         "pinStatus" to mapOf("type" to "keyword")
                     )
