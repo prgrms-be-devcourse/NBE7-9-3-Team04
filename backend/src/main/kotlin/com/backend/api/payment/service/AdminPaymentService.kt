@@ -4,8 +4,6 @@ import com.backend.api.payment.dto.response.AdminPaymentResponse
 import com.backend.api.payment.dto.response.AdminPaymentSummaryResponse
 import com.backend.domain.payment.entity.PaymentStatus
 import com.backend.domain.payment.repository.PaymentRepository
-import com.backend.global.exception.ErrorCode
-import com.backend.global.exception.ErrorException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -19,10 +17,6 @@ class AdminPaymentService(
     fun getAllByOrderByApprovedAtDesc(): List<AdminPaymentResponse> {
         val payments = paymentRepository.findAllByOrderByApprovedAtDesc()
 
-        if (payments.isEmpty()) {
-            throw ErrorException(ErrorCode.PAYMENT_NOT_FOUND)
-        }
-
         return payments.map { AdminPaymentResponse.from(it) }
     }
 
@@ -31,7 +25,11 @@ class AdminPaymentService(
         val total = paymentRepository.count()
 
         if (total == 0L) {
-            throw ErrorException(ErrorCode.PAYMENT_NOT_FOUND)
+            return AdminPaymentSummaryResponse(
+                totalPayments = 0,
+                successPayments = 0,
+                totalRevenue = 0
+            )
         }
 
         val successCount = paymentRepository.countByStatus(PaymentStatus.DONE)
