@@ -19,7 +19,7 @@ class UserMyPageService(private val userRepository: UserRepository,
         private val rq: Rq,
         private val userQuestionRepository: UserQuestionRepository) {
 
-    fun modifyUser(userId: Long, modify: UserMyPageRequest.UserModify): UserMyPageResponse {
+    fun modifyUser(userId: Long, modify: UserModifyRequest): UserMyPageResponse {
         val user = userRepository.findById(userId)
             .orElseThrow{ IllegalArgumentException("유저를 찾을 수 없습니다.") }
 
@@ -53,12 +53,12 @@ class UserMyPageService(private val userRepository: UserRepository,
     }
 
 
-    fun getSolvedProblems(userId: Long): List<UserMyPageResponse.SolvedProblem> {
+    fun getSolvedProblems(userId: Long): List<SolvedProblemResponse> {
         val solvedQuestions: List<UserQuestion> =
             userQuestionRepository.findByUser_Id(userId)
 
         return solvedQuestions.map { q ->
-            UserMyPageResponse.SolvedProblem(
+            SolvedProblemResponse(
                 title = q.question.title,
                 modifyDate = q.modifyDate
             )

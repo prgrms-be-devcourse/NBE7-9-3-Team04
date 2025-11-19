@@ -2,7 +2,6 @@ package com.backend.api.user.dto.response
 
 import com.backend.domain.user.entity.User
 import io.swagger.v3.oas.annotations.media.Schema
-import java.time.LocalDateTime
 
 data class UserMyPageResponse(
     @field:Schema(description = "유저 아이디", example = "5")
@@ -24,27 +23,19 @@ data class UserMyPageResponse(
     val github: String?,
 
     @field:Schema(description = "이미지 주소", example = "image3")
-    val image: String?,
-
-    @field:Schema(description = "소셜 로그인 아이디", example = "12345678")
-    val oauthId: String?
+    val image: String?
 ) {
     companion object {
-        fun fromEntity(user: User): UserMyPageResponse =
-            UserMyPageResponse(
+        fun fromEntity(user: User): UserMyPageResponse {
+            return UserMyPageResponse(
                 userId = user.id,
                 email = user.email,
                 name = user.name,
                 nickname = user.nickname,
                 age = user.age,
                 github = user.github,
-                image = user.image,
-                oauthId = user.oauthId
+                image = user.image
             )
+        }
     }
-
-    class SolvedProblem(
-        val title: String,// 문제 제목
-        val modifyDate: LocalDateTime?// 수정일
-    )
 }

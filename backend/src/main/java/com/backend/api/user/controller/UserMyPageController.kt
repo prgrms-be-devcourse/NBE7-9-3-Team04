@@ -52,7 +52,7 @@ class UserMyPageController(
     @PutMapping("/me")
     @Operation(summary = "개인 정보 수정")
     fun updateUser(
-        @RequestBody modify: UserMyPageRequest.UserModify
+        @RequestBody modify: UserModifyRequest
     ): ApiResponse<UserMyPageResponse> {
         val userId = currentUser().id
         val response = userMyPageService.modifyUser(userId, modify)
@@ -114,7 +114,7 @@ class UserMyPageController(
 
     @GetMapping
     @Operation(summary = "해결한 문제")
-    fun solvedProblemList(): ApiResponse<List<UserMyPageResponse.SolvedProblem>> {
+    fun solvedProblemList(): ApiResponse<List<SolvedProblemResponse>> {
         val userId = currentUser().id
         val solvedList = userMyPageService.getSolvedProblems(userId)
         return ApiResponse.ok(solvedList)
