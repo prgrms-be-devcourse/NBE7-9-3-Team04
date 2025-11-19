@@ -17,6 +17,7 @@ class BillingScheduler(
     //00시에 자동으로 결제 진행
     @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
     fun runAutoBillingTask() {
+
         log.info("[스케줄러 시작] 자동 결제 작업 시작 - ${LocalDate.now()}")
 
         //오늘 결제일인 구독 목록 조회

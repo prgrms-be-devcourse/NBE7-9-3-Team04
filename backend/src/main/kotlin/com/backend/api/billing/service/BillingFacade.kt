@@ -14,7 +14,6 @@ class BillingFacade(
     private val billingService: BillingService,
 ) {
 
-
     fun issueBillingKey(request: BillingRequest): BillingResponse {
         val authKey = request.authKey ?: throw ErrorException(ErrorCode.INVALID_AUTH_KEY)
         val customerKey = request.customerKey ?: throw ErrorException(ErrorCode.INVALID_CUSTOMER_KEY)
@@ -22,6 +21,12 @@ class BillingFacade(
         val billingKey = tossBillingClient.issueBillingKey(authKey, customerKey)
 
         val subscription = billingService.activatePremium(customerKey, billingKey)
+
+        val body = billingService.buildPaymentBody(subscription)
+
+        val response = tossBillingClient.billingPayment(billingKey, body)
+
+        billingService.processAutoPayment(customerKey, response)
 
         return BillingResponse(
             billingKey = billingKey,
