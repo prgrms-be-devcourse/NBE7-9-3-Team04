@@ -22,7 +22,7 @@ export default function MySettingsPage() {
     nickname: "",
     age: 0,
     github: "",
-    oauthId: null
+    oauthId: null,
   });
 
   useEffect(() => {
@@ -32,22 +32,22 @@ export default function MySettingsPage() {
   const handleVerifyPassword = async () => {
     try {
       const userInfo = await fetchApi(`/api/v1/users/me`, { method: "GET" });
-  
+
       if (userInfo.data.oauthId !== null) {
         toast.error("SNS 회원은 비밀번호 인증을 사용할 수 없습니다.");
         return;
       }
-  
+
       if (passwordInput.trim().length === 0) {
         setPasswordError("비밀번호를 입력해주세요.");
         return;
       }
-  
+
       const res = await fetchApi(`/api/v1/users/verifyPassword`, {
         method: "POST",
         body: JSON.stringify({ password: passwordInput }),
       });
-  
+
       if (res.data === true) {
         setCanEdit(true);
         setShowPasswordModal(false);
@@ -60,39 +60,38 @@ export default function MySettingsPage() {
       setCanEdit(false);
     }
   };
-  
 
   const handleSNSLoginPopup = async (provider: string) => {
     try {
       const userInfo = await fetchApi(`/api/v1/users/me`, { method: "GET" });
-  
-      if(userInfo.data.oauthId === null){
+
+      if (userInfo.data.oauthId === null) {
         toast.error("기존 회원은 SNS 인증을 사용할 수 없습니다.");
         return;
       }
-  
+
       const width = 600;
       const height = 700;
       const left = window.screen.width / 2 - width / 2;
       const top = window.screen.height / 2 - height / 2;
-  
+
       const popup = window.open(
         `http://localhost:8080/oauth2/authorization/${provider}?mode=profile`,
         "SNS Login",
         `width=${width},height=${height},top=${top},left=${left}`
       );
-  
+
       const receiveMessage = async (event: MessageEvent) => {
         if (event.origin !== "http://localhost:3000") return;
-  
+
         const { oauthId, email } = event.data || {};
         if (!oauthId || !email) return;
-  
+
         const res = await fetchApi(`/api/v1/users/verifyOauthId`, {
           method: "POST",
           body: JSON.stringify({ oauthId: oauthId }),
         });
-  
+
         if (res.data === true) {
           setCanEdit(true);
           setIsSnsUser(true);
@@ -101,24 +100,24 @@ export default function MySettingsPage() {
           setPasswordInput("");
           setFormData({
             ...userInfo.data,
-            email: email,   // 🔥 SNS에서 받은 email을 강제로 반영
+            email: email, // 🔥 SNS에서 받은 email을 강제로 반영
           });
           toast.success("SNS 인증이 확인되었습니다.");
         } else {
           toast.error("현재 로그인된 계정과 SNS 계정이 일치하지 않습니다.");
         }
-  
+
         window.removeEventListener("message", receiveMessage);
         popup?.close();
       };
-  
+
       window.addEventListener("message", receiveMessage);
     } catch (err) {
       console.error(err);
       toast.error("사용자 정보를 가져오는 중 오류가 발생했습니다.");
     }
   };
-  
+
   const handleSave = async () => {
     try {
       const res = await fetchApi(`/api/v1/users/me`, {
@@ -219,19 +218,17 @@ export default function MySettingsPage() {
               <label className="block text-sm font-medium mb-1">이메일</label>
               <input
                 type="email"
-                className={`w-full border rounded-md p-2
-                  ${isSnsUser ? "bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed" : "border-gray-300"}`}
+                className="w-full border border-gray-300 rounded-md p-2 bg-gray-100 text-gray-400 cursor-not-allowed"
                 value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                disabled={isSnsUser}
+                disabled
               />
             </div>
 
             {!isSnsUser && (
               <div>
-                <label className="block text-sm font-medium mb-1">비밀번호</label>
+                <label className="block text-sm font-medium mb-1">
+                  비밀번호
+                </label>
                 <input
                   type="password"
                   className="w-full border border-gray-300 rounded-md p-2"
@@ -283,7 +280,9 @@ export default function MySettingsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">GitHub URL</label>
+              <label className="block text-sm font-medium mb-1">
+                GitHub URL
+              </label>
               <input
                 type="url"
                 className="w-full border border-gray-300 rounded-md p-2"
