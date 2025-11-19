@@ -3,7 +3,9 @@ package com.backend.api.user.service
 import com.backend.api.user.dto.request.UserModifyRequest
 import com.backend.api.user.dto.response.SolvedProblemResponse
 import com.backend.api.user.dto.response.UserMyPageResponse
+import com.backend.domain.user.entity.search.UserDocument
 import com.backend.domain.user.repository.UserRepository
+import com.backend.domain.user.repository.search.UserSearchRepository
 import com.backend.domain.userQuestion.entity.UserQuestion
 import com.backend.domain.userQuestion.repository.UserQuestionRepository
 import com.backend.global.Rq.Rq
@@ -15,14 +17,17 @@ import org.springframework.stereotype.Service
 
 @Service
 @Transactional
-class UserMyPageService(private val userRepository: UserRepository,
-        private val passwordEncoder: PasswordEncoder,
-        private val rq: Rq,
-        private val userQuestionRepository: UserQuestionRepository) {
+class UserMyPageService(
+    private val userRepository: UserRepository,
+    private val passwordEncoder: PasswordEncoder,
+    private val rq: Rq,
+    private val userQuestionRepository: UserQuestionRepository,
+    private val userSearchRepository: UserSearchRepository
+) {
 
     fun modifyUser(userId: Long, modify: UserModifyRequest): UserMyPageResponse {
         val user = userRepository.findById(userId)
-            .orElseThrow{ IllegalArgumentException("유저를 찾을 수 없습니다.") }
+            .orElseThrow { IllegalArgumentException("유저를 찾을 수 없습니다.") }
 
         val encodedPassword = when {
             modify.password.isNullOrBlank() -> user.password
@@ -43,6 +48,7 @@ class UserMyPageService(private val userRepository: UserRepository,
         }
 
         val saved = userRepository.save(user)
+        userSearchRepository.save(UserDocument.from(user))
         return UserMyPageResponse.fromEntity(saved)
     }
 
@@ -68,7 +74,7 @@ class UserMyPageService(private val userRepository: UserRepository,
 
     fun verifyPassword(userId: Long, rawPassword: String?): Boolean {
         val user = userRepository.findById(userId)
-            .orElseThrow{ ErrorException(ErrorCode.NOT_FOUND_USER) }
+            .orElseThrow { ErrorException(ErrorCode.NOT_FOUND_USER) }
 
         return passwordEncoder.matches(rawPassword, user.password)
     }
