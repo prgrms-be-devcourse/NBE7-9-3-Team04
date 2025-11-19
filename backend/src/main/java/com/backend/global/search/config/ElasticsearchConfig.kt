@@ -1,5 +1,6 @@
 package com.backend.global.search.config
 
+import com.backend.domain.post.entity.search.PostDocument
 import com.backend.domain.user.entity.search.UserDocument
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.CommandLineRunner
@@ -14,7 +15,7 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 
 @Configuration
 @Profile("!test")
-@EnableElasticsearchRepositories(basePackages = ["com.backend.domain.user.repository.search"])
+@EnableElasticsearchRepositories(basePackages = ["com.backend.domain.*.repository.search"])
 class ElasticsearchConfig(
 
     @Value("\${spring.elasticsearch.uris}")
@@ -28,31 +29,90 @@ class ElasticsearchConfig(
             .build()
     }
 
+    private val noriSettings = mapOf(
+        "analysis" to mapOf(
+            "tokenizer" to mapOf(
+                "nori_tokenizer" to mapOf("type" to "nori_tokenizer")
+            ),
+            "analyzer" to mapOf(
+                "nori_analyzer" to mapOf(
+                    "type" to "custom",
+                    "tokenizer" to "nori_tokenizer",
+                    "filter" to listOf("lowercase")
+                )
+            )
+        )
+    )
+
     @Bean
     fun createUsersIndex(operations: ElasticsearchOperations): CommandLineRunner {
         return CommandLineRunner {
             val indexOps = operations.indexOps(UserDocument::class.java)
 
-            val settings = mapOf(
-                "analysis" to mapOf(
-                    "analyzer" to mapOf(
-                        "nori_analyzer" to mapOf(
-                            "type" to "custom",
-                            "tokenizer" to "nori_tokenizer",
-                            "filter" to listOf("nori_readingform", "lowercase")
-                        )
+            val mapping = Document.from(
+                mapOf(
+                    "properties" to mapOf(
+                        "id" to mapOf("type" to "keyword"),
+                        "name" to mapOf("type" to "text", "analyzer" to "nori_analyzer"),
+                        "nickname" to mapOf("type" to "text", "analyzer" to "nori_analyzer"),
+                        "email" to mapOf("type" to "keyword"),
+                        "role" to mapOf("type" to "keyword")
                     )
                 )
             )
 
-            val mapping: Document = indexOps.createMapping(UserDocument::class.java)
+            if (!indexOps.exists()) {
+                indexOps.create(noriSettings)
+                indexOps.putMapping(mapping)
+                println("[ES] users 인덱스 생성 완료")
+            } else {
+                println("[ES] users 인덱스 이미 존재")
+            }
+        }
+    }
+
+    @Bean
+    fun createPostsIndex(operations: ElasticsearchOperations): CommandLineRunner {
+        return CommandLineRunner {
+            val indexOps = operations.indexOps(PostDocument::class.java)
+
+            val mapping = Document.from(
+                mapOf(
+                    "properties" to mapOf(
+                        "id" to mapOf("type" to "keyword"),
+                        "title" to mapOf("type" to "text", "analyzer" to "nori_analyzer"),
+                        "introduction" to mapOf("type" to "text", "analyzer" to "nori_analyzer"),
+                        "content" to mapOf("type" to "text", "analyzer" to "nori_analyzer"),
+                        "postCategoryType" to mapOf("type" to "keyword"),
+                        "authorNickname" to mapOf("type" to "keyword"),
+                        "recruitCount" to mapOf("type" to "integer"),
+
+                        // 날짜 format 완전 지원 버전
+                        "deadline" to mapOf(
+                            "type" to "date",
+                            "format" to "strict_date_optional_time||yyyy-MM-dd'T'HH:mm:ss.SSS||yyyy-MM-dd'T'HH:mm:ss"
+                        ),
+                        "createdAt" to mapOf(
+                            "type" to "date",
+                            "format" to "strict_date_optional_time||yyyy-MM-dd'T'HH:mm:ss.SSS||yyyy-MM-dd'T'HH:mm:ss"
+                        ),
+                        "updatedAt" to mapOf(
+                            "type" to "date",
+                            "format" to "strict_date_optional_time||yyyy-MM-dd'T'HH:mm:ss.SSS||yyyy-MM-dd'T'HH:mm:ss"
+                        ),
+
+                        "status" to mapOf("type" to "keyword"),
+                        "pinStatus" to mapOf("type" to "keyword")
+                    )
+                )
+            )
 
             if (!indexOps.exists()) {
-                indexOps.create(settings)
+                indexOps.create(noriSettings)
                 indexOps.putMapping(mapping)
-                println("[Elasticsearch] users 인덱스 생성 완료")
+                println("[ES] posts 인덱스 생성 완료")
             } else {
-                println("[Elasticsearch] users 인덱스 이미 존재")
+                println("[ES] posts 인덱스 이미 존재")
             }
         }
     }

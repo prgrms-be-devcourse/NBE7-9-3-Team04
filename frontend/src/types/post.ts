@@ -44,7 +44,8 @@ export type AdminPostStatusRequest = {
 // 응답 DTO
 
 export type PostResponse = {
-  postId: number;
+  postId?: number;
+  id?: number;
   title: string;
   introduction: string;
   content: string;

@@ -20,7 +20,7 @@ class GlobalSearchController(
 ) {
 
     // ES 기반 통합 검색 (현재는 User만 지원)
-    @GetMapping("/es")
+    @GetMapping("/users/es")
     fun searchByES(
         @RequestParam keyword: String,
         @RequestParam(defaultValue = "1") page: Int,
@@ -30,7 +30,7 @@ class GlobalSearchController(
     }
 
     // MySQL 기반 통합 검색 (성능 비교용)
-    @GetMapping("/mysql")
+    @GetMapping("/users/mysql")
     fun searchByMySQL(
         @RequestParam keyword: String,
         @RequestParam(defaultValue = "1") page: Int,
@@ -39,11 +39,15 @@ class GlobalSearchController(
         return ApiResponse.ok(userMySQLSearchService.searchAll(keyword, page, size))
     }
 
-    // Post 검색 (추후 활성화)
-    // @GetMapping("/posts/es")
-    // fun searchPostByES(@RequestParam keyword: String): ApiResponse<List<SearchResultDto>> {
-    //     return ApiResponse.ok(postSearchService.postSearch(keyword))
-    // }
+     // Post 검색
+     @GetMapping("/posts/es")
+     fun searchPostByES(
+         @RequestParam keyword: String,
+         @RequestParam(defaultValue = "1") page: Int,
+         @RequestParam(defaultValue = "20") size: Int
+     ): ApiResponse<SearchPageResponse<SearchResultDto>> {
+         return ApiResponse.ok(globalSearchService.searchPost(keyword, page, size))
+     }
 
     // CS Question 검색 (추후 활성화)
     // @GetMapping("/questions/es")

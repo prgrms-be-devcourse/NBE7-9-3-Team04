@@ -1,28 +1,37 @@
 package com.backend.api.user.init
 
-import com.backend.domain.user.entity.search.UserDocument
+import com.backend.api.search.mapper.SearchDocumentMapper
 import com.backend.domain.user.repository.UserRepository
 import com.backend.domain.user.repository.search.UserSearchRepository
 import org.slf4j.LoggerFactory
-import org.springframework.boot.CommandLineRunner
+import org.springframework.boot.context.event.ApplicationReadyEvent
+import org.springframework.context.annotation.Profile
+import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
+@Profile("!test")
 @Component
 class UserDataSyncRunner(
     private val userRepository: UserRepository,
-    private val userSearchRepository: UserSearchRepository
-) : CommandLineRunner {
+    private val userSearchRepository: UserSearchRepository,
+    private val mapper: SearchDocumentMapper
+) {
 
     private val log = LoggerFactory.getLogger(UserDataSyncRunner::class.java)
 
-    override fun run(vararg args: String?) {
-        val users = userRepository.findAll()
+    @Transactional(readOnly = true)
+    @EventListener(ApplicationReadyEvent::class)
+    fun sync() {
+        log.info("Elasticsearch 사용자 인덱싱 시작")
 
-        val docs = users.map { u ->
-            UserDocument.from(u)
+        val users = userRepository.findAll()
+        val docs = users.map { mapper.toUserDocument(it) }
+
+        docs.chunked(500).forEach { chunk ->
+            userSearchRepository.saveAll(chunk)
         }
 
-        userSearchRepository.saveAll(docs)
-        log.info("Elasticsearch 인덱싱 완료: {}건 저장됨", docs.size)
+        log.info("Elasticsearch 사용자 인덱싱 완료: {}건", docs.size)
     }
 }

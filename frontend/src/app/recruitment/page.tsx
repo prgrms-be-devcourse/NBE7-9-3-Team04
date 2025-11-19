@@ -6,15 +6,17 @@ import Link from "next/link";
 import CategoryTab from "@/components/categoryTab";
 import { PostResponse, PostPageResponse, PostStatus, PinStatus } from "@/types/post";
 
-
 export default function RecruitmentPage() {
   const [pinnedPosts, setPinnedPosts] = useState<PostResponse[]>([]);
   const [posts, setPosts] = useState<PostResponse[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [searchKeyword, setSearchKeyword] = useState(""); // 검색 키워드
   const [currentSlide, setCurrentSlide] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState("전체");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
   const postsPerPage = 9;
   const categories = ["전체", "프로젝트", "스터디"];
 
@@ -67,11 +69,10 @@ export default function RecruitmentPage() {
           modifyDate: p.modifyDate?.split("T")[0],
           deadline: p.deadline?.split("T")[0],
         }));
+
         setPosts(formatted);
         setCurrentPage(res.data.currentPage);
-        setTotalPages(res.data.totalPages === 0 ? 1 : res.data.totalPages);
-      } else {
-        console.error("게시글 불러오기 실패:", res.message);
+        setTotalPages(res.data.totalPages || 1);
       }
     } catch (err) {
       console.error("게시글 불러오기 실패:", err);
@@ -80,46 +81,71 @@ export default function RecruitmentPage() {
     }
   };
 
+  const fetchSearchPosts = async (keyword: string, page = 1) => {
+    try {
+      setLoading(true);
+
+      const res = (await fetchApi(
+        `/api/v1/search/posts/es?keyword=${keyword}&page=${page}&size=${postsPerPage}`
+      )) as {
+        status: string;
+        data: {
+          content: PostResponse[];
+          currentPage: number;
+          totalPages: number;
+          totalElements: number;
+          last: boolean;
+        };
+      };
+
+      if (res.status === "OK") {
+        const formatted = res.data.content.map((p: any) => ({
+          ...p,
+          createDate: p.createdAt?.split("T")[0],
+          modifyDate: p.updatedAt?.split("T")[0],
+          deadline: p.deadline?.split("T")[0],
+        }));
+
+        setPosts(formatted);
+        setCurrentPage(res.data.currentPage);
+        setTotalPages(res.data.totalPages || 1);
+      }
+    } catch (err) {
+      console.error("검색 실패:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (searchKeyword.trim() === "") {
+      fetchPosts(1);
+    } else {
+      fetchSearchPosts(searchKeyword, 1);
+    }
+  }, [selectedCategory, searchKeyword]);
+
   useEffect(() => {
     fetchPinnedPosts();
   }, []);
 
   useEffect(() => {
-    fetchPosts(1);
-  }, [selectedCategory]);
-
-  useEffect(() => {
-    const updatePostStatus = async () => {
-      const currentDate = new Date();
-      const updatedPosts = posts.map((post) => {
-        const deadlineDate = new Date(post.deadline);
-        if (deadlineDate < currentDate) {
-          return {
-            ...post,
-            status: "CLOSED" as PostStatus,
-            pinStatus: "NOT_PINNED" as PinStatus,
-          };
-        }
-        return post;
-      });
-      return updatedPosts;
-    };
-
-    updatePostStatus().then((updatedPosts) => setPosts(updatedPosts));
-  }, []);
-
-  useEffect(() => {
     if (pinnedPosts.length === 0) return;
+
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % pinnedPosts.length);
     }, 5000);
+
     return () => clearInterval(timer);
   }, [pinnedPosts.length]);
 
-  const nextSlide = () =>
-    setCurrentSlide((prev) => (prev + 1) % pinnedPosts.length);
-  const prevSlide = () =>
-    setCurrentSlide((prev) => (prev - 1 + pinnedPosts.length) % pinnedPosts.length);
+  const handlePageChange = (page: number) => {
+    if (searchKeyword.trim() === "") {
+      fetchPosts(page);
+    } else {
+      fetchSearchPosts(searchKeyword, page);
+    }
+  };
 
   return (
     <div className="max-w-screen-xl mx-auto px-6 py-10">
@@ -129,87 +155,101 @@ export default function RecruitmentPage() {
         <p className="text-gray-500">함께 성장할 팀원을 찾아보세요</p>
       </div>
 
-      {/* 프리미엄 모집글 */}
-      <div className="mb-10">
-        <div className="flex justify-between mb-4">
-          <h2 className="text-xl font-semibold">프리미엄 모집글</h2>
-          <div className="flex gap-2">
-            <button
-              onClick={prevSlide}
-              className="h-8 w-8 rounded border border-gray-300 hover:bg-gray-100"
-            >
-              &lt;
-            </button>
-            <button
-              onClick={nextSlide}
-              className="h-8 w-8 rounded border border-gray-300 hover:bg-gray-100"
-            >
-              &gt;
-            </button>
+      {/* 프리미엄 게시글 슬라이더 */}
+      {pinnedPosts.length > 0 && (
+        <div className="mb-10">
+          <div className="flex justify-between mb-4">
+            <h2 className="text-xl font-semibold">프리미엄 모집글</h2>
+            <div className="flex gap-2">
+              <button
+                onClick={() =>
+                  setCurrentSlide((prev) => (prev - 1 + pinnedPosts.length) % pinnedPosts.length)
+                }
+                className="h-8 w-8 rounded border border-gray-300 hover:bg-gray-100"
+              >
+                &lt;
+              </button>
+              <button
+                onClick={() =>
+                  setCurrentSlide((prev) => (prev + 1) % pinnedPosts.length)
+                }
+                className="h-8 w-8 rounded border border-gray-300 hover:bg-gray-100"
+              >
+                &gt;
+              </button>
+            </div>
           </div>
-        </div>
 
-        <div className="relative overflow-hidden rounded-lg">
-          <div
-            className="flex transition-transform duration-500 ease-in-out"
-            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-          >
-            {pinnedPosts.map((post) => (
-              <div key={post.postId} className="min-w-full flex-shrink-0">
-                <div className="flex justify-between p-8 border border-blue-500 bg-blue-100 rounded-lg min-h-[160px]">
-                  <div className="flex-1 pr-4 flex flex-col justify-between">
-                    <div>
-                      <div className="flex gap-3 mb-2">
-                        <span className="bg-blue-600 text-white text-[10px] font-semibold rounded-full px-2 py-[2px]">
-                          프리미엄
-                        </span>
-                        <span className="bg-gray-100 text-gray-700 text-[10px] font-medium rounded-full px-2 py-[2px]">
-                          {post.categoryType}
-                        </span>
+          <div className="relative overflow-hidden rounded-lg">
+            <div
+              className="flex transition-transform duration-500 ease-in-out"
+              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+            >
+              {pinnedPosts.map((post) => (
+                <div key={post.postId ?? post.id} className="min-w-full flex-shrink-0">
+                  <div className="flex justify-between p-8 border border-blue-500 bg-blue-100 rounded-lg min-h-[160px]">
+                    <div className="flex-1 pr-4 flex flex-col justify-between">
+                      <div>
+                        <div className="flex gap-3 mb-2">
+                          <span className="bg-blue-600 text-white text-[10px] font-semibold rounded-full px-2 py-[2px]">
+                            프리미엄
+                          </span>
+                          <span className="bg-gray-100 text-gray-700 text-[10px] font-medium rounded-full px-2 py-[2px]">
+                            {post.categoryType}
+                          </span>
+                        </div>
+                        <h3 className="text-lg font-semibold mb-2 line-clamp-2">
+                          {post.title}
+                        </h3>
+                        <p className="text-sm text-gray-600 line-clamp-2">
+                          {post.introduction}
+                        </p>
                       </div>
-                      <h3 className="text-lg font-semibold mb-2 line-clamp-2">
-                        {post.title}
-                      </h3>
-                      <p className="text-sm text-gray-600 line-clamp-2">
-                        {post.introduction}
-                      </p>
+                      <div className="flex items-center gap-1 text-sm text-gray-700 mt-3">
+                        🧑‍🤝‍🧑 <span>{post.recruitCount}명</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1 text-sm text-gray-700 mt-3">
-                      🧑‍🤝‍🧑 <span>{post.recruitCount}명</span>
-                    </div>
-                  </div>
 
-                  <div className="flex flex-col justify-between items-end">
-                    <div className="text-sm text-gray-500">
-                      ⏰ 마감: {post.deadline}
+                    <div className="flex flex-col justify-between items-end">
+                      <div className="text-sm text-gray-500">
+                        ⏰ 마감: {post.deadline}
+                      </div>
+                      <Link
+                        href={`/recruitment/${post.postId ?? post.id}`}
+                        className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 text-sm"
+                      >
+                        자세히 보기
+                      </Link>
                     </div>
-                    <Link
-                      href={`/recruitment/${post.postId}`}
-                      className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 text-sm"
-                    >
-                      자세히 보기
-                    </Link>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
 
-          {/* 슬라이드 dot */}
-          <div className="flex justify-center gap-2 mt-3">
-            {pinnedPosts.map((_, i) => (
-              <button
-                key={`slide-${i}`}
-                onClick={() => setCurrentSlide(i)}
-                className={`h-2 rounded-full transition-all ${
-                  i === currentSlide
-                    ? "w-8 bg-blue-600"
-                    : "w-2 bg-gray-300 hover:bg-gray-400"
-                }`}
-              />
-            ))}
+            <div className="flex justify-center gap-2 mt-3">
+              {pinnedPosts.map((_, i) => (
+                <button
+                  key={`slide-${i}`}
+                  onClick={() => setCurrentSlide(i)}
+                  className={`h-2 rounded-full transition-all ${
+                    i === currentSlide ? "w-8 bg-blue-600" : "w-2 bg-gray-300 hover:bg-gray-400"
+                  }`}
+                />
+              ))}
+            </div>
           </div>
         </div>
+      )}
+
+      {/* 검색 입력창 */}
+      <div className="mb-6">
+        <input
+          type="text"
+          value={searchKeyword}
+          onChange={(e) => setSearchKeyword(e.target.value)}
+          placeholder="검색어를 입력하세요 (제목 / 소개 / 내용 검색)"
+          className="w-full border p-3 rounded-lg"
+        />
       </div>
 
       {/* 카테고리 */}
@@ -233,7 +273,7 @@ export default function RecruitmentPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {posts.map((post) => (
             <div
-              key={post.postId}
+              key={post.postId ?? post.id}
               className="bg-white border border-gray-300 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="flex justify-between mb-2 text-sm">
@@ -275,7 +315,7 @@ export default function RecruitmentPage() {
               </div>
 
               <Link
-                href={`/recruitment/${post.postId}`}
+                href={`/recruitment/${post.postId ?? post.id}`}
                 className="block text-center border border-gray-300 rounded py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
               >
                 자세히 보기
@@ -288,23 +328,20 @@ export default function RecruitmentPage() {
       {/* 페이지네이션 */}
       <div className="flex justify-center items-center gap-2 mt-6">
         <button
-          onClick={() => fetchPosts(1)}
+          onClick={() => handlePageChange(1)}
           disabled={currentPage === 1}
           className={`px-3 py-1 rounded bg-gray-200 ${
-            currentPage === 1
-              ? "opacity-50 cursor-not-allowed"
-              : "hover:bg-gray-300"
+            currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-300"
           }`}
         >
           처음
         </button>
+
         <button
-          onClick={() => fetchPosts(currentPage - 1)}
+          onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
           className={`px-3 py-1 rounded bg-gray-200 ${
-            currentPage === 1
-              ? "opacity-50 cursor-not-allowed"
-              : "hover:bg-gray-300"
+            currentPage === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-300"
           }`}
         >
           &lt;
@@ -313,11 +350,9 @@ export default function RecruitmentPage() {
         {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
           <button
             key={page}
-            onClick={() => fetchPosts(page)}
+            onClick={() => handlePageChange(page)}
             className={`px-3 py-1 rounded ${
-              currentPage === page
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200 hover:bg-gray-300"
+              currentPage === page ? "bg-blue-600 text-white" : "bg-gray-200 hover:bg-gray-300"
             }`}
           >
             {page}
@@ -325,23 +360,20 @@ export default function RecruitmentPage() {
         ))}
 
         <button
-          onClick={() => fetchPosts(currentPage + 1)}
+          onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
           className={`px-3 py-1 rounded bg-gray-200 ${
-            currentPage === totalPages
-              ? "opacity-50 cursor-not-allowed"
-              : "hover:bg-gray-300"
+            currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-300"
           }`}
         >
           &gt;
         </button>
+
         <button
-          onClick={() => fetchPosts(totalPages)}
+          onClick={() => handlePageChange(totalPages)}
           disabled={currentPage === totalPages}
           className={`px-3 py-1 rounded bg-gray-200 ${
-            currentPage === totalPages
-              ? "opacity-50 cursor-not-allowed"
-              : "hover:bg-gray-300"
+            currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-300"
           }`}
         >
           마지막
