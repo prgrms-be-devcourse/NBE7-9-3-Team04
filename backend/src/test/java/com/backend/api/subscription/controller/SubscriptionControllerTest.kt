@@ -73,7 +73,7 @@ class SubscriptionControllerTest(
             nextBillingDate = LocalDate.now().plusMonths(1),
             questionLimit = 8,
             subscriptionName = "PREMIUM",
-            price = 9900L,
+            price = 3900L,
             billingKey = "billingKey123",
             customerKey = "customerKey123",
             user = testUser1
@@ -139,7 +139,7 @@ class SubscriptionControllerTest(
                 .andExpect(jsonPath("$.data.subscriptionName").value("PREMIUM"))
                 .andExpect(jsonPath("$.data.subscriptionType").value("PREMIUM"))
                 .andExpect(jsonPath("$.data.isActive").value(true))
-                .andExpect(jsonPath("$.data.price").value(9900))
+                .andExpect(jsonPath("$.data.price").value(3900))
                 .andExpect(jsonPath("$.data.customerKey").value("customerKey123"))
                 .andExpect(jsonPath("$.data.billingKey").value("billingKey123"))
                 .andDo(print())

@@ -17,7 +17,7 @@ data class AdminPaymentResponse(
     @field:Schema(description = "주문 상품명", example = "프리미엄 월간 구독")
     val orderName: String,
 
-    @field:Schema(description = "총 결제 금액", example = "9900")
+    @field:Schema(description = "총 결제 금액", example = "3900")
     val amount: Long,
 
     @field:Schema(description = "결제 수단", example = "카드")

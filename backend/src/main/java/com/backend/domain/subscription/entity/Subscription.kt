@@ -57,7 +57,7 @@ class Subscription(
         this.active = true
         this.subscriptionType = SubscriptionType.PREMIUM
         this.subscriptionName = "PREMIUM"
-        this.price = 9900L
+        this.price = 3900L
         this.questionLimit = 8
         this.startDate = LocalDateTime.now()
         this.endDate = this.startDate.plusMonths(1)
