@@ -93,6 +93,14 @@ custom:
 
 openai:
   url: ${OPENAI_API_URL}
+  admin:
+    api-key: ${OPENAI_ADMIN_API_KEY}
+    url: ${OPENAI_ADMIN_API_URL}
+
+slack:
+  webhook:
+    url: ${SLACK_WEBHOOK_URL}
+
 
 toss:
   payments:
