@@ -61,13 +61,13 @@ Toss Payments를 통한 구독 서비스를 통해 프리미엄 서비스를 이
 
 **8. Elasticsearch 기반 검색 기능**
 
-**8. 마이페이지**
+**9. 마이페이지**
 
-**9. 관리자 페이지**
+**10. 관리자 페이지**
 
-**9.  Slack WebHook을 통한 OpenAI API 토큰 사용 비용 모니터링**
+**11.  Slack WebHook을 통한 OpenAI API 토큰 사용 비용 모니터링**
 
-**10.  Discord WebHook을 통한 서버 ERROR 로그 및 GitHub 저장소 이벤트를 실시간 알림**
+**12.  Discord WebHook을 통한 서버 ERROR 로그 및 GitHub 저장소 이벤트를 실시간 알림**
 
 ---
 
