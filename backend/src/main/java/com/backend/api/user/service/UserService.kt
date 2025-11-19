@@ -127,11 +127,14 @@ class UserService(
 
 
     @Transactional
-    fun login(request: UserLoginRequest): UserLoginResponse {
-        val user: User = userRepository.findByEmail(request.email)
-            ?: throw ErrorException(ErrorCode.NOT_FOUND_EMAIL)
-
-        if(user.oauthId != null) throw ErrorException(ErrorCode.INVALID_AUTHENTICATION_SNS)
+    fun login(request: UserLoginRequest? = null, oauthId: String? = null): UserLoginResponse {
+        val user = if(request != null) {
+            userRepository.findByEmail(request.email)
+                ?: throw ErrorException(ErrorCode.NOT_FOUND_EMAIL)
+        } else {
+            userRepository.findByOauthId(oauthId!!)
+                ?: throw ErrorException(ErrorCode.NOT_FOUND_OAUTHID)
+        }
 
         if (!user.validateLoginAvaliable()) {
 
@@ -142,7 +145,7 @@ class UserService(
             }
         }
 
-        if (!passwordEncoder.matches(request.password, user.password)) {
+        if (request != null && !passwordEncoder.matches(request.password, user.password)) {
             throw ErrorException(ErrorCode.WRONG_PASSWORD)
         }
 
