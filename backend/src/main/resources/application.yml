@@ -127,7 +127,7 @@ resilience4j:
         waitDuration: 2s
         enableExponentialBackoff: true
         exponential-backoff-multiplier: 2.0
-    retryAspectOrder: -4
+    retryAspectOrder: -2
   ratelimiter:
     configs:
       rateLimiterAI:
@@ -137,4 +137,4 @@ resilience4j:
     instances:
       rateLimiterAI:
         baseConfig: rateLimiterAI
-    ratelimiterAspectOrder: -2
+    ratelimiterAspectOrder: -4
