@@ -24,7 +24,10 @@ data class UserMyPageResponse(
     val github: String?,
 
     @field:Schema(description = "이미지 주소", example = "image3")
-    val image: String?
+    val image: String?,
+
+    @field:Schema(description = "소셜 로그인 아이디", example = "12345678")
+    val oauthId: String?
 ) {
     companion object {
         fun fromEntity(user: User): UserMyPageResponse =
@@ -35,7 +38,8 @@ data class UserMyPageResponse(
                 nickname = user.nickname,
                 age = user.age,
                 github = user.github,
-                image = user.image
+                image = user.image,
+                oauthId = user.oauthId
             )
     }
 

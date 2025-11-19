@@ -19,6 +19,17 @@ export type UserSignupRequest = {
   image?: string | null;
 };
 
+/** SNS 회원가입 요청 DTO */
+export type UserOauthSignupRequest = {
+  email: string;
+  name: string;
+  nickname: string;
+  age: number;
+  github: string;
+  image?: string | null;
+  oauthId: string
+};
+
 /** 관리자: 사용자 상태 변경 요청 DTO */
 export type AdminUserStatusUpdateRequest = {
   status: AccountStatus;
@@ -51,6 +62,7 @@ export type UserResponse = {
   role: Role;
   createDate: string;
   modifyDate: string;
+  oauthId?: string | null;
 };
 
 /** 사용자 목록 페이지 응답 DTO */
@@ -83,6 +95,7 @@ export type UserMyPageResponse = {
   nickname: string,
   age: number,
   github: string | null,
+  oauthId?: string | null
 };
 
 
