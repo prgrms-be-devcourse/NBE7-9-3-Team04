@@ -46,6 +46,24 @@ spring:
       host: localhost
       port: 6379
 
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-name: GitHub
+            authorization-grant-type: authorization_code
+            redirect-uri: http://localhost:8080/login/oauth2/code/github
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
+            scope:
+              - read:user
+              - user:email
+        provider:
+          github:
+            user-info-uri: https://api.github.com/user
+
+
 mailgun:
   api-key: ${MAILGUN_API_KEY}
   domain: ${MAILGUN_DOMAIN}
@@ -75,6 +93,14 @@ custom:
 
 openai:
   url: ${OPENAI_API_URL}
+  admin:
+    api-key: ${OPENAI_ADMIN_API_KEY}
+    url: ${OPENAI_ADMIN_API_URL}
+
+slack:
+  webhook:
+    url: ${SLACK_WEBHOOK_URL}
+
 
 toss:
   payments:
@@ -92,7 +118,7 @@ resilience4j:
         failureRateThreshold: 50
         permittedNumberOfCallsInHalfOpenState: 5
         waitDurationInOpenState: 10s
-    circuitbreakerAspectOrder: -4
+    circuitbreakerAspectOrder: -3
   retry:
     configs:
       aiRetry:
@@ -100,4 +126,14 @@ resilience4j:
         waitDuration: 2s
         enableExponentialBackoff: true
         exponential-backoff-multiplier: 2.0
-    retryAspectOrder: -3
+    retryAspectOrder: -4
+  ratelimiter:
+    configs:
+      rateLimiterAI:
+        limitForPeriod: 1
+        limitRefreshPeriod: 10s
+        timeoutDuration: 0
+    instances:
+      rateLimiterAI:
+        baseConfig: rateLimiterAI
+    ratelimiterAspectOrder: -2

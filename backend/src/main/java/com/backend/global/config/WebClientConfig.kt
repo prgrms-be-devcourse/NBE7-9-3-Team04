@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
+import org.springframework.web.client.RestTemplate
 import org.springframework.web.reactive.function.client.WebClient
 import java.nio.charset.StandardCharsets
 import java.util.*
@@ -29,4 +30,18 @@ class WebClientConfig(
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .build()
     }
+
+    @Bean
+    fun githubApiClient(): WebClient {
+        return WebClient.builder()
+            .baseUrl("https://api.github.com")
+            .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+            .build()
+    }
+
+    @Bean
+    fun restTemplate(): RestTemplate {
+        return RestTemplate()
+    }
+
 }

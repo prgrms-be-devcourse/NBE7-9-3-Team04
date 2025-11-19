@@ -1,6 +1,7 @@
 package com.backend.api.user.controller
 
 import com.backend.api.user.dto.request.UserLoginRequest
+import com.backend.api.user.dto.request.UserOauthSignupRequest
 import com.backend.api.user.dto.request.UserSignupRequest
 import com.backend.api.user.dto.response.UserLoginResponse
 import com.backend.api.user.dto.response.UserSignupResponse
@@ -56,6 +57,17 @@ class UserController(
     @Operation(summary = "사용자 회원가입")
     fun signup(@RequestBody request: UserSignupRequest): ApiResponse<UserSignupResponse> {
         val response = userService.signUp(request)
+
+        return ApiResponse.ok(
+            "회원가입이 완료되었습니다.",
+            response
+        )
+    }
+
+    @PostMapping("/oauth/signup")
+    @Operation(summary = "사용자 SNS 회원가입")
+    fun oauthSignup(@RequestBody request: UserOauthSignupRequest): ApiResponse<UserSignupResponse> {
+        val response = userService.oauthSignUp(request)
 
         return ApiResponse.ok(
             "회원가입이 완료되었습니다.",
