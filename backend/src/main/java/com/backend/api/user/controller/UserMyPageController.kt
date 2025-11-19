@@ -148,7 +148,7 @@ class UserMyPageController(
             // 이메일 가입 유저가 아닐 경우 커스텀 예외 발생
             throw ErrorException(ErrorCode.INVALID_AUTHENTICATION_SNS)
         }
-        else if(!isValid) {
+        if(!isValid) {
             // 비밀번호가 틀릴 경우 커스텀 예외 발생
             throw ErrorException(ErrorCode.WRONG_PASSWORD)
         }
@@ -167,7 +167,7 @@ class UserMyPageController(
             // 소셜 로그인 유저가 아닐 경우 커스텀 예외 발생
             throw ErrorException(ErrorCode.INVALID_AUTHENTICATION_EMAIL)
         }
-        else if(!isValid) {
+        if(!isValid) {
             // 현재 로그인한 유저와 SNS 인증 정보가 다를 경우 예외 발생
             throw ErrorException(ErrorCode.FORBIDDEN_USER)
         }
