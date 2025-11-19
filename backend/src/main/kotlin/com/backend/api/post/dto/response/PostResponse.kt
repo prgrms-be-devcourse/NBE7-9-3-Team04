@@ -54,7 +54,7 @@ data class PostResponse(
         fun from(post: Post, isMine: Boolean): PostResponse {
 
             val nickName = post.users.nickname
-                ?.takeIf { it.isNotEmpty() }
+                .takeIf { it.isNotEmpty() }
                 ?: throw ErrorException(ErrorCode.NOT_FOUND_NICKNAME)
 
             return PostResponse(

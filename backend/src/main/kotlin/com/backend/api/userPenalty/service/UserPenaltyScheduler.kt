@@ -41,7 +41,7 @@ class UserPenaltyScheduler(
                 log.error(
                     "[Scheduler] 해제 처리 실패 (penaltyId={}, userId={}): {}",
                     penalty.id,
-                    penalty.user?.id ?: "unknown",
+                    penalty.user.id,
                     e.message
                 )
             }
@@ -51,7 +51,7 @@ class UserPenaltyScheduler(
     // 개별 정지 해제 처리 (트랜잭션 단위 분리)
     @Transactional
     protected fun processPenaltyRelease(penalty: UserPenalty) {
-        val user = penalty.user ?: return
+        val user = penalty.user
 
         if (!penalty.released && user.accountStatus == AccountStatus.SUSPENDED) {
             user.changeStatus(AccountStatus.ACTIVE)

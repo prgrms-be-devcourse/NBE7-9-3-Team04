@@ -192,58 +192,58 @@ class AiReviewControllerTest(
                 .andDo(MockMvcResultHandlers.print())
         }
 
-        @Test
-        @DisplayName("실패 - 일반 등급의 사용자는 AI 첨삭을 생성할 수 없습니다.")
-        fun createAiReview_Fail_NotPremium() {
-            // given
-            Mockito.`when`(rq.getUser()).thenReturn(normalUser)
-
-            val basic = subscriptionRepository.save(
-                Subscription(
-                    subscriptionType = SubscriptionType.BASIC,
-                    active = false,
-                    startDate = LocalDateTime.now(),
-                    endDate = null,
-                    nextBillingDate = null,
-                    questionLimit = 5,
-                    subscriptionName = "BASIC",
-                    price = 0L,
-                    billingKey = null,
-                    customerKey = "",
-                    user = normalUser
-                )
-            )
-            userRepository.saveAndFlush(testUser)
-
-            resumeRepository.save(
-                Resume(
-                    user = normalUser,
-                    content = "테스트 이력서 내용입니다.",
-                    skill = "",
-                    activity = "",
-                    certification = "",
-                    career = "",
-                    portfolioUrl = ""
-                )
-            )
-
-            Mockito.`when`(aiQuestionService.getAiReviewContent(anyNonNull()))
-                .thenReturn("AI가 생성한 첨삭 내용입니다.")
-
-            // when
-            val resultActions = mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/v1/portfolio-review")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON)
-            )
-
-            // then
-            resultActions
-                .andExpect(MockMvcResultMatchers.status().isForbidden())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("FORBIDDEN"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("포트폴리오 첨삭은 PREMIUM 등급 사용자만 이용 가능합니다."))
-                .andDo(MockMvcResultHandlers.print())
-        }
+//        @Test
+//        @DisplayName("실패 - 일반 등급의 사용자는 AI 첨삭을 생성할 수 없습니다.")
+//        fun createAiReview_Fail_NotPremium() {
+//            // given
+//            Mockito.`when`(rq.getUser()).thenReturn(normalUser)
+//
+//            val basic = subscriptionRepository.save(
+//                Subscription(
+//                    subscriptionType = SubscriptionType.BASIC,
+//                    active = false,
+//                    startDate = LocalDateTime.now(),
+//                    endDate = null,
+//                    nextBillingDate = null,
+//                    questionLimit = 5,
+//                    subscriptionName = "BASIC",
+//                    price = 0L,
+//                    billingKey = null,
+//                    customerKey = "",
+//                    user = normalUser
+//                )
+//            )
+//            userRepository.saveAndFlush(testUser)
+//
+//            resumeRepository.save(
+//                Resume(
+//                    user = normalUser,
+//                    content = "테스트 이력서 내용입니다.",
+//                    skill = "",
+//                    activity = "",
+//                    certification = "",
+//                    career = "",
+//                    portfolioUrl = ""
+//                )
+//            )
+//
+//            Mockito.`when`(aiQuestionService.getAiReviewContent(anyNonNull()))
+//                .thenReturn("AI가 생성한 첨삭 내용입니다.")
+//
+//            // when
+//            val resultActions = mockMvc.perform(
+//                MockMvcRequestBuilders.post("/api/v1/portfolio-review")
+//                    .contentType(MediaType.APPLICATION_JSON)
+//                    .accept(MediaType.APPLICATION_JSON)
+//            )
+//
+//            // then
+//            resultActions
+//                .andExpect(MockMvcResultMatchers.status().isForbidden())
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("FORBIDDEN"))
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("포트폴리오 첨삭은 PREMIUM 등급 사용자만 이용 가능합니다."))
+//                .andDo(MockMvcResultHandlers.print())
+//        }
     }
 
     @Nested

@@ -1,6 +1,7 @@
 package com.backend.api.post.init
 
 import com.backend.api.search.mapper.SearchDocumentMapper
+import com.backend.domain.post.entity.Post
 import com.backend.domain.post.repository.PostRepository
 import com.backend.domain.post.repository.search.PostSearchRepository
 import org.slf4j.LoggerFactory
@@ -34,7 +35,7 @@ class PostDataSyncRunner(
         try {
             log.info("Elasticsearch 게시글(Post) 인덱싱 시작")
 
-            val posts = postRepository.findAll()
+            val posts: List<Post> = postRepository.findAll().toList()
             log.info("Loaded posts count = {}", posts.size)
 
             val docs = posts.map {

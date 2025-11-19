@@ -48,8 +48,8 @@ class AdminQuestionService(
             author = admin,
             categoryType = request.categoryType
         ).apply {
-            request.isApproved?.let { updateApproved(it) }
-            request.score?.let { updateScore(it) }
+            updateApproved(request.isApproved)
+            updateScore(request.score)
         }
 
         val saved = questionRepository.save(question)

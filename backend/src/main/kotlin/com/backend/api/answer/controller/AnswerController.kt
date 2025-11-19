@@ -57,13 +57,9 @@ class AnswerController(
     @Operation(summary = "답변 삭제")
     fun deleteAnswer(
         @PathVariable answerId: Long
-    ): ApiResponse<Void?> {
+    ): ApiResponse<Unit> {
         val currentUser: User = rq.getUser()
         answerService.deleteAnswer(currentUser, answerId)
-
-        val a:Int = 1
-        var b:Int? = null
-        b = a
 
         return ApiResponse.ok(
             "${answerId}번 답변이 삭제되었습니다.",

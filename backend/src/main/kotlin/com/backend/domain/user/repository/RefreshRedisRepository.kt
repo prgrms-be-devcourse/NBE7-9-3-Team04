@@ -25,7 +25,7 @@ class RefreshRedisRepository(
     }
 
     fun findByUserId(userId: Long): String? =
-        redisTemplate.opsForValue().get(REFRESH_TOKEN_PREFIX + userId) as String?
+        redisTemplate.opsForValue()[REFRESH_TOKEN_PREFIX + userId] as String?
 
 
     fun deleteByUserId(userId: Long) =

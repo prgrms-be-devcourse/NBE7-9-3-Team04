@@ -52,7 +52,7 @@ class AdminQnaController(
     @Operation(summary = "Qna 삭제", description = "관리자가 Qna 자체를 삭제합니다.")
     fun deleteQna(
         @PathVariable qnaId: Long
-    ): ApiResponse<Void> {
+    ): ApiResponse<Unit> {
         adminQnaService.deleteQna(qnaId, rq.getUser())
         return ApiResponse.ok("Qna가 삭제되었습니다.", null)
     }
