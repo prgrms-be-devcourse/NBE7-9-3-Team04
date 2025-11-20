@@ -49,8 +49,6 @@ class AiRequestHandler(
     }
 
     @Retry(name = "aiRetry")
-    @CircuitBreaker(name = "aiExternal", fallbackMethod = "fallbackCircuitBreaker")
-    @RateLimiter(name =  "rateLimiterAI", fallbackMethod = "rateLimiterFallbackConnectionAi")
     fun <T : Any> connectionAi(request: T): String {
         return restClient.post()
             .uri(apiUrl)
