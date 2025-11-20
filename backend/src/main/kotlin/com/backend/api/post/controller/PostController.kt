@@ -65,7 +65,7 @@ class PostController(
 
     @DeleteMapping("/{postId}")
     @Operation(summary = "게시글 삭제")
-    fun deletePost(@PathVariable postId: Long): ApiResponse<Void> {
+    fun deletePost(@PathVariable postId: Long): ApiResponse<Unit> {
         val user = currentUser
         postService.deletePost(postId, user)
 

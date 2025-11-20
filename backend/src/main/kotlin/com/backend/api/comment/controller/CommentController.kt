@@ -60,7 +60,7 @@ class CommentController(
     @Operation(summary = "댓글 삭제")
     fun deleteComment(
         @PathVariable commentId: Long
-    ): ApiResponse<Void> {
+    ): ApiResponse<Unit> {
         val currentUser = rq.getUser()
 
         commentService.deleteComment(currentUser, commentId)

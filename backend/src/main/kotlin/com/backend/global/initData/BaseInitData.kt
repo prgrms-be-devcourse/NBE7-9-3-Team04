@@ -29,7 +29,6 @@ import com.backend.domain.subscription.repository.SubscriptionRepository
 import com.backend.domain.user.entity.Role
 import com.backend.domain.user.entity.User
 import com.backend.domain.user.repository.UserRepository
-import lombok.RequiredArgsConstructor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
@@ -42,7 +41,6 @@ import java.time.LocalDateTime
 import java.util.stream.IntStream
 
 @Configuration
-@RequiredArgsConstructor
 class BaseInitData(
     private val userRepository: UserRepository,
     private val postRepository: PostRepository,
@@ -66,7 +64,7 @@ class BaseInitData(
 
     @Bean
     fun initDataRunner(): ApplicationRunner {
-        return ApplicationRunner { args: ApplicationArguments ->
+        return ApplicationRunner { _: ApplicationArguments ->
             self.userInitData() // 회원 초기 데이터 등록
             self.initAdminUser()
             self.resumeInitData()
@@ -977,4 +975,6 @@ class BaseInitData(
         qnaRepository.save(qna4)
         qnaRepository.save(qna5)
     }
+
+
 }

@@ -6,7 +6,6 @@ import com.backend.api.question.dto.response.PortfolioListReadResponse
 import com.backend.api.question.service.AiQuestionService
 import com.backend.global.Rq.Rq
 import com.backend.global.dto.response.ApiResponse
-import com.fasterxml.jackson.core.JsonProcessingException
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.*
