@@ -25,10 +25,12 @@ class SearchDocumentMapper {
             title = post.title,
             introduction = post.introduction,
             content = post.content,
+            deadline = post.deadline.toString(),
+            recruitCount = post.recruitCount,
             postCategoryType = post.postCategoryType,
             authorNickname = post.users.nickname,
             createdDate = post.createDate.toString(),
-            updatedDate = post.modifyDate.toString()
+            modifyDate = post.modifyDate.toString()
         )
     }
 }

@@ -75,22 +75,31 @@ class RankingService(
 
         val tuples = stringRedisTemplate.opsForZSet()
             .reverseRangeWithScores(REDIS_PREFIX, 0, -1)
+            ?.toSet()
             ?: throw ErrorException(ErrorCode.RANKING_NOT_AVAILABLE)
 
-        val userIds = tuples.map { it.value!!.toLong() }
-        val dbRankings = rankingRepository.findByUserIdIn(userIds)
+        val userIds = tuples.mapNotNull { it.value?.toLongOrNull() }
 
+        val dbRankings = rankingRepository.findByUserIdIn(userIds)
         val rankingMap = dbRankings.associateBy { it.user.id }
 
         // 점수 DESC → 닉네임 ASC 정렬
-        return tuples.sortedWith(
-            compareByDescending<ZSetOperations.TypedTuple<String>> { it.score }
+        return tuples
+                .sortedWith(
+            compareByDescending<ZSetOperations.TypedTuple<String>> { it.score ?: 0.0 }
                 .thenBy { tuple ->
-                    rankingMap[tuple.value!!.toLong()]!!.user.nickname
+                    val userId = tuple.value?.toLongOrNull()
+                    rankingMap[userId]?.user?.nickname ?: ""
                 }
-        ).map { tuple ->
-            tuple.value!!.toLong() to tuple.score!!
-        }
+        )
+            .mapNotNull { tuple ->
+                val userId = tuple.value?.toLongOrNull()
+                val score = tuple.score
+
+                if (userId != null && score != null) {
+                    userId to score
+                } else null
+            }
     }
 
 

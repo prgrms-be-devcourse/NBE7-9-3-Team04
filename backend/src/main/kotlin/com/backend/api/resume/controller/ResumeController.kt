@@ -46,7 +46,7 @@ class ResumeController(
     @Operation(summary = "이력서 삭제", description = "사용자의 이력서를 삭제합니다.")
     fun deleteResume(
         @Parameter(description = "이력서 ID", example = "1") @PathVariable resumeId: @Valid Long
-    ): ApiResponse<Void> {
+    ): ApiResponse<Unit> {
         val userId = rq.getUser().id
         resumeService.deleteResume(userId, resumeId)
         return ApiResponse.noContent("이력서가 삭제되었습니다.")

@@ -9,7 +9,9 @@ import com.backend.domain.post.entity.PinStatus
 import com.backend.domain.post.entity.Post
 import com.backend.domain.post.entity.PostCategoryType
 import com.backend.domain.post.entity.PostStatus
+import com.backend.domain.post.entity.search.PostDocument
 import com.backend.domain.post.repository.PostRepository
+import com.backend.domain.post.repository.search.PostSearchRepository
 import com.backend.domain.subscription.repository.SubscriptionRepository
 import com.backend.domain.user.entity.User
 import com.backend.global.exception.ErrorCode
@@ -26,7 +28,8 @@ import java.time.LocalDateTime
 class PostService(
     private val postRepository: PostRepository,
     private val userService: UserService,
-    private val subscriptionRepository: SubscriptionRepository
+    private val subscriptionRepository: SubscriptionRepository,
+    private val postSearchRepository: PostSearchRepository
 ) {
     @Transactional
     fun createPost(request: PostAddRequest, user: User): PostResponse {
@@ -55,6 +58,7 @@ class PostService(
         )
 
         val savedPost = postRepository.save(post)
+        postSearchRepository.save(PostDocument.from(post))
 
         return PostResponse.from(savedPost, false)
     }
@@ -112,6 +116,8 @@ class PostService(
             request.categoryType
         )
 
+        postSearchRepository.save(PostDocument.from(post))
+
         return PostResponse.from(post, true)
     }
 
@@ -119,7 +125,7 @@ class PostService(
     fun deletePost(postId: Long, user: User) {
         val post = findPostByIdOrThrow(postId)
         validatePostOwner(post, user)
-
+        postSearchRepository.deleteById(postId.toString())
         postRepository.delete(post)
     }
 
@@ -180,10 +186,9 @@ class PostService(
         }
     }
 
-    fun getByStatusAndDeadlineLessThan(now: LocalDateTime): List<Post> {
-        return postRepository.findByStatusAndDeadlineLessThan(PostStatus.ING, now)
-            throw ErrorException(ErrorCode.POST_NOT_FOUND)
-    }
+    fun getByStatusAndDeadlineLessThan(now: LocalDateTime): List<Post> =
+        postRepository.findByStatusAndDeadlineLessThan(PostStatus.ING, now)
+
 
     private fun validateDeadline(deadline: LocalDateTime) {
         if (deadline.isBefore(LocalDateTime.now())) {

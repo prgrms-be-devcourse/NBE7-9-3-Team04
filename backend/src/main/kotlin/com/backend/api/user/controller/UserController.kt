@@ -43,7 +43,7 @@ class UserController(
 
     @DeleteMapping("/logout")
     @Operation(summary = "사용자 로그아웃")
-    fun logout(): ApiResponse<Void> {
+    fun logout(): ApiResponse<Unit> {
         val user = rq.getUser()
         userService.logout(user.id)
 
@@ -77,21 +77,21 @@ class UserController(
 
     @PostMapping("/sendEmail")
     @Operation(summary = "이메일 인증 코드 전송", description = "회원가입 시 이메일 인증 코드를 전송합니다.")
-    fun sendEmailVerificationCode(@RequestParam email: String): ApiResponse<Void> {
+    fun sendEmailVerificationCode(@RequestParam email: String): ApiResponse<Unit> {
         userService.sendEmailVerification(email)
         return ApiResponse.ok("이메일 인증 코드가 전송되었습니다.", null)
     }
 
     @PostMapping("/verifyCode")
     @Operation(summary = "이메일 인증 코드 검증", description = "회원가입 시 이메일 인증 코드를 검증합니다.")
-    fun verifyEmailCode(@RequestParam email: String, @RequestParam code: String): ApiResponse<Void> {
+    fun verifyEmailCode(@RequestParam email: String, @RequestParam code: String): ApiResponse<Unit> {
         userService.verifyEmailCode(email, code)
         return ApiResponse.ok("이메일 인증 코드가 검증되었습니다.", null)
     }
 
     @PostMapping("/refresh")
     @Operation(summary = "토큰 재발급")
-    fun refresh(): ApiResponse<Void> {
+    fun refresh(): ApiResponse<Unit> {
         val refreshToken = rq.getCookieValue("refreshToken")
             ?: throw ErrorException(ErrorCode.REFRESH_TOKEN_NOT_FOUND)
 
@@ -115,7 +115,7 @@ class UserController(
     fun findPassword(
         @RequestParam name: String,
         @RequestParam email: String
-    ): ApiResponse<Void> {
+    ): ApiResponse<Unit> {
         val isValid = userService.verifyUserInfo(name, email)
 
         if (!isValid) {

@@ -9,7 +9,7 @@ data class AutoPaymentRequest(
     @field:Schema(description = "빌링키 (자동결제용 키)", example = "Z_t5vOvQxrj4499PeiJcjen28-V2RyqgYTwN44Rdzk0=")
     val billingKey: String,
 
-    @field:Schema(description = "결제 금액", example = "9900")
+    @field:Schema(description = "결제 금액", example = "3900")
     val amount: Long,
 
     @field:Schema(description = "주문 ID (고유값)", example = "b05c8d5b-7414-44af-9bcd-053e5eeec1e1")

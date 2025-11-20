@@ -18,7 +18,7 @@ data class PaymentConfirmResponse(
     @field:Schema(description = "주문 상품명", example = "PREMIUM")
     val orderName: String,
 
-    @field:Schema(description = "총 결제 금액", example = "9900")
+    @field:Schema(description = "총 결제 금액", example = "3900")
     val totalAmount: Long,
 
     @field:Schema(description = "결제 수단", example = "카드")

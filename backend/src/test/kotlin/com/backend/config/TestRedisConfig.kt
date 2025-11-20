@@ -19,7 +19,6 @@ class TestRedisConfig {
         redisPort = findAvailableTcpPort()
         redisServer = RedisServer(redisPort).also { it.start() }
 
-        // Spring Boot Redis 설정에 반영
         System.setProperty("spring.data.redis.host", "localhost")
         System.setProperty("spring.data.redis.port", redisPort.toString())
 

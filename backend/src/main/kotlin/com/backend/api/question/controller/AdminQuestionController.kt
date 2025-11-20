@@ -1,6 +1,9 @@
 package com.backend.api.question.controller
 
-import com.backend.api.question.dto.request.*
+import com.backend.api.question.dto.request.AdminQuestionAddRequest
+import com.backend.api.question.dto.request.AdminQuestionUpdateRequest
+import com.backend.api.question.dto.request.QuestionApproveRequest
+import com.backend.api.question.dto.request.QuestionScoreRequest
 import com.backend.api.question.dto.response.QuestionPageResponse
 import com.backend.api.question.dto.response.QuestionResponse
 import com.backend.api.question.service.AdminQuestionService
@@ -86,7 +89,7 @@ class AdminQuestionController(
     @Operation(summary = "질문 삭제 (관리자)", description = "관리자가 질문을 삭제합니다.")
     fun deleteQuestion(
         @PathVariable questionId: Long
-    ): ApiResponse<Void> {
+    ): ApiResponse<Unit> {
         adminQuestionService.deleteQuestion(questionId, rq.getUser())
         return ApiResponse.ok("관리자 질문 삭제 성공", null)
     }

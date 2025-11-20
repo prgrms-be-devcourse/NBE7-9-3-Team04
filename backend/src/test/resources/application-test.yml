@@ -11,16 +11,71 @@ spring:
       hibernate:
         ddl-auto: create-drop
 
+
   data:
     redis:
       host: localhost
-      port: 0 # 포트 랜덤 설정
+      port: 0  # embedded redis 사용 시 문제 없음
+
+  ai:
+    openai:
+      api-key: dummy
+    vertex:
+      ai:
+        gemini:
+          project-id: dummy
+          location: asia-northeast3
+          chat:
+            options:
+              model: "vertex--pro-vision"
+
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: dummy
+            client-secret: dummy
+            redirect-uri: http://localhost:8080/login/oauth2/code/github
+        provider:
+          github:
+            user-info-uri: https://api.github.com/user
+
+mailgun:
+  api-key: dummy
+  domain: dummy
+  from: dummy@mail.com
+
+logging:
+  level:
+    com.backend: INFO
 
 custom:
   jwt:
-    secretPattern: ${SECRET_PATTERN}
+    secretPattern: "this_is_a_very_long_dummy_secret_key_123456789"
+  jwt-secret: dummy
+
+openai:
+  url: dummy
+  admin:
+    api-key: dummy
+    url: dummy
+
+slack:
+  webhook:
+    url: dummy
 
 toss:
   payments:
     base-url: "http://localhost:8080"
     secret-key: "dummyKey"
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      aiExternal:
+        slidingWindowSize: 5
+        minimumNumberOfCalls: 3
+        failureRateThreshold: 50
+        permittedNumberOfCallsInHalfOpenState: 2
+        waitDurationInOpenState: 5s

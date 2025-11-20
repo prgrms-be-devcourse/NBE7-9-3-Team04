@@ -39,14 +39,6 @@ class User(
     @Column(nullable = false)
     var aiQuestionUsedCount: Int = 0, // AI 질문 사용 횟수
 
-    // @OneToOne(
-    //     mappedBy = "user",
-    //     cascade = [CascadeType.ALL],
-    //     orphanRemoval = true,
-    //     fetch = FetchType.LAZY
-    // )
-    // var subscription: Subscription? = null,
-
     @Column(unique = true)
     var oauthId: String? = null
 

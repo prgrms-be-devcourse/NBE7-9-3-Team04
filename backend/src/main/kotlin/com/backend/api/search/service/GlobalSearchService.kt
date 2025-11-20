@@ -1,11 +1,11 @@
 package com.backend.api.search.service
 
 import com.backend.api.post.service.PostSearchService
+import com.backend.api.search.dto.PostSearchDto
 import com.backend.api.search.dto.SearchPageResponse
-import com.backend.api.search.dto.SearchResultDto
+import com.backend.api.search.dto.SearchResponse
+import com.backend.api.search.dto.UserSearchDto
 import com.backend.api.user.service.UserSearchService
-import com.backend.domain.user.entity.search.UserDocument
-import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
 
 @Service
@@ -16,15 +16,19 @@ class GlobalSearchService(
 ) {
 
     // 유저 검색 (Elasticsearch 기반)
-    fun searchUser(keyword: String, page: Int, size: Int): SearchPageResponse<SearchResultDto> {
-        val users: Page<UserDocument> = userSearchService.search(keyword, page, size)
+    fun searchUser(keyword: String, page: Int, size: Int):SearchPageResponse<SearchResponse<UserSearchDto>> {
+        val users = userSearchService.search(keyword, page, size)
 
         val content = users.content.map { u ->
-            SearchResultDto(
+            SearchResponse(
                 type = "user",
-                id = u.id ?: "",
-                title = u.name ?: "",
-                snippet = u.nickname ?: ""
+                data = UserSearchDto(
+                    id = u.id,
+                    name = u.name,
+                    nickname = u.nickname,
+                    email = u.email,
+                    role = u.role.toString()
+                )
             )
         }
 
@@ -32,15 +36,24 @@ class GlobalSearchService(
     }
 
     // Post 검색 (Elasticsearch 기반)
-    fun searchPost(keyword: String, page: Int, size: Int): SearchPageResponse<SearchResultDto> {
+    fun searchPost(keyword: String, page: Int, size: Int): SearchPageResponse<SearchResponse<PostSearchDto>> {
         val posts = postSearchService.search(keyword, page, size)
 
         val content = posts.content.map { p ->
-            SearchResultDto(
+            SearchResponse(
                 type = "post",
-                id = p.id,
-                title = p.title,
-                snippet = p.introduction
+                data = PostSearchDto(
+                    id = p.id,
+                    title = p.title,
+                    introduction = p.introduction,
+                    content = p.content,
+                    deadline = p.deadline,
+                    recruitCount = p.recruitCount,
+                    postCategoryType = p.postCategoryType.toString(),
+                    authorNickname = p.authorNickname,
+                    createdDate = p.createdDate,
+                    modifyDate = p.modifyDate
+                )
             )
         }
 
@@ -49,9 +62,9 @@ class GlobalSearchService(
 
 
     // 통합 검색 (현재는 User만)
-    fun searchAll(keyword: String, page: Int, size: Int): SearchPageResponse<SearchResultDto> {
-        return searchUser(keyword, page, size)
-    }
+//    fun searchAll(keyword: String, page: Int, size: Int): SearchPageResponse<SearchResultDto> {
+//        return searchUser(keyword, page, size)
+//    }
 
     /*
     fun searchPost(keyword: String, page: Int, size: Int): SearchPageResponse<SearchResultDto> {

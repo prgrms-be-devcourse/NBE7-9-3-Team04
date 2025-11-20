@@ -24,7 +24,7 @@ class VerificationCodeRedisRepository(
 
     fun findCode(email: String): String? {
         val key = "verify:$email"
-        return hashOps.get(key, "code")
+        return hashOps[key, "code"]
     }
 
     fun delete(email: String) {

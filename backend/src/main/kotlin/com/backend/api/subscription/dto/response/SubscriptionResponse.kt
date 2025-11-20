@@ -18,7 +18,7 @@ data class SubscriptionResponse(
     @field:Schema(description = "구독 활성화 여부", example = "true")
     val isActive: Boolean,
 
-    @field:Schema(description = "구독 가격", example = "9900")
+    @field:Schema(description = "구독 가격", example = "3900")
     val price: Long,
 
     @field:Schema(description = "구독 시작 날짜", example = "2025-10-23T03:00:00")

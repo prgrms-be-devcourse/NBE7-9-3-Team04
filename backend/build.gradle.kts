@@ -38,11 +38,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     testImplementation("org.springframework.security:spring-security-test")
-    compileOnly("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("com.h2database:h2")
     runtimeOnly("com.mysql:mysql-connector-j")
-    annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
@@ -135,12 +133,16 @@ sonarqube {
         property("sonar.host.url", "http://localhost:9000")
         property("sonar.token", System.getenv("SONAR_TOKEN") ?: "")
 
-        property("sonar.sources", "src/main/java,src/main/resources")
-        property("sonar.tests", "src/test/java,src/test/resources")
+        property("sonar.sources", "src/main/kotlin,src/main/resources")
+        property("sonar.tests", "src/test/kotlin,src/test/resources")
 
         property("sonar.java.coveragePlugin", "jacoco")
         property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml")
 
         property("sonar.verbose", "true")
     }
+}
+
+tasks.withType<Test> {
+    systemProperty("spring.profiles.active", "test")
 }

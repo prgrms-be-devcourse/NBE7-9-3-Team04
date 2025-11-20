@@ -47,7 +47,7 @@ class AdminPostController(
     @Operation(summary = "게시글 삭제", description = "관리자가 특정 게시글을 삭제합니다.")
     fun deletePost(
         @PathVariable postId: Long
-    ): ApiResponse<Void> {
+    ): ApiResponse<Unit> {
         adminPostService.deletePost(postId, currentUser)
         return ApiResponse.ok("게시글 삭제 성공", null)
     }

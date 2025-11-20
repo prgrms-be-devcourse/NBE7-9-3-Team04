@@ -158,7 +158,7 @@ export default function MyPremiumPage() {
                   👑 프리미엄 멤버십
                 </h3>
                 <p className="text-4xl font-bold text-blue-600">
-                  9,900원{" "}
+                  3,900원{" "}
                   <span className="text-lg font-normal text-gray-500">
                     / 월
                   </span>
