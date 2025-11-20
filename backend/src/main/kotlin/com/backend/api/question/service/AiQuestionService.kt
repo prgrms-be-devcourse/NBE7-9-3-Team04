@@ -94,13 +94,9 @@ class AiQuestionService(
     ): List<Question> {
         val groupId = UUID.randomUUID()
         return responses.map { dto ->
-            val content = dto.content
-                .takeIf { it.isBlank() }
-                ?: throw ErrorException(ErrorCode.NOT_FOUND_CONTENT)
-
             Question(
                 resume.portfolioUrl ?: "포트폴리오 URL 없음",
-                content,
+                dto.content,
                 true,
                 2,
                 user,
