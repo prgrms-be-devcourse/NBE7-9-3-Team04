@@ -29,19 +29,25 @@ class OAuth2JwtAuthenticationSuccessHandler(
         if (user != null) {
             // 기존 회원이면 로그인
             val loginResponse = userService.login(oauthId = oauthId)
-            val email = loginResponse.email
+            val email = attributes["email"] as String? ?: ""
+            val githubUrl = attributes["html_url"] as String? ?: ""
 
             rq.setCookie("accessToken", loginResponse.accessToken, (jwtTokenProvider.getAccessTokenExpireTime()).toInt())
             rq.setCookie("refreshToken", loginResponse.refreshToken, (jwtTokenProvider.getRefreshTokenExpireTime()).toInt())
             // 프론트로 리다이렉트
-            response.sendRedirect("http://localhost:3000/auth/oauth?email=$email&oauthId=$oauthId")
+            response.sendRedirect(
+                "http://localhost:3000/auth/oauth" +
+                        "?email=$email" +
+                        "&githubUrl=$githubUrl" +
+                        "&oauthId=$oauthId"
+            )
         } else {
             // 신규 회원이면 프론트 회원가입 페이지로 리다이렉트
             val email = attributes["email"] as String? ?: ""
             val name = attributes["login"] as String? ?: ""
             val nickname = attributes["name"] as String? ?: ""
-            val githubUrl = "https://github.com/${attributes["login"] as String? ?: ""}"
-            val avatarUrl = attributes["avatar_url"] as String?
+            val githubUrl = attributes["html_url"] as String? ?: ""
+            val avatarUrl = attributes["avatar_url"] as String? ?: ""
 
             response.sendRedirect(
                 "http://localhost:3000/auth/oauth/signup" +

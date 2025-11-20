@@ -84,8 +84,8 @@ export default function MySettingsPage() {
       const receiveMessage = async (event: MessageEvent) => {
         if (event.origin !== "http://localhost:3000") return;
 
-        const { oauthId, email } = event.data || {};
-        if (!oauthId || !email) return;
+        const { oauthId, email, githubUrl } = event.data || {};
+        if (!oauthId || !email || !githubUrl) return;
 
         const res = await fetchApi(`/api/v1/users/verifyOauthId`, {
           method: "POST",
@@ -100,7 +100,8 @@ export default function MySettingsPage() {
           setPasswordInput("");
           setFormData({
             ...userInfo.data,
-            email: email, // 🔥 SNS에서 받은 email을 강제로 반영
+            email: email, 
+            github: githubUrl
           });
           toast.success("SNS 인증이 확인되었습니다.");
         } else {
